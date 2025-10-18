@@ -4,47 +4,60 @@
     <meta charset="UTF-8">
     <title>Phê duyệt bác sĩ - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12">
-    <h1 class="text-3xl font-bold mb-6 text-center">Phê duyệt hồ sơ bác sĩ</h1>
-    <div th:if="${pendingDoctors.empty}"
-         class="w-1/2 mx-auto mt-4 mb-6 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center">
-        MSG14: No profiles to review.
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Phê duyệt hồ sơ bác sĩ</h1>
+
+    <div th:if="${pendingDoctors.empty}" class="mb-8 p-6 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center mx-4 md:mx-8">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        Không có hồ sơ bác sĩ nào đang chờ duyệt.
     </div>
 
-    <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
-        <thead class="bg-gray-200">
-        <tr>
-            <th class="p-4">Tên</th>
-            <th class="p-4">Chuyên khoa</th>
-            <th class="p-4">Trạng thái</th>
-            <th class="p-4">Hành động</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="doctor : ${pendingDoctors}" class="hover:bg-gray-100 transition">
-            <td class="p-4" th:text="${doctor.user.email}"></td>
-            <td class="p-4" th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></td>
-            <td class="p-4" th:text="${doctor.status}"></td>
-            <td class="p-4 flex gap-2">
-                <form th:action="@{/admin-approve-doctor}" method="post">
-                    <input type="hidden" name="doctorId" th:value="${doctor.doctorId}" />
-                    <input type="hidden" name="approve" value="true" />
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Phê duyệt</button>
-                </form>
-                <form th:action="@{/admin-approve-doctor}" method="post">
-                    <input type="hidden" name="doctorId" th:value="${doctor.doctorId}" />
-                    <input type="hidden" name="approve" value="false" />
-                    <input type="text" name="reason" placeholder="Lý do từ chối" class="p-2 border rounded" />
-                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Từ chối</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 overflow-x-auto">
+        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+            <i class="fas fa-user-check mr-2 text-indigo-500"></i> Danh sách bác sĩ chờ phê duyệt
+        </h2>
+        <table class="w-full table-auto min-w-max border-collapse">
+            <thead class="bg-indigo-100 text-indigo-800">
+            <tr>
+                <th class="p-3 text-left">Tên</th>
+                <th class="p-3 text-left">Chuyên khoa</th>
+                <th class="p-3 text-left">Trạng thái</th>
+                <th class="p-3 text-left">Hành động</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+            <tr th:each="doctor : ${pendingDoctors}" class="transition duration-200 hover:bg-gray-50">
+                <td class="p-3" th:text="${doctor.user.email}"></td>
+                <td class="p-3" th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></td>
+                <td class="p-3" th:text="${doctor.status}"></td>
+                <td class="p-3 flex flex-col md:flex-row gap-2">
+                    <form th:action="@{/admin-approve-doctor}" method="post">
+                        <input type="hidden" name="doctorId" th:value="${doctor.doctorId}" />
+                        <input type="hidden" name="approve" value="true" />
+                        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center">
+                            <i class="fas fa-check mr-2"></i> Phê duyệt
+                        </button>
+                    </form>
+                    <form th:action="@{/admin-approve-doctor}" method="post" class="flex gap-2">
+                        <input type="hidden" name="doctorId" th:value="${doctor.doctorId}" />
+                        <input type="hidden" name="approve" value="false" />
+                        <input type="text" name="reason" placeholder="Lý do từ chối" class="p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
+                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center">
+                            <i class="fas fa-times mr-2"></i> Từ chối
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

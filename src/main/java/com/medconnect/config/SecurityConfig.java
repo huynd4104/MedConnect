@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index", "/register", "/login", "/forgot-password", "/verify", "/search-doctors", "/doctor-profile-view/**").permitAll()
 
                         // Các URL theo vai trò
-                        .requestMatchers("/patient-profile", "/patient-dashboard", "/book-appointment", "/payment", "/review").hasRole("Patient")
+                        .requestMatchers("/patient-profile", "/patient-dashboard", "/book-appointment", "/payment", "/payment-callback", "/cancel-appointment", "/review").hasRole("Patient")
                         .requestMatchers("/doctor-profile", "/doctor-schedule", "/doctor-schedule/**", "/doctor-dashboard/**", "/write-summary", "/delete-document/**").hasRole("Doctor")
                         .requestMatchers("/admin-doctor-approval", "/admin-specializations", "/admin-doctor-list", "/admin-patient-list").hasRole("Admin")
 

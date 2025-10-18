@@ -1,46 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Đăng nhập - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex items-center justify-center">
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
 
 <!-- Icon Home ở góc phải trên -->
 <div class="fixed top-4 right-4 z-50">
     <a href="/" class="text-indigo-500 hover:text-indigo-700 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-        </svg>
+        <i class="fas fa-home w-12 h-12 text-3xl"></i>
     </a>
 </div>
 
-<section class="container mx-auto bg-white p-8 rounded-lg shadow-md max-w-md">
-    <h1 class="text-3xl font-bold mb-6 text-center">Đăng nhập</h1>
+<section class="container mx-auto py-12 px-4 md:px-0 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-md w-full transform transition duration-300">
+        <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Đăng nhập</h1>
 
-    <div th:if="${error}" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
+        <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span th:text="${error}"></span>
+        </div>
 
-    <form th:action="@{/login}" th:object="${loginDTO}" method="post" class="space-y-4">
-        <div>
-            <label for="email" class="block text-sm font-medium">Email</label>
-            <input type="email" id="email" name="username" th:field="*{email}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-500 text-sm"></span>
+        <form th:action="@{/login}" th:object="${loginDTO}" method="post" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-envelope mr-2 text-indigo-500"></i> Email
+                </label>
+                <input type="email" id="email" name="username" th:field="*{email}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-500 text-sm"></span>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-lock mr-2 text-indigo-500"></i> Mật khẩu
+                </label>
+                <input type="password" id="password" name="password" th:field="*{password}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-red-500 text-sm"></span>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                <i class="fas fa-sign-in-alt mr-2"></i> Đăng nhập
+            </button>
+        </form>
+
+        <!-- Nút Google với logo G -->
+        <div class="mt-4 flex justify-center">
+            <a href="/oauth2/authorization/google" class="flex items-center justify-center w-12 h-12 bg-white border border-gray-300 rounded-full shadow-md hover:bg-gray-100 transition">
+                <span class="text-2xl font-bold text-red-500">G</span>
+            </a>
         </div>
-        <div>
-            <label for="password" class="block text-sm font-medium">Mật khẩu</label>
-            <input type="password" id="password" name="password" th:field="*{password}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-red-500 text-sm"></span>
+
+        <div class="mt-4 text-center space-y-2">
+            <a href="/forgot-password" class="text-indigo-600 hover:text-indigo-800 font-medium transition block">Quên mật khẩu?</a>
+            <a href="/register" class="text-indigo-600 hover:text-indigo-800 font-medium transition block">Đăng ký</a>
         </div>
-        <button type="submit" class="w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Đăng nhập</button>
-    </form>
-    <div class="mt-4 text-center">
-        <a href="/forgot-password" class="text-indigo-500 hover:underline">Quên mật khẩu?</a>
-        <a href="/register" class="text-indigo-500 hover:underline">Đăng Ký</a>
-    </div>
-    <div class="mt-4 flex justify-center gap-4">
-        <a href="/oauth2/authorization/google" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Google</a>
-        <a href="/oauth2/authorization/facebook" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Facebook</a>
     </div>
 </section>
 

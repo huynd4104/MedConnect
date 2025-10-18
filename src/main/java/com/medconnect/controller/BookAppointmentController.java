@@ -1,13 +1,8 @@
 package com.medconnect.controller;
 
 import com.medconnect.dto.AppointmentDTO;
-import com.medconnect.entity.Appointment;
-import com.medconnect.entity.Doctor;
-import com.medconnect.entity.Schedule;
-import com.medconnect.entity.User;
-import com.medconnect.repository.DoctorRepository;
-import com.medconnect.repository.ScheduleRepository;
-import com.medconnect.repository.UserRepository;
+import com.medconnect.entity.*;
+import com.medconnect.repository.*;
 import com.medconnect.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -30,6 +25,8 @@ public class BookAppointmentController {
     private final DoctorRepository doctorRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @GetMapping("/book-appointment")
     public String showBookForm(@RequestParam("doctorId") Integer doctorId, Model model, RedirectAttributes redirectAttributes) {
@@ -81,6 +78,39 @@ public class BookAppointmentController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/book-appointment" + doctorIdParam;
+        }
+    }
+
+    @PostMapping("/cancel-appointment")
+    public String cancelAppointment(@RequestParam("appointmentId") Integer appointmentId,
+                                    Authentication auth,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            // 1. Lấy thông tin bệnh nhân đang đăng nhập
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            User currentUser = userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+            Patient currentPatient = patientRepository.findByUser(currentUser)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân"));
+
+            // 2. (Bảo mật) Kiểm tra xem lịch hẹn này có phải của họ không
+            Appointment appointment = appointmentRepository.findById(appointmentId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn"));
+
+            if (!appointment.getPatient().getPatientId().equals(currentPatient.getPatientId())) {
+                redirectAttributes.addFlashAttribute("error", "Lỗi: Bạn không có quyền hủy lịch hẹn này.");
+                return "redirect:/patient-dashboard";
+            }
+
+            // 3. Gọi service để hủy (true = byPatient)
+            appointmentService.cancelAppointment(appointmentId, true);
+
+            redirectAttributes.addFlashAttribute("success", "Đã hủy lịch hẹn thành công.");
+            return "redirect:/patient-dashboard";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            return "redirect:/patient-dashboard";
         }
     }
 }

@@ -4,52 +4,86 @@
     <meta charset="UTF-8">
     <title>Quản lý chuyên khoa - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12">
-    <h1 class="text-3xl font-bold mb-6 text-center">Quản lý chuyên khoa</h1>
-    <form th:action="@{/admin-add-specialization}" th:object="${specializationDTO}" method="post" class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto space-y-4 mb-8">
-        <div>
-            <label for="name" id="name" class="block text-sm font-medium">Tên chuyên khoa</label>
-            <input type="text" th:field="*{name}" class="w-full p-3 border rounded-lg">
-            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-red-500 text-sm"></span>
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Quản lý chuyên khoa</h1>
+
+    <div th:if="${error}" class="mb-8 p-6 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center mx-4 md:mx-8">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-10 gap-6 mx-4 md:mx-8">
+        <!-- Bảng danh sách chuyên khoa (60%) -->
+        <div class="col-span-1 md:col-span-6 bg-white p-6 md:p-8 rounded-xl shadow-lg overflow-x-auto">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-list mr-2 text-indigo-500"></i> Danh sách chuyên khoa
+            </h2>
+            <table class="w-full table-auto min-w-max border-collapse">
+                <thead class="bg-indigo-100 text-indigo-800">
+                <tr>
+                    <th class="p-3 text-left">Tên</th>
+                    <th class="p-3 text-left">Mô tả</th>
+                    <th class="p-3 text-left">Hành động</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                <tr th:each="spec : ${specializations}" class="transition duration-200 hover:bg-gray-50">
+                    <td class="p-3" th:text="${spec.name}"></td>
+                    <td class="p-3" th:text="${spec.description}"></td>
+                    <td class="p-3 flex flex-col md:flex-row gap-2">
+                        <form th:action="@{/admin-update-specialization}" method="post" class="flex flex-col md:flex-row gap-2">
+                            <input type="hidden" name="id" th:value="${spec.specializationId}" />
+                            <input type="text" name="name" th:value="${spec.name}" class="p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
+                            <input type="text" name="description" th:value="${spec.description}" class="p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center">
+                                <i class="fas fa-edit mr-2"></i> Sửa
+                            </button>
+                        </form>
+                        <form th:action="@{/admin-delete-specialization}" method="post">
+                            <input type="hidden" name="id" th:value="${spec.specializationId}" />
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center">
+                                <i class="fas fa-trash mr-2"></i> Xóa
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${specializations.empty}">
+                    <td colspan="3" class="p-3 text-center text-gray-600">Không có chuyên khoa nào</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div>
-            <label for="description" id="description" class="block text-sm font-medium">Mô tả</label>
-            <textarea th:field="*{description}" class="w-full p-3 border rounded-lg" rows="3"></textarea>
+
+        <!-- Form thêm chuyên khoa (40%) -->
+        <div class="col-span-1 md:col-span-4 bg-white p-6 md:p-8 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-plus-circle mr-2 text-indigo-500"></i> Thêm chuyên khoa
+            </h2>
+            <form th:action="@{/admin-add-specialization}" th:object="${specializationDTO}" method="post" accept-charset="UTF-8" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <i class="fas fa-tag mr-2 text-indigo-500"></i> Tên chuyên khoa
+                    </label>
+                    <input type="text" th:field="*{name}" id="name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <i class="fas fa-align-left mr-2 text-indigo-500"></i> Mô tả
+                    </label>
+                    <textarea th:field="*{description}" id="description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="3"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                    <i class="fas fa-plus mr-2"></i> Thêm
+                </button>
+            </form>
         </div>
-        <button type="submit" class="w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Thêm</button>
-    </form>
-    <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
-        <thead class="bg-gray-200">
-        <tr>
-            <th class="p-4">Tên</th>
-            <th class="p-4">Mô tả</th>
-            <th class="p-4">Hành động</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="spec : ${specializations}" class="hover:bg-gray-100 transition">
-            <td class="p-4" th:text="${spec.name}"></td>
-            <td class="p-4" th:text="${spec.description}"></td>
-            <td class="p-4 flex gap-2">
-                <form th:action="@{/admin-update-specialization}" method="post">
-                    <input type="hidden" name="id" th:value="${spec.specializationId}" />
-                    <input type="text" name="name" th:value="${spec.name}" class="p-2 border rounded" />
-                    <input type="text" name="description" th:value="${spec.description}" class="p-2 border rounded" />
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Sửa</button>
-                </form>
-                <form th:action="@{/admin-delete-specialization}" method="post">
-                    <input type="hidden" name="id" th:value="${spec.specializationId}" />
-                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Xóa</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <div th:if="${error}" class="mt-4 text-red-500 text-center" th:text="${error}"></div>
+    </div>
 </section>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

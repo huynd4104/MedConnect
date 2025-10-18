@@ -1,21 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Video call - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/zego-uikit-prebuilt"></script> <!-- ZEGOCLOUD SDK -->
 </head>
-<body class="bg-gray-900 min-h-screen flex flex-col">
-<header class="bg-indigo-500 text-white p-4 text-center">
-    <h1 class="text-2xl font-bold">Video call tư vấn</h1>
-</header>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<div th:replace="~{fragments/header :: header}"></div>
 
-<div th:if="${error}" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Video call tư vấn</h1>
 
-<section class="flex-1 flex items-center justify-center">
-    <div id="videoContainer" class="w-full max-w-4xl h-96 bg-black rounded-lg shadow-md"></div>
+    <div th:if="${error}" class="mb-8 p-6 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center mx-4 md:mx-8">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8">
+        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+            <i class="fas fa-video mr-2 text-indigo-500"></i> Phòng tư vấn trực tuyến
+        </h2>
+        <div id="videoContainer" class="w-full max-w-4xl h-96 bg-black rounded-lg shadow-md"></div>
+    </div>
 </section>
+
 <script th:inline="javascript">
     const appID = /*[[${app.zegocloud.app-id}]]*/ 1941948199;
     const serverSecret = /*[[${app.zegocloud.server-secret}]]*/ 'a2e06d622e55a46a53d2b6ce9b58d6d4';

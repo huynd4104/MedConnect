@@ -10,6 +10,7 @@ import com.medconnect.repository.PatientRepository;
 import com.medconnect.repository.UserRepository;
 import com.medconnect.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import com.medconnect.repository.PaymentRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ public class PaymentController {
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
+    private final PaymentRepository paymentRepository;
 
     @GetMapping("/payment")
     public String showPaymentForm(@RequestParam("appointmentId") Integer appointmentId,
@@ -82,10 +84,38 @@ public class PaymentController {
     }
 
     @PostMapping("/payment")
-    public String processPayment(@ModelAttribute PaymentDTO dto) throws Exception {
-        Payment payment = new Payment(); // Map from DTO
-        String url = paymentService.createVnpayPaymentUrl(payment, "http://localhost:8080/payment-callback");
-        return "redirect:" + url;
+    public String processPayment(@ModelAttribute PaymentDTO dto, RedirectAttributes redirectAttributes) {
+        try {
+            // Fix 1 (sửa HTML) sẽ đảm bảo dto.getAppointmentId() không còn null
+            Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn"));
+
+            Payment payment = new Payment();
+            payment.setAppointment(appointment);
+            payment.setAmount(dto.getAmount()); // Fix 1 (sửa HTML) cũng đảm bảo cái này không null
+            payment.setPaymentMethod(dto.getPaymentMethod());
+            payment.setStatus(Payment.Status.Pending);
+
+            // 3. SỬA LẠI CHỖ NÀY
+            paymentRepository.save(payment); // Dùng repo đã tiêm (inject)
+
+            // 4. Tạo URL VNPAY
+            String url = paymentService.createVnpayPaymentUrl(payment, "http://localhost:8080/payment-callback");
+
+            return "redirect:" + url;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+
+            // Xử lý redirect khi bị lỗi (tránh lỗi "input string: null" như trong log)
+            if (dto.getAppointmentId() != null) {
+                return "redirect:/payment?appointmentId=" + dto.getAppointmentId();
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Lỗi nghiêm trọng: Mất ID lịch hẹn. Vui lòng thử lại.");
+                return "redirect:/patient-dashboard";
+            }
+        }
     }
 
     @GetMapping("/payment-callback")

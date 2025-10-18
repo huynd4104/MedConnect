@@ -45,7 +45,12 @@
             <tr th:each="app : ${appointments}" class="transition duration-200">
                 <td th:text="${app.appointmentDateTime}" class="p-3"></td>
                 <td th:text="${app.patient.fullName}" class="p-3"></td>
-                <td th:text="${app.consultationType}" class="p-3"></td>
+                <td class="p-3">
+    <span th:switch="${app.consultationType.name()}">
+        <span th:case="'InPerson'">Trực tiếp</span>
+        <span th:case="'Online'">Trực tuyến</span>
+        </span>
+                </td>
                 <td th:text="${app.status}" class="p-3"></td>
                 <td class="p-3 flex flex-col md:flex-row gap-2">
                     <a th:href="@{/video-call/{id}(id=${app.appointmentId})}" th:if="${app.consultationType == 'Online' and app.status == 'Confirmed'}" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition flex items-center">
@@ -54,12 +59,6 @@
                     <a th:href="@{/write-summary}" th:if="${app.status == 'Confirmed'}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center">
                         <i class="fas fa-file-alt mr-2"></i> Viết tóm tắt
                     </a>
-                    <form th:action="@{/cancel-appointment}" method="post">
-                        <input type="hidden" name="appointmentId" th:value="${app.appointmentId}" />
-                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center">
-                            <i class="fas fa-times mr-2"></i> Hủy
-                        </button>
-                    </form>
                 </td>
             </tr>
             <tr th:if="${appointments.empty}">

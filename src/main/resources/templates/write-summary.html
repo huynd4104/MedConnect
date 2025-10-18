@@ -4,37 +4,56 @@
     <meta charset="UTF-8">
     <title>Viết tóm tắt/Đơn thuốc - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 bg-white rounded-lg shadow-md p-8 max-w-lg">
-    <h1 class="text-3xl font-bold mb-6 text-center">Viết tóm tắt/Đơn thuốc</h1>
-    <div th:if="${error}" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
-    <div class="mb-6">
-        <h2 class="text-xl font-bold">Tóm tắt lịch hẹn</h2>
-        <p th:text="'Bệnh nhân: ' + ${appointment.patient.fullName}"></p>
-        <p th:text="'Thời gian: ' + ${appointment.appointmentDateTime}"></p>
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Viết tóm tắt/Đơn thuốc</h1>
+
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-2xl mx-auto transform transition duration-300">
+        <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-700 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-indigo-500"></i> Tóm tắt lịch hẹn
+            </h2>
+            <p class="text-gray-700"><span class="font-medium">Bệnh nhân:</span> <span th:text="${appointment.patient.fullName}"></span></p>
+            <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${appointment.appointmentDateTime}"></span></p>
+        </div>
+
+        <form th:action="@{/write-summary}" th:object="${consultationDocumentDTO}" method="post" class="space-y-6">
+            <div>
+                <label for="documentType" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-file-alt mr-2 text-indigo-500"></i> Loại tài liệu
+                </label>
+                <select th:field="*{documentType}" id="documentType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="Summary">Tóm tắt</option>
+                    <option value="Prescription">Đơn thuốc</option>
+                </select>
+                <span th:if="${#fields.hasErrors('documentType')}" th:errors="*{documentType}" class="text-red-500 text-sm"></span>
+            </div>
+            <div>
+                <label for="content" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-align-left mr-2 text-indigo-500"></i> Nội dung
+                </label>
+                <textarea th:field="*{content}" id="content" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="8"></textarea>
+                <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-red-500 text-sm"></span>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4 pt-4">
+                <button type="submit" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                    <i class="fas fa-paper-plane mr-2"></i> Gửi
+                </button>
+                <button type="button" class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition flex items-center justify-center">
+                    <i class="fas fa-save mr-2"></i> Lưu nháp
+                </button>
+            </div>
+        </form>
     </div>
-    <form th:action="@{/write-summary}" th:object="${consultationDocumentDTO}" method="post" class="space-y-4">
-        <div>
-            <label for="documentType" class="block text-sm font-medium">Loại tài liệu</label>
-            <select th:field="*{documentType}" class="w-full p-3 border rounded-lg">
-                <option value="Summary">Tóm tắt</option>
-                <option value="Prescription">Đơn thuốc</option>
-            </select>
-            <span th:if="${#fields.hasErrors('documentType')}" th:errors="*{documentType}" class="text-red-500 text-sm"></span>
-        </div>
-        <div>
-            <label for="content" class="block text-sm font-medium">Nội dung</label>
-            <textarea th:field="*{content}" class="w-full p-3 border rounded-lg" rows="8"></textarea>
-            <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-red-500 text-sm"></span>
-        </div>
-        <div class="flex gap-4">
-            <button type="submit" class="flex-1 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Gửi</button>
-            <button type="button" class="flex-1 bg-gray-300 text-gray-800 p-3 rounded-lg font-semibold hover:bg-gray-400 transition">Lưu nháp</button>
-        </div>
-    </form>
 </section>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
