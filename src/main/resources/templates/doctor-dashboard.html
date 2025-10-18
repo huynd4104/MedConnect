@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Bảng điều khiển bác sĩ - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Optional for icons -->
+</head>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Bảng điều khiển bác sĩ</h1>
+
+    <!-- Thông tin cá nhân -->
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 transform transition duration-300">
+        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+            <i class="fas fa-user-md mr-2 text-indigo-500"></i> Thông tin cá nhân
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <p class="text-gray-700"><span class="font-medium">Email:</span> <span th:text="${doctor.user.email}"></span></p>
+            <p class="text-gray-700"><span class="font-medium">Chuyên khoa:</span> <span th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></span></p>
+            <p class="text-gray-700"><span class="font-medium">Số năm kinh nghiệm:</span> <span th:text="${doctor.experienceYears}"></span></p>
+            <p class="text-gray-700"><span class="font-medium">Trạng thái:</span> <span th:text="${doctor.status}"></span></p>
+        </div>
+        <a th:href="@{/doctor-profile}" class="text-indigo-600 hover:text-indigo-800 font-medium mt-6 inline-block transition">Chỉnh sửa hồ sơ <i class="fas fa-edit ml-1"></i></a>
+    </div>
+
+    <!-- Lịch hẹn sắp tới -->
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 overflow-x-auto">
+        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+            <i class="fas fa-calendar-check mr-2 text-indigo-500"></i> Lịch hẹn sắp tới
+        </h2>
+        <table class="w-full table-auto min-w-max border-collapse">
+            <thead class="bg-indigo-100 text-indigo-800">
+            <tr>
+                <th class="p-3 text-left">Ngày</th>
+                <th class="p-3 text-left">Bệnh nhân</th>
+                <th class="p-3 text-left">Loại tư vấn</th>
+                <th class="p-3 text-left">Trạng thái</th>
+                <th class="p-3 text-left">Hành động</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+            <tr th:each="app : ${appointments}" class="transition duration-200">
+                <td th:text="${app.appointmentDateTime}" class="p-3"></td>
+                <td th:text="${app.patient.fullName}" class="p-3"></td>
+                <td th:text="${app.consultationType}" class="p-3"></td>
+                <td th:text="${app.status}" class="p-3"></td>
+                <td class="p-3 flex flex-col md:flex-row gap-2">
+                    <a th:href="@{/video-call/{id}(id=${app.appointmentId})}" th:if="${app.consultationType == 'Online' and app.status == 'Confirmed'}" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition flex items-center">
+                        <i class="fas fa-video mr-2"></i> Tham gia video
+                    </a>
+                    <a th:href="@{/write-summary}" th:if="${app.status == 'Confirmed'}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center">
+                        <i class="fas fa-file-alt mr-2"></i> Viết tóm tắt
+                    </a>
+                    <form th:action="@{/cancel-appointment}" method="post">
+                        <input type="hidden" name="appointmentId" th:value="${app.appointmentId}" />
+                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center">
+                            <i class="fas fa-times mr-2"></i> Hủy
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${appointments.empty}">
+                <td colspan="5" class="p-3 text-center text-gray-600">Không có lịch hẹn</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Lịch biểu -->
+    <div class="bg-white p-6 md:p-8 mx-4 md:mx-8 rounded-xl shadow-lg transform transition duration-300">
+        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+            <i class="fas fa-calendar mr-2 text-indigo-500"></i> Lịch biểu
+        </h2>
+        <a th:href="@{/doctor-schedule}" class="text-indigo-600 hover:text-indigo-800 font-medium transition">Quản lý lịch biểu <i class="fas fa-arrow-right ml-1"></i></a>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex items-center justify-center">
+
+<section class="container mx-auto bg-white p-8 rounded-lg shadow-md max-w-md">
+    <h1 class="text-3xl font-bold mb-6 text-center">Đăng ký tài khoản</h1>
+    <div th:if="${error}" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
+    <form th:action="@{/register}" th:object="${registerDTO}" method="post" class="space-y-4">
+        <div>
+            <div class="flex gap-4">
+                <label><input type="radio" th:field="*{role}" th:value="Patient" /> Bệnh nhân</label>
+                <label><input type="radio" th:field="*{role}" th:value="Doctor" /> Bác sĩ</label>
+            </div>
+            <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label for="email" id="email" class="block text-sm font-medium">Email</label>
+            <input type="email" th:field="*{email}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label for="password" id="password" class="block text-sm font-medium">Mật khẩu</label>
+            <input type="password" th:field="*{password}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label for="confirmPassword" id="confirmPassword" class="block text-sm font-medium">Xác nhận mật khẩu</label>
+            <input type="password" th:field="*{confirmPassword}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-red-500 text-sm"></span>
+        </div>
+        <button type="submit" class="w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Đăng ký</button>
+    </form>
+    <div class="mt-4 text-center"><a class="text-indigo-500">Đã có tài khoản? </a>
+        <a href="/login" class="text-indigo-500 hover:underline">Đăng nhập</a>
+    </div>
+    <div class="mt-4 flex justify-center gap-4">
+        <a href="/oauth2/authorization/google" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Google</a>
+        <a href="/oauth2/authorization/facebook" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Facebook</a>
+    </div>
+</section>
+
+</body>
+</html>

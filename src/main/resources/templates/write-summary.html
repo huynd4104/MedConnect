@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Viết tóm tắt/Đơn thuốc - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12 bg-white rounded-lg shadow-md p-8 max-w-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center">Viết tóm tắt/Đơn thuốc</h1>
+    <div th:if="${error}" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
+    <div class="mb-6">
+        <h2 class="text-xl font-bold">Tóm tắt lịch hẹn</h2>
+        <p th:text="'Bệnh nhân: ' + ${appointment.patient.fullName}"></p>
+        <p th:text="'Thời gian: ' + ${appointment.appointmentDateTime}"></p>
+    </div>
+    <form th:action="@{/write-summary}" th:object="${consultationDocumentDTO}" method="post" class="space-y-4">
+        <div>
+            <label for="documentType" class="block text-sm font-medium">Loại tài liệu</label>
+            <select th:field="*{documentType}" class="w-full p-3 border rounded-lg">
+                <option value="Summary">Tóm tắt</option>
+                <option value="Prescription">Đơn thuốc</option>
+            </select>
+            <span th:if="${#fields.hasErrors('documentType')}" th:errors="*{documentType}" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label for="content" class="block text-sm font-medium">Nội dung</label>
+            <textarea th:field="*{content}" class="w-full p-3 border rounded-lg" rows="8"></textarea>
+            <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-red-500 text-sm"></span>
+        </div>
+        <div class="flex gap-4">
+            <button type="submit" class="flex-1 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Gửi</button>
+            <button type="button" class="flex-1 bg-gray-300 text-gray-800 p-3 rounded-lg font-semibold hover:bg-gray-400 transition">Lưu nháp</button>
+        </div>
+    </form>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý chuyên khoa - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-6 text-center">Quản lý chuyên khoa</h1>
+    <form th:action="@{/admin-add-specialization}" th:object="${specializationDTO}" method="post" class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto space-y-4 mb-8">
+        <div>
+            <label for="name" id="name" class="block text-sm font-medium">Tên chuyên khoa</label>
+            <input type="text" th:field="*{name}" class="w-full p-3 border rounded-lg">
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label for="description" id="description" class="block text-sm font-medium">Mô tả</label>
+            <textarea th:field="*{description}" class="w-full p-3 border rounded-lg" rows="3"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Thêm</button>
+    </form>
+    <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
+        <thead class="bg-gray-200">
+        <tr>
+            <th class="p-4">Tên</th>
+            <th class="p-4">Mô tả</th>
+            <th class="p-4">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="spec : ${specializations}" class="hover:bg-gray-100 transition">
+            <td class="p-4" th:text="${spec.name}"></td>
+            <td class="p-4" th:text="${spec.description}"></td>
+            <td class="p-4 flex gap-2">
+                <form th:action="@{/admin-update-specialization}" method="post">
+                    <input type="hidden" name="id" th:value="${spec.specializationId}" />
+                    <input type="text" name="name" th:value="${spec.name}" class="p-2 border rounded" />
+                    <input type="text" name="description" th:value="${spec.description}" class="p-2 border rounded" />
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Sửa</button>
+                </form>
+                <form th:action="@{/admin-delete-specialization}" method="post">
+                    <input type="hidden" name="id" th:value="${spec.specializationId}" />
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${error}" class="mt-4 text-red-500 text-center" th:text="${error}"></div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

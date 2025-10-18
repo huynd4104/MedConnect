@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán phí tư vấn - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto px-4 md:px-0 flex-1 flex items-center justify-center">
+    <div class="max-w-lg mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Thanh toán phí tư vấn</h1>
+
+        <!-- Thông báo lỗi -->
+        <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div> <!-- Giữ text-center cho lỗi như gốc -->
+
+        <!-- Form thanh toán -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 transform transition duration-300">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-file-invoice mr-2 text-indigo-500"></i> Tóm tắt lịch hẹn
+            </h2>
+            <div class="space-y-2 mb-6"> <!-- Không thêm text-center -->
+                <p class="text-gray-700"><span class="font-medium">Bác sĩ:</span> <span th:text="${appointment.doctor.user.email}"></span></p>
+                <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${appointment.appointmentDateTime}"></span></p>
+                <p class="text-gray-700"><span class="font-medium">Phí:</span> <span th:text="${fee} + ' VND'"></span></p>
+            </div>
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-credit-card mr-2 text-indigo-500"></i> Phương thức thanh toán
+            </h2>
+            <form th:action="@{/payment}" th:object="${paymentDTO}" method="post" class="space-y-4">
+                <div>
+                    <label for="paymentMethod" class="block text-sm font-medium text-gray-700">Phương thức thanh toán</label>
+                    <select th:field="*{paymentMethod}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="VNPAY">VNPAY</option>
+                    </select>
+                </div>
+                <div class="flex gap-4">
+                    <a th:href="@{/patient-dashboard}" class="w-1/2 bg-gray-500 text-white p-3 rounded-lg font-semibold hover:bg-gray-600 transition flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                    </a>
+                    <button type="submit" class="w-1/2 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-center">
+                        <i class="fas fa-check mr-2"></i> Thanh toán
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

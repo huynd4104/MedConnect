@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ bệnh nhân - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Quản lý hồ sơ bệnh nhân</h1>
+
+    <!-- Thông báo lỗi -->
+    <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
+
+    <!-- Container cho hai bảng -->
+    <div class="flex flex-col md:flex-row gap-8 mx-4 md:mx-8">
+        <!-- Form Cập nhật thông tin (bên trái) -->
+        <div class="w-full md:w-1/2 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-user-edit mr-2 text-indigo-500"></i> Cập nhật thông tin
+            </h2>
+            <form th:action="@{/patient-profile}" th:object="${patientProfileDTO}" method="post" class="space-y-4">
+                <div>
+                    <label for="fullName" class="block text-sm font-medium text-gray-700">Họ tên</label>
+                    <input type="text" th:field="*{fullName}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                    <input type="text" th:field="*{phoneNumber}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label for="address" class="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                    <input type="text" th:field="*{address}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="dateOfBirth" class="block text-sm font-medium text-gray-700">Ngày sinh</label>
+                    <input type="date" th:field="*{dateOfBirth}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="medicalHistory" class="block text-sm font-medium text-gray-700">Lịch sử bệnh</label>
+                    <textarea th:field="*{medicalHistory}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="4"></textarea>
+                </div>
+                <div class="flex gap-4">
+                    <a th:href="@{/patient-dashboard}" class="w-1/2 bg-gray-500 text-white p-3 rounded-lg font-semibold hover:bg-gray-600 transition flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                    </a>
+                    <button type="submit" class="w-1/2 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-center">
+                        <i class="fas fa-save mr-2"></i> Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lịch sử lịch hẹn (bên phải) -->
+        <div class="w-full md:w-1/2 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-calendar-check mr-2 text-indigo-500"></i> Lịch sử lịch hẹn
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto min-w-max border-collapse">
+                    <thead class="bg-indigo-100 text-indigo-800">
+                    <tr>
+                        <th class="p-3 text-left">Ngày</th>
+                        <th class="p-3 text-left">Bác sĩ</th>
+                        <th class="p-3 text-left">Trạng thái</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                    <tr th:each="app : ${appointments}" class="transition duration-200">
+                        <td th:text="${app.appointmentDateTime}" class="p-3"></td>
+                        <td th:text="${app.doctor.user.email}" class="p-3"></td>
+                        <td th:text="${app.status}" class="p-3"></td>
+                    </tr>
+                    <tr th:if="${appointments.empty}">
+                        <td colspan="3" class="p-3 text-center text-gray-600">Không có lịch hẹn</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

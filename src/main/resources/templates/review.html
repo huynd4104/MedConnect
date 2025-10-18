@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Để lại đánh giá - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12 bg-white rounded-lg shadow-md p-8 max-w-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center">Để lại đánh giá</h1>
+    <div th:if="${error}" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
+    <div class="mb-6">
+        <h2 class="text-xl font-bold">Tóm tắt lịch hẹn</h2>
+        <p th:text="'Bác sĩ: ' + ${appointment.doctor.user.email}"></p>
+        <p th:text="'Thời gian: ' + ${appointment.appointmentDateTime}"></p>
+    </div>
+    <form th:action="@{/review}" th:object="${reviewDTO}" method="post" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium">Đánh giá (1-5 sao)</label>
+            <input type="number" th:field="*{rating}" min="1" max="5" class="w-full p-3 border rounded-lg">
+            <span th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label for="comment" id="comment" class="block text-sm font-medium">Nhận xét</label>
+            <textarea th:field="*{comment}" class="w-full p-3 border rounded-lg" rows="4"></textarea>
+        </div>
+        <div class="flex items-center">
+            <input type="checkbox" th:field="*{anonymous}" class="mr-2">
+            <label>Ẩn danh</label>
+        </div>
+        <button type="submit" class="w-full bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Gửi</button>
+    </form>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

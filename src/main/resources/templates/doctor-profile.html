@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ bác sĩ - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12">
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Hoàn Thiện Hồ Sơ Bác Sĩ</h1>
+
+        <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center" th:text="${error}"></div>
+        <div th:if="${success}" class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-center" th:text="${success}"></div>
+
+        <form th:action="@{/doctor-profile}" th:object="${doctorProfileDTO}" method="post" enctype="multipart/form-data" class="space-y-6">
+
+            <div>
+                <label for="specializationId" class="block text-sm font-medium text-gray-700 mb-1">Chuyên khoa</label>
+                <select th:field="*{specializationId}" id="specializationId" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">-- Chọn chuyên khoa --</option>
+                    <option th:each="spec : ${specializations}"
+                            th:value="${spec.specializationId}"
+                            th:text="${spec.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="experienceYears" class="block text-sm font-medium text-gray-700 mb-1">Số năm kinh nghiệm</label>
+                <input type="number" th:field="*{experienceYears}" id="experienceYears" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="licenseNumber" class="block text-sm font-medium text-gray-700 mb-1">Số giấy phép</label>
+                <input type="text" th:field="*{licenseNumber}" id="licenseNumber" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="photo" class="block text-sm font-medium text-gray-700 mb-1">Ảnh đại diện</label>
+                <div th:if="*{existingPhotoPath}" class="my-2">
+                    <img th:src="@{${doctorProfileDTO.existingPhotoPath}}" alt="Ảnh đại diện hiện tại" class="w-24 h-24 rounded-full object-cover border-2 border-gray-200">
+                </div>
+                <input type="file" name="photo" id="photo" class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                <p class="text-xs text-gray-500 mt-1">Để trống nếu bạn không muốn thay đổi ảnh đại diện.</p>
+            </div>
+
+            <div>
+                <label for="credentials" class="block text-sm font-medium text-gray-700 mb-1">Tải lên giấy tờ mới</label>
+                <input type="file" name="credentials" id="credentials" multiple class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                <p class="text-xs text-gray-500 mt-1">Bạn có thể chọn nhiều file cùng lúc.</p>
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+                <a href="./doctor-dashboard" class="bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition-colors text-center">Quay lại</a>
+                <button type="submit" class="bg-indigo-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Gửi duyệt</button>
+            </div>
+        </form>
+
+        <div th:if="${doctorProfileDTO.existingDocuments != null && !doctorProfileDTO.existingDocuments.isEmpty()}" class="mt-8 pt-6 border-t border-gray-200">
+            <p class="text-md font-semibold text-gray-700 mb-3">Các giấy tờ đã tải lên:</p>
+            <ul class="space-y-2">
+                <li th:each="doc : ${doctorProfileDTO.existingDocuments}" class="flex items-center justify-between p-2 rounded-md hover:bg-gray-50">
+                    <a th:href="@{${doc.filePath}}" th:text="${doc.fileName}" target="_blank" class="text-indigo-600 hover:underline flex-grow"></a>
+                    <form th:action="@{/delete-document/{id}(id=${doc.documentId})}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài liệu này không?');">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-semibold ml-4">Xóa</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

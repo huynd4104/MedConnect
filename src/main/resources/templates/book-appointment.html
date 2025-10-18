@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt lịch hẹn - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12 px-4 md:px-0">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Đặt lịch hẹn</h1>
+
+    <!-- Thông báo lỗi -->
+    <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
+
+    <!-- Container cho hai bảng -->
+    <div class="grid md:grid-cols-10 gap-8 mx-4 md:mx-8">
+        <!-- Thông tin bác sĩ và Lịch làm việc (bên trái - 70%) -->
+        <div class="col-span-full md:col-span-7 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300 flex flex-col gap-6">
+            <!-- Phần Thông tin bác sĩ -->
+            <div class="flex flex-col gap-4">
+                <h2 class="text-2xl font-semibold text-indigo-700 flex items-center">
+                    <i class="fas fa-user-md mr-2 text-indigo-500"></i> Thông tin bác sĩ
+                </h2>
+                <div class="space-y-2 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <p class="text-gray-700"><span class="font-medium">Bác sĩ:</span> <span th:text="${doctor.user.email}"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Chuyên khoa:</span> <span th:text="${doctor.specialization.name}"></span></p>
+                </div>
+            </div>
+
+            <!-- Phần Lịch làm việc -->
+            <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                <table class="min-w-full divide-y divide-gray-200 table-fixed">
+                    <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ 2</th>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ 3</th>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ 4</th>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ 5</th>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ 6</th>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ 7</th>
+                        <th scope="col" class="w-1/7 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Chủ Nhật</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 2}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 3}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 4}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 5}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 6}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 7}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
+                            <ul class="list-disc pl-4 mx-auto max-w-fit">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 1}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                            </ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Thông tin lịch hẹn (bên phải - 30%) -->
+        <div class="col-span-full md:col-span-3 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
+                <i class="fas fa-calendar-plus mr-2 text-indigo-500"></i> Thông tin lịch hẹn
+            </h2>
+            <form th:action="@{/book-appointment}" th:object="${appointmentDTO}" method="post" class="space-y-4">
+                <input type="hidden" th:field="*{doctorId}" />
+                <div>
+                    <label for="appointmentDateTime" class="block text-sm font-medium text-gray-700">Thời gian</label>
+                    <input type="datetime-local" th:field="*{appointmentDateTime}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <span th:if="${#fields.hasErrors('appointmentDateTime')}" th:errors="*{appointmentDateTime}" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label for="consultationType" class="block text-sm font-medium text-gray-700">Loại tư vấn</label>
+                    <select th:field="*{consultationType}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="InPerson">Trực tiếp</option>
+                        <option value="Online">Trực tuyến</option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('consultationType')}" th:errors="*{consultationType}" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label for="medicalInfo" class="block text-sm font-medium text-gray-700">Thông tin y tế (tùy chọn)</label>
+                    <textarea th:field="*{medicalInfo}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="4"></textarea>
+                </div>
+                <div class="flex gap-4">
+                    <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}" class="w-1/2 bg-gray-500 text-white p-3 rounded-lg font-semibold hover:bg-gray-600 transition flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                    </a>
+                    <button type="submit" class="w-1/2 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-center">
+                        <i class="fas fa-check mr-2"></i> Xác nhận
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

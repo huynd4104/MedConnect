@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Optional for icons -->
+</head>
+<body>
+<header th:fragment="header" class="bg-indigo-700 text-white p-4 shadow-md">
+    <div class="container mx-auto flex flex-wrap justify-between items-center">
+        <a href="/" class="text-3xl font-bold tracking-wide hover:text-indigo-200 transition">MedConnect</a>
+        <nav class="flex flex-col md:flex-row gap-4 mt-4 md:mt-0">
+            <a href="/" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-home mr-1"></i> Trang chủ</a>
+            <a href="/search-doctors" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-search mr-1"></i> Tìm bác sĩ</a>
+            <a th:href="@{/patient-dashboard}" sec:authorize="hasRole('Patient')" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-user mr-1"></i> Bảng điều khiển</a>
+            <a th:href="@{/doctor-dashboard}" sec:authorize="hasRole('Doctor')" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-user-md mr-1"></i> Bảng điều khiển</a>
+            <div sec:authorize="hasRole('Admin')" class="flex flex-col md:flex-row gap-4">
+                <a th:href="@{/admin-doctor-approval}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-check mr-1"></i> Phê duyệt BS</a>
+                <a th:href="@{/admin-specializations}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-stethoscope mr-1"></i> Chuyên khoa</a>
+                <a th:href="@{/admin-doctor-list}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-list mr-1"></i> DS Bác sĩ</a>
+                <a th:href="@{/admin-patient-list}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-users mr-1"></i> DS Bệnh nhân</a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post" class="inline">
+                    <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition flex items-center">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
+                    </button>
+                </form>
+            </div>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition flex items-center">
+                <i class="fas fa-sign-in-alt mr-2"></i> Đăng nhập
+            </a>
+            <a th:href="@{/register}" sec:authorize="!isAuthenticated()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition flex items-center">
+                <i class="fas fa-user-plus mr-2"></i> Đăng ký
+            </a>
+        </nav>
+    </div>
+</header>
+</body>
+</html>

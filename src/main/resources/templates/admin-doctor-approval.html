@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Phê duyệt bác sĩ - MedConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-100 min-h-screen flex flex-col">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="container mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-6 text-center">Phê duyệt hồ sơ bác sĩ</h1>
+    <div th:if="${pendingDoctors.empty}"
+         class="w-1/2 mx-auto mt-4 mb-6 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center">
+        MSG14: No profiles to review.
+    </div>
+
+    <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
+        <thead class="bg-gray-200">
+        <tr>
+            <th class="p-4">Tên</th>
+            <th class="p-4">Chuyên khoa</th>
+            <th class="p-4">Trạng thái</th>
+            <th class="p-4">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="doctor : ${pendingDoctors}" class="hover:bg-gray-100 transition">
+            <td class="p-4" th:text="${doctor.user.email}"></td>
+            <td class="p-4" th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></td>
+            <td class="p-4" th:text="${doctor.status}"></td>
+            <td class="p-4 flex gap-2">
+                <form th:action="@{/admin-approve-doctor}" method="post">
+                    <input type="hidden" name="doctorId" th:value="${doctor.doctorId}" />
+                    <input type="hidden" name="approve" value="true" />
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Phê duyệt</button>
+                </form>
+                <form th:action="@{/admin-approve-doctor}" method="post">
+                    <input type="hidden" name="doctorId" th:value="${doctor.doctorId}" />
+                    <input type="hidden" name="approve" value="false" />
+                    <input type="text" name="reason" placeholder="Lý do từ chối" class="p-2 border rounded" />
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Từ chối</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>
