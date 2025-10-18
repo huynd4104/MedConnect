@@ -1,7 +1,9 @@
 package com.medconnect.controller;
 
+import com.medconnect.entity.ConsultationDocument;
 import com.medconnect.entity.Patient;
 import com.medconnect.entity.User;
+import com.medconnect.repository.ConsultationDocumentRepository;
 import com.medconnect.repository.PatientRepository;
 import com.medconnect.repository.UserRepository;
 import com.medconnect.service.AppointmentService;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +23,7 @@ public class PatientDashboardController {
     private final AppointmentService appointmentService;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
+    private final ConsultationDocumentRepository documentRepository;
 
     @GetMapping("/patient-dashboard")
     public String showDashboard(Model model, Authentication auth) {
@@ -35,8 +39,8 @@ public class PatientDashboardController {
         model.addAttribute("patient", patient);
         model.addAttribute("appointments", appointmentService.getPatientAppointments(patient.getPatientId()));
 
-        // THÊM DÒNG NÀY ĐỂ KHẮC PHỤC LỖI
-        model.addAttribute("documents", Collections.emptyList());
+        List<ConsultationDocument> documents = documentRepository.findByAppointmentPatientPatientId(patient.getPatientId());
+        model.addAttribute("documents", documents);
 
         return "patient-dashboard";
     }

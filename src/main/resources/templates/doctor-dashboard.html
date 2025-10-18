@@ -1,82 +1,198 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Bảng điều khiển bác sĩ - MedConnect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Optional for icons -->
+    <title>
+        Bảng điều khiển bác sĩ - MedConnect
+    </title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Optional for icons -->
 </head>
+
 <body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
-<div th:replace="~{fragments/header :: header}"></div>
-
+<div th:replace="~{fragments/header :: header}">
+</div>
 <section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Bảng điều khiển bác sĩ</h1>
-
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">
+        Bảng điều khiển bác sĩ
+    </h1>
     <!-- Thông tin cá nhân -->
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 transform transition duration-300">
         <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-user-md mr-2 text-indigo-500"></i> Thông tin cá nhân
+            <i class="fas fa-user-md mr-2 text-indigo-500">
+            </i>
+            Thông tin cá nhân
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p class="text-gray-700"><span class="font-medium">Email:</span> <span th:text="${doctor.user.email}"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Chuyên khoa:</span> <span th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Số năm kinh nghiệm:</span> <span th:text="${doctor.experienceYears}"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Trạng thái:</span> <span th:text="${doctor.status}"></span></p>
+            <p class="text-gray-700">
+            <span class="font-medium">
+              Email:
+            </span>
+                <span th:text="${doctor.user.email}">
+            </span>
+            </p>
+            <p class="text-gray-700">
+            <span class="font-medium">
+              Chuyên khoa:
+            </span>
+                <span th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'">
+            </span>
+            </p>
+            <p class="text-gray-700">
+            <span class="font-medium">
+              Số năm kinh nghiệm:
+            </span>
+                <span th:text="${doctor.experienceYears}">
+            </span>
+            </p>
+            <p class="text-gray-700">
+            <span class="font-medium">
+              Trạng thái:
+            </span>
+                <span th:text="${doctor.status}">
+            </span>
+            </p>
         </div>
-        <a th:href="@{/doctor-profile}" class="text-indigo-600 hover:text-indigo-800 font-medium mt-6 inline-block transition">Chỉnh sửa hồ sơ <i class="fas fa-edit ml-1"></i></a>
+        <a th:href="@{/doctor-profile}" class="text-indigo-600 hover:text-indigo-800 font-medium mt-6 inline-block transition">
+            Chỉnh sửa hồ sơ
+            <i class="fas fa-edit ml-1">
+            </i>
+        </a>
     </div>
-
     <!-- Lịch hẹn sắp tới -->
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 overflow-x-auto">
         <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-calendar-check mr-2 text-indigo-500"></i> Lịch hẹn sắp tới
+            <i class="fas fa-calendar-check mr-2 text-indigo-500">
+            </i>
+            Lịch hẹn sắp tới
         </h2>
         <table class="w-full table-auto min-w-max border-collapse">
             <thead class="bg-indigo-100 text-indigo-800">
             <tr>
-                <th class="p-3 text-left">Ngày</th>
-                <th class="p-3 text-left">Bệnh nhân</th>
-                <th class="p-3 text-left">Loại tư vấn</th>
-                <th class="p-3 text-left">Trạng thái</th>
-                <th class="p-3 text-left">Hành động</th>
+                <th class="p-3 text-left">
+                    Ngày
+                </th>
+                <th class="p-3 text-left">
+                    Bệnh nhân
+                </th>
+                <th class="p-3 text-left">
+                    Loại tư vấn
+                </th>
+                <th class="p-3 text-left">
+                    Trạng thái
+                </th>
+                <th class="p-3 text-center w-[350px]">
+                    Hành động
+                </th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
             <tr th:each="app : ${appointments}" class="transition duration-200">
-                <td th:text="${app.appointmentDateTime}" class="p-3"></td>
-                <td th:text="${app.patient.fullName}" class="p-3"></td>
-                <td class="p-3">
-    <span th:switch="${app.consultationType.name()}">
-        <span th:case="'InPerson'">Trực tiếp</span>
-        <span th:case="'Online'">Trực tuyến</span>
-        </span>
+                <td th:text="${app.appointmentDateTime}" class="p-3">
                 </td>
-                <td th:text="${app.status}" class="p-3"></td>
-                <td class="p-3 flex flex-col md:flex-row gap-2">
-                    <a th:href="@{/video-call/{id}(id=${app.appointmentId})}" th:if="${app.consultationType.name() == 'Online' and app.status.name() == 'Confirmed' and app.videoCallLink != null}" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition flex items-center">
-                        <i class="fas fa-video mr-2"></i> Tham gia video
-                    </a>
-                    <a th:href="@{/write-summary}" th:if="${app.status == 'Confirmed'}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center">
-                        <i class="fas fa-file-alt mr-2"></i> Viết tóm tắt
-                    </a>
+                <td th:text="${app.patient.fullName}" class="p-3">
+                </td>
+                <td class="p-3">
+                <span th:switch="${app.consultationType.name()}">
+                  <span th:case="'InPerson'">
+                    Trực tiếp
+                  </span>
+                  <span th:case="'Online'">
+                    Trực tuyến
+                  </span>
+                </span>
+                </td>
+                <td class="p-3">
+                <span th:switch="${app.status.name()}">
+                  <span th:case="'Pending'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Đang chờ 🟡
+                  </span>
+                  <span th:case="'Confirmed'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Đã xác nhận 🟢
+                  </span>
+                  <span th:case="'Completed'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    Đã hoàn thành 🔵
+                  </span>
+                  <span th:case="'Cancelled'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Đã hủy 🔴
+                  </span>
+                  <span th:case="*">
+                    class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                    bg-gray-100 text-gray-800"> Không xác định
+                  </span>
+                </span>
+                </td>
+                <td class="p-3 flex flex-col gap-2 w-[350px] md:flex-row">
+                    <div th:if="${app.status.name() == 'Confirmed'}" class="flex flex-col md:flex-row gap-2">
+                        <a th:href="@{/video-call/{id}(id=${app.appointmentId})}" th:if="${app.consultationType.name() == 'Online' and app.videoCallLink != null}"
+                           class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition flex items-center justify-center">
+                            <i class="fas fa-video mr-2">
+                            </i>
+                            Tham gia video
+                        </a>
+                        <form th:action="@{/doctor-dashboard/complete/{id}(id=${app.appointmentId})}"
+                              method="POST" class="complete-appointment-form">
+                            <button type="submit" class="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center">
+                                <i class="fas fa-check mr-2">
+                                </i>
+                                Hoàn thành
+                            </button>
+                        </form>
+                    </div>
+                    <div th:if="${app.status.name() == 'Completed'}" class="flex gap-2">
+                        <a th:href="@{/write-summary/{id}(id=${app.appointmentId})}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center">
+                            <i class="fas fa-file-alt mr-2">
+                            </i>
+                            Viết tóm tắt
+                        </a>
+                    </div>
                 </td>
             </tr>
             <tr th:if="${appointments.empty}">
-                <td colspan="5" class="p-3 text-center text-gray-600">Không có lịch hẹn</td>
+                <td colspan="5" class="p-3 text-center text-gray-600">
+                    Không có lịch hẹn
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
-
     <!-- Lịch biểu -->
     <div class="bg-white p-6 md:p-8 mx-4 md:mx-8 rounded-xl shadow-lg transform transition duration-300">
         <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-calendar mr-2 text-indigo-500"></i> Lịch biểu
+            <i class="fas fa-calendar mr-2 text-indigo-500">
+            </i>
+            Lịch biểu
         </h2>
-        <a th:href="@{/doctor-schedule}" class="text-indigo-600 hover:text-indigo-800 font-medium transition">Quản lý lịch biểu <i class="fas fa-arrow-right ml-1"></i></a>
+        <a th:href="@{/doctor-schedule}" class="text-indigo-600 hover:text-indigo-800 font-medium transition">
+            Quản lý lịch biểu
+            <i class="fas fa-arrow-right ml-1">
+            </i>
+        </a>
     </div>
 </section>
-
-<div th:replace="~{fragments/footer :: footer}"></div>
+<div id="completeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
+    <div class="relative p-8 bg-white w-full max-w-md m-auto flex-col flex rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+            Xác nhận
+        </h2>
+        <p class="text-gray-600 mb-6">
+            Bạn có chắc muốn kết thúc tư vấn và hoàn thành lịch hẹn này?
+        </p>
+        <div class="flex justify-end gap-4">
+            <button id="modalCloseComplete" type="button" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                Không
+            </button>
+            <button id="modalConfirmComplete" type="button" class="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                Chắc chắn
+            </button>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}">
+</div>
 </body>
+
 </html>

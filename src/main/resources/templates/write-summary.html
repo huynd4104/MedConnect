@@ -27,6 +27,7 @@
         </div>
 
         <form th:action="@{/write-summary}" th:object="${consultationDocumentDTO}" method="post" class="space-y-6">
+            <input type="hidden" th:field="*{appointmentId}" />
             <div>
                 <label for="documentType" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <i class="fas fa-file-alt mr-2 text-indigo-500"></i> Loại tài liệu
@@ -45,11 +46,12 @@
                 <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-red-500 text-sm"></span>
             </div>
             <div class="flex flex-col md:flex-row gap-4 pt-4">
+                <a th:href="@{/doctor-dashboard}" class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition flex items-center justify-center text-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                </a>
+
                 <button type="submit" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
                     <i class="fas fa-paper-plane mr-2"></i> Gửi
-                </button>
-                <button type="button" class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i> Lưu nháp
                 </button>
             </div>
         </form>

@@ -76,4 +76,20 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
         // Notify other party
     }
+
+    public void completeAppointment(Integer appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn: " + appointmentId));
+
+        // Chỉ cho phép hoàn thành các lịch hẹn đã Confirmed
+        if (appointment.getStatus() == Appointment.Status.Confirmed) {
+            appointment.setStatus(Appointment.Status.Completed);
+            appointment.setUpdatedAt(LocalDateTime.now()); // Cập nhật thời gian
+            appointmentRepository.save(appointment);
+        } else {
+            // Có thể ném ra lỗi nếu logic nghiệp vụ yêu cầu
+            // (ví dụ: không thể hoàn thành lịch hẹn đã hủy)
+            throw new IllegalStateException("Chỉ có thể hoàn thành lịch hẹn đã được xác nhận.");
+        }
+    }
 }
