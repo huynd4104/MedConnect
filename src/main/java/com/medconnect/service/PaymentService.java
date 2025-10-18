@@ -25,6 +25,7 @@ import java.util.TreeMap;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final AppointmentRepository appointmentRepository;
+    private final VideoService videoService;
 
     @Value("${app.vnpay.tmn-code}")
     private String tmnCode;
@@ -119,18 +120,54 @@ public class PaymentService {
     }
 
     public void processVnpayCallback(Map<String, String> params) {
-        // Verify hash and update payment status
-        String secureHash = params.remove("vnp_SecureHash");
-        String hashData = String.join("&", params.entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .sorted()
-                .toArray(String[]::new));
-        // Calculate hash and compare
-        // If success, update payment and appointment
+        // (Bạn nên giữ logic xác thực vnp_SecureHash của mình ở đây nếu có)
+        // ...
+
+        String responseCode = params.get("vnp_ResponseCode");
         Integer appointmentId = Integer.parseInt(params.get("vnp_TxnRef"));
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow();
-        appointment.setPaymentStatus(Appointment.PaymentStatus.Paid);
-        appointment.setStatus(Appointment.Status.Confirmed);
-        appointmentRepository.save(appointment);
+
+        // 1. Lấy các đối tượng liên quan
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn: " + appointmentId));
+
+        // Bạn cần tìm payment record đã tạo trước đó
+        Payment payment = paymentRepository.findByAppointmentAppointmentId(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thanh toán cho lịch hẹn: " + appointmentId));
+
+        if ("00".equals(responseCode)) {
+            // === 2. THANH TOÁN THÀNH CÔNG ===
+
+            // Cập nhật trạng thái Lịch hẹn
+            appointment.setStatus(Appointment.Status.Confirmed);
+            appointment.setPaymentStatus(Appointment.PaymentStatus.Paid);
+
+            // *** TẠO VIDEO LINK (LOGIC BỊ THIẾU) ***
+            if (appointment.getConsultationType() == Appointment.ConsultationType.Online) {
+                videoService.initializeSession(appointment); // <-- Sửa ở đây
+            }
+
+            // Cập nhật trạng thái Thanh toán
+            payment.setStatus(Payment.Status.Success);
+            payment.setTransactionId(params.get("vnp_TransactionNo")); // Lưu mã giao dịch VNPAY
+            payment.setPaidAt(LocalDateTime.now()); // Lưu thời gian thanh toán
+
+            // Lưu cả hai vào CSDL
+            appointmentRepository.save(appointment);
+            paymentRepository.save(payment);
+
+            // (Bạn nên gọi NotificationService/EmailService ở đây để báo thành công)
+
+        } else {
+            // === 3. THANH TOÁN THẤT BẠI ===
+
+            // Cập nhật trạng thái Thanh toán
+            payment.setStatus(Payment.Status.Failed);
+            paymentRepository.save(payment);
+
+            // Lịch hẹn không đổi (vẫn là Pending/Pending)
+
+            // Ném ra lỗi để PaymentController bắt được và báo cho người dùng
+            throw new RuntimeException("Thanh toán VNPAY thất bại. Mã lỗi: " + responseCode);
+        }
     }
 }

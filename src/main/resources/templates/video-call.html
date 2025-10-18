@@ -5,59 +5,163 @@
     <title>Video call - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/zego-uikit-prebuilt"></script> <!-- ZEGOCLOUD SDK -->
+    <script defer src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen flex flex-col font-sans antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Video call tư vấn</h1>
+<section class="flex-1 flex flex-col px-4 py-6 md:px-8 md:py-8 max-w-[1920px] mx-auto w-full">
 
-    <div th:if="${error}" class="mb-8 p-6 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center mx-4 md:mx-8">
-        <i class="fas fa-exclamation-circle mr-2"></i>
-        <span th:text="${error}"></span>
+    <!-- Error Message -->
+    <div th:if="${error}" class="mb-6 p-5 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg flex items-center shadow-sm">
+        <i class="fas fa-exclamation-circle text-xl mr-3"></i>
+        <span th:text="${error}" class="font-medium"></span>
     </div>
 
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8">
-        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-video mr-2 text-indigo-500"></i> Phòng tư vấn trực tuyến
-        </h2>
-        <div id="videoContainer" class="w-full max-w-4xl h-96 bg-black rounded-lg shadow-md"></div>
+    <!-- Main Video Container Card -->
+    <div class="flex-1 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+
+        <!-- Header Bar -->
+        <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-video text-white text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-white">Phòng tư vấn trực tuyến</h2>
+                    <p class="text-indigo-100 text-sm">Kết nối video an toàn & bảo mật</p>
+                </div>
+            </div>
+
+            <button id="customFullscreenBtn" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-lg transition duration-200 flex items-center space-x-2 border border-white/20">
+                <i class="fas fa-expand text-sm"></i>
+                <span id="fullscreenBtnText" class="font-medium">Toàn màn hình</span>
+            </button>
+        </div>
+
+        <!-- Video Display Area -->
+        <div class="flex-1 bg-gradient-to-br from-slate-900 to-slate-800 relative min-h-[500px] md:min-h-[600px] lg:min-h-[700px]">
+            <div id="videoContainer" class="w-full h-full absolute inset-0"></div>
+        </div>
+
     </div>
 </section>
 
 <script th:inline="javascript">
-    const appID = /*[[${app.zegocloud.app-id}]]*/ 1941948199;
-    const serverSecret = /*[[${app.zegocloud.server-secret}]]*/ 'a2e06d622e55a46a53d2b6ce9b58d6d4';
-    const roomID = /*[[${appointment.videoCallLink}]]*/ 'session_id';
-    const userID = 'user_' + Math.random();
-    const userName = 'User';
-    const token = generateToken(); // Call backend VideoService to generate
+    function toggleFullScreen() {
+        const elem = document.getElementById('videoContainer');
+        const btnText = document.getElementById('fullscreenBtnText');
+        const btnIcon = document.querySelector('#customFullscreenBtn i');
 
-    const zp = ZegoUIKitPrebuilt.create(token);
-    zp.joinRoom({
-        container: document.querySelector("#videoContainer"),
-        sharedLinks: [{
-            name: 'Personal link',
-            url: window.location.origin + window.location.pathname + '?roomID=' + roomID,
-        }],
-        scenario: {
-            mode: ZegoUIKitPrebuilt.OneONoneCall,
-        },
-        turnOnMicrophoneWhenJoining: true,
-        turnOnCameraWhenJoining: true,
-        showMyCameraToggleButton: true,
-        showMyMicrophoneToggleButton: true,
-        showAudioVideoSettingsButton: true,
-        showScreenSharingButton: true,
-        showTextChat: true,
-        showUserList: true,
-        maxUsers: 2,
-        layout: "Auto",
-        showLayoutButton: false,
-    });
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+            // Enter fullscreen
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            }
+
+            if(btnText) btnText.textContent = 'Thu nhỏ';
+            if(btnIcon) btnIcon.classList.replace('fa-expand', 'fa-compress');
+        } else {
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            }
+
+            if(btnText) btnText.textContent = 'Toàn màn hình';
+            if(btnIcon) btnIcon.classList.replace('fa-compress', 'fa-expand');
+        }
+    }
+
+    function handleFullScreenChange() {
+        const btnText = document.getElementById('fullscreenBtnText');
+        const btnIcon = document.querySelector('#customFullscreenBtn i');
+        if (!btnText || !btnIcon) return;
+
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+            btnText.textContent = 'Toàn màn hình';
+            btnIcon.classList.replace('fa-compress', 'fa-expand');
+        } else {
+            btnText.textContent = 'Thu nhỏ';
+            btnIcon.classList.replace('fa-expand', 'fa-compress');
+        }
+    }
+
+    window.onload = function() {
+        const videoContainer = document.getElementById('videoContainer');
+        const fullscreenBtn = document.getElementById('customFullscreenBtn');
+
+        // Get data from Model
+        const appId = /*[[${appId}]]*/ null;
+        const roomID = /*[[${sessionId}]]*/ null;
+        const userID = /*[[${userId}]]*/ null;
+        const userName = /*[[${userName}]]*/ null;
+        const serverToken = /*[[${token}]]*/ null;
+        const error = /*[[${error}]]*/ null;
+
+        if (error) {
+            console.error("Lỗi khi vào phòng:", error);
+            if (videoContainer) videoContainer.style.display = 'none';
+            if (fullscreenBtn) fullscreenBtn.style.display = 'none';
+        } else if (!appId || !roomID || !userID || !serverToken) {
+            console.error("Thiếu thông tin cấu hình Zego.");
+            if (videoContainer) videoContainer.style.display = 'none';
+            if (fullscreenBtn) fullscreenBtn.style.display = 'none';
+        } else {
+            try {
+                const kitToken = ZegoUIKitPrebuilt.generateKitTokenForProduction(
+                    appId,
+                    serverToken,
+                    roomID,
+                    userID,
+                    userName
+                );
+
+                const zp = ZegoUIKitPrebuilt.create(kitToken);
+
+                zp.joinRoom({
+                    container: document.querySelector("#videoContainer"),
+                    sharedLinks: [{
+                        name: 'Link mời',
+                        url: window.location.origin + window.location.pathname,
+                    }],
+                    scenario: {
+                        mode: ZegoUIKitPrebuilt.OneONoneCall,
+                    },
+                    turnOnMicrophoneWhenJoining: true,
+                    turnOnCameraWhenJoining: true,
+                });
+            } catch (e) {
+                console.error("Lỗi khi khởi tạo Zego SDK:", e);
+                if (videoContainer) {
+                    videoContainer.innerHTML = '<p class="text-red-400 p-4 text-center">Lỗi Zego: ' + e.message + '</p>';
+                }
+            }
+        }
+
+        // Fullscreen button event
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', toggleFullScreen);
+        }
+
+        // Fullscreen change listeners
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullScreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullScreenChange);
+    };
 </script>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

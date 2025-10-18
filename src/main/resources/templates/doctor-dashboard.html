@@ -53,7 +53,7 @@
                 </td>
                 <td th:text="${app.status}" class="p-3"></td>
                 <td class="p-3 flex flex-col md:flex-row gap-2">
-                    <a th:href="@{/video-call/{id}(id=${app.appointmentId})}" th:if="${app.consultationType == 'Online' and app.status == 'Confirmed'}" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition flex items-center">
+                    <a th:href="@{/video-call/{id}(id=${app.appointmentId})}" th:if="${app.consultationType.name() == 'Online' and app.status.name() == 'Confirmed' and app.videoCallLink != null}" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition flex items-center">
                         <i class="fas fa-video mr-2"></i> Tham gia video
                     </a>
                     <a th:href="@{/write-summary}" th:if="${app.status == 'Confirmed'}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center">
