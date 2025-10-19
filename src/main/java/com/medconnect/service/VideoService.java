@@ -23,12 +23,6 @@ public class VideoService {
     @Value("${app.zegocloud.server-secret}")
     private String serverSecret;
 
-    /**
-     * Sửa lại để gọi generateToken04
-     * @param userId ID người dùng (ví dụ: "2")
-     * @param sessionId ID phòng (ví dụ: "session_15")
-     * @return Chuỗi token đã mã hóa
-     */
     public String generateZegoToken(String userId, String sessionId) {
 
         long expirationInSecondsLong = 3600; // Token có hiệu lực trong 1 giờ (dạng long)
@@ -46,41 +40,34 @@ public class VideoService {
         payloadData.put("privilege", privilege);
 
         try {
-            // *** SỬA LỖI TẠI ĐÂY ***
-            // 3. Gọi hàm generateToken04 (thay vì generateToken)
             TokenInfo tokenInfo = TokenServerAssistant.generateToken04(
                     this.appId,
                     userId,
                     this.serverSecret,
-                    (int) expirationInSecondsLong, // <-- Ép kiểu sang int
-                    payloadData.toString()         // <-- Chuyển payload sang String
+                    (int) expirationInSecondsLong,
+                    payloadData.toString()
             );
 
-            // 4. Kiểm tra lỗi (nếu có)
+            // 4. Kiểm tra lỗi
             if (tokenInfo.error.code != ErrorCode.SUCCESS) {
-                // Ném ra lỗi nếu tạo token thất bại
                 throw new RuntimeException("Tạo token Zego (Token04) thất bại: " + tokenInfo.error.message);
             }
 
             // 5. Trả về token đã được mã hóa
-            // (Phiên bản Token04 trả về token trong trường .data)
             return tokenInfo.data;
 
         } catch (Exception e) {
-            // Ghi log lỗi nếu có vấn đề
             System.err.println("Lỗi nghiêm trọng khi tạo ZegoToken (Token04): " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Không thể tạo token video call.", e);
         }
     }
 
-    // Phương thức initializeSession (Giữ nguyên, không thay đổi)
     public void initializeSession(Appointment appointment) {
         String sessionId = "session_" + appointment.getAppointmentId();
         appointment.setVideoCallLink(sessionId);
     }
 
-    // Phương thức terminateSession (Giữ nguyên, không thay đổi)
     public void terminateSession(Appointment appointment) {
         appointment.setStatus(Appointment.Status.Completed);
     }

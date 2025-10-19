@@ -15,7 +15,7 @@ import java.util.Optional; // <-- THÊM IMPORT
 public class ConsultationDocumentService {
     private final ConsultationDocumentRepository documentRepository;
     private final AppointmentRepository appointmentRepository;
-    private final NotificationService notificationService; // Giả sử service này đã inject
+    private final NotificationService notificationService;
 
     public void writeDocument(ConsultationDocumentDTO dto) {
         // Validate format...
@@ -23,8 +23,7 @@ public class ConsultationDocumentService {
             throw new RuntimeException("MSG25: Prescription does not meet regulations.");
         }
 
-        // --- BẮT ĐẦU SỬA ---
-        // Tìm xem document đã tồn tại chưa
+        // xem document đã tồn tại chưa
         Optional<ConsultationDocument> existingDocOpt = documentRepository.findByAppointmentAppointmentId(dto.getAppointmentId());
 
         ConsultationDocument doc;
@@ -46,9 +45,7 @@ public class ConsultationDocumentService {
         doc.setDocumentType(dto.getDocumentType());
         doc.setContent(dto.getContent());
 
-        documentRepository.save(doc); // Lưu (hoặc cập nhật)
-        // --- KẾT THÚC SỬA ---
-
+        documentRepository.save(doc);
 
         // Chỉ gửi thông báo nếu đây là lần đầu tiên tạo tài liệu
         if (isNewDocument) {

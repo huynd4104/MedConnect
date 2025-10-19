@@ -33,7 +33,7 @@
     <!-- Danh sách bác sĩ -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mx-4 md:mx-8">
         <div th:each="doctor : ${doctors}" class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
-            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-48 object-cover rounded-t-lg mb-4">
+            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-90 object-cover rounded-t-lg mb-4">
             <h2 th:text="${doctor.user.email}" class="text-xl font-semibold text-indigo-700"></h2>
             <p th:text="${doctor.specialization.name}" class="text-gray-600"></p>
             <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}" class="text-indigo-600 hover:text-indigo-800 font-medium mt-4 inline-block transition">

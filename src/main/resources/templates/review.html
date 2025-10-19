@@ -5,6 +5,27 @@
     <title>Để lại đánh giá - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            font-size: 2rem;
+        }
+        .star {
+            cursor: pointer;
+            color: #d1d5db;
+            transition: all 0.2s ease;
+        }
+        .star:hover {
+            transform: scale(1.15);
+        }
+        .star.active {
+            color: #fbbf24;
+        }
+        .star.hovered {
+            color: #fbbf24;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
@@ -27,12 +48,21 @@
         </div>
 
         <form th:action="@{/review}" th:object="${reviewDTO}" method="post" class="space-y-6">
+            <input type="hidden" th:field="*{appointmentId}" />
             <div>
-                <label for="rating" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    <i class="fas fa-star mr-2 text-indigo-500"></i> Đánh giá (1-5 sao)
+                <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                    <i class="fas fa-star mr-2 text-indigo-500"></i> Đánh giá
                 </label>
-                <input type="number" th:field="*{rating}" id="rating" min="1" max="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                <span th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}" class="text-red-500 text-sm"></span>
+                <div class="star-rating" id="starRating">
+                    <i class="fas fa-star star" data-rating="1"></i>
+                    <i class="fas fa-star star" data-rating="2"></i>
+                    <i class="fas fa-star star" data-rating="3"></i>
+                    <i class="fas fa-star star" data-rating="4"></i>
+                    <i class="fas fa-star star" data-rating="5"></i>
+                </div>
+                <input type="hidden" th:field="*{rating}" id="ratingInput" />
+                <span th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}" class="text-red-500 text-sm block mt-2"></span>
+                <p id="ratingText" class="text-gray-600 text-sm mt-2">Vui lòng chọn số sao đánh giá</p>
             </div>
             <div>
                 <label for="comment" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
@@ -44,13 +74,89 @@
                 <input type="checkbox" th:field="*{anonymous}" id="anonymous" class="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                 <label for="anonymous" class="text-sm font-medium text-gray-700">Ẩn danh</label>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
-                <i class="fas fa-paper-plane mr-2"></i> Gửi
-            </button>
+            <div class="flex flex-col md:flex-row gap-4 pt-4">
+                <a th:href="@{/patient-dashboard}" class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition flex items-center justify-center text-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                </a>
+
+                <button type="submit" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                    <i class="fas fa-paper-plane mr-2"></i> Gửi
+                </button>
+            </div>
         </form>
     </div>
 </section>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('ratingInput');
+    const ratingText = document.getElementById('ratingText');
+    let selectedRating = 0;
+
+    const ratingTexts = {
+        1: 'Rất không hài lòng',
+        2: 'Không hài lòng',
+        3: 'Bình thường',
+        4: 'Hài lòng',
+        5: 'Rất hài lòng'
+    };
+
+    // Click vào sao để chọn rating
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            selectedRating = parseInt(this.getAttribute('data-rating'));
+            ratingInput.value = selectedRating;
+            updateStars(selectedRating);
+            ratingText.textContent = ratingTexts[selectedRating];
+            ratingText.classList.remove('text-gray-600');
+            ratingText.classList.add('text-indigo-600', 'font-medium');
+        });
+
+        // Hover effect
+        star.addEventListener('mouseenter', function() {
+            const hoverRating = parseInt(this.getAttribute('data-rating'));
+            stars.forEach((s, index) => {
+                if (index < hoverRating) {
+                    s.classList.add('hovered');
+                } else {
+                    s.classList.remove('hovered');
+                }
+            });
+        });
+    });
+
+    // Reset hover khi rời chuột
+    document.getElementById('starRating').addEventListener('mouseleave', function() {
+        stars.forEach(s => s.classList.remove('hovered'));
+    });
+
+    function updateStars(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    (function initReviewStars() {
+        // 1. Lấy giá trị rating ban đầu (Thymeleaf đã điền vào input)
+        const initialRating = parseInt(ratingInput.value);
+
+        // 2. Nếu có giá trị hợp lệ, cập nhật giao diện
+        if (initialRating > 0 && initialRating <= 5) {
+            selectedRating = initialRating;
+            updateStars(selectedRating); // Cập nhật màu sao
+
+            // Cập nhật text (ví dụ: "Rất hài lòng")
+            ratingText.textContent = ratingTexts[selectedRating];
+            ratingText.classList.remove('text-gray-600');
+            ratingText.classList.add('text-indigo-600', 'font-medium');
+        }
+    })();
+</script>
 </body>
 </html>

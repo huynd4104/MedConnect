@@ -21,14 +21,10 @@ public class SearchService {
             return doctorRepository.findApprovedBySpecializationId(specializationId);
         }
 
-        // Kiểm tra xem `name` có rỗng hoặc null không
-        // StringUtils.hasText() sẽ trả về false nếu name là null, "", hoặc chỉ chứa khoảng trắng
         if (!StringUtils.hasText(name)) {
-            // Nếu không có tiêu chí tên, gọi phương thức đơn giản hơn để lấy TẤT CẢ bác sĩ đã được duyệt
             return doctorRepository.findByStatus(Doctor.Status.Approved);
         }
 
-        // Nếu có tên, thực hiện tìm kiếm như cũ
         return doctorRepository.searchApprovedDoctors(name);
     }
 }

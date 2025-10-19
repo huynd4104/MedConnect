@@ -35,7 +35,7 @@ public class Doctor {
     @Column(name = "photo_path")
     private String photoPath;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private Status status = Status.Pending;
 

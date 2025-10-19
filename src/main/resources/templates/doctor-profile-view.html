@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Xem hồ sơ bác sĩ - MedConnect</title>
@@ -23,7 +23,9 @@
                 <h2 th:text="${doctor.user.email}" class="text-2xl font-semibold text-indigo-700 mb-2"></h2>
                 <p th:text="${doctor.specialization.name}" class="text-gray-600 text-lg mb-2"></p>
                 <p th:text="'Kinh nghiệm: ' + ${doctor.experienceYears} + ' năm'" class="text-gray-600 mb-4"></p>
-                <a th:href="@{/book-appointment(doctorId=${doctor.doctorId})}" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center w-fit">
+                <a th:href="@{/book-appointment(doctorId=${doctor.doctorId})}"
+                   sec:authorize="hasRole('Patient')"
+                   class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center w-fit">
                     <i class="fas fa-calendar-plus mr-2"></i> Đặt lịch
                 </a>
             </div>
@@ -96,12 +98,42 @@
         <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
             <i class="fas fa-star mr-2 text-indigo-500"></i> Đánh giá
         </h2>
-        <div th:each="review : ${reviews}" class="bg-gray-50 p-4 rounded-lg mb-4 shadow-sm transition duration-200">
-            <p th:text="'Đánh giá: ' + ${review.rating} + '/5'" class="text-gray-700"></p>
-            <p th:text="${review.comment}" th:if="!${review.anonymous}" class="text-gray-600"></p>
-            <p th:if="${review.anonymous}" class="text-gray-600">Ẩn danh</p>
+        <div th:if="${reviews.isEmpty()}" class="text-center text-gray-500 italic">
+            Chưa có đánh giá nào.
         </div>
-        <div th:if="${reviews.empty}" class="text-center text-gray-600">Không có đánh giá</div>
+
+        <div th:each="review : ${reviews}" class="bg-gray-50 p-5 rounded-lg mb-4 shadow-sm border-l-4 border-indigo-100">
+
+            <div class="flex justify-between items-center mb-2">
+                <div class="font-semibold text-gray-800 text-lg">
+                    <th:block th:if="${review.anonymous}">
+                        <i class="fas fa-user-secret mr-2 text-gray-500"></i>
+                        Ẩn danh
+                    </th:block>
+                    <th:block th:if="!${review.anonymous}">
+                        <i class="fas fa-user mr-2 text-indigo-500"></i>
+                        <span th:text="${review.appointment.patient.fullName}"></span>
+                    </th:block>
+                </div>
+
+                <p class="text-sm text-gray-500">
+                    <i class="far fa-clock mr-1"></i>
+                    <span th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+            </div>
+
+            <div class="flex items-center my-2 text-xl text-yellow-400">
+                <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                    <i class="fas fa-star"
+                       th:classappend="${i > review.rating} ? 'text-gray-300' : ''">
+                    </i>
+                </th:block>
+            </div>
+
+            <p th:text="${review.comment}" class="text-gray-700 mt-3 pl-1 italic">
+                Nội dung bình luận...
+            </p>
+        </div>
     </div>
 </section>
 

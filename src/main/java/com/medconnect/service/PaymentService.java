@@ -48,7 +48,6 @@ public class PaymentService {
         params.put("vnp_ReturnUrl", returnUrl);
         params.put("vnp_IpAddr", "127.0.0.1");
 
-        // Thêm vnp_CreateDate và vnp_ExpireDate
         LocalDateTime createTime = LocalDateTime.now();
         LocalDateTime expireTime = createTime.plusMinutes(15);
 
@@ -57,7 +56,6 @@ public class PaymentService {
         params.put("vnp_ExpireDate", expireTime.format(formatter));
 
         StringBuilder hashData = new StringBuilder();
-        // Dùng Iterator để xử lý dấu '&' giống hệt PaymentServlet.java
         Iterator<Map.Entry<String, String>> itr = params.entrySet().iterator();
 
         while (itr.hasNext()) {
@@ -70,7 +68,6 @@ public class PaymentService {
                 hashData.append(fieldName);
                 hashData.append('=');
 
-                // LỖI LÀ Ở ĐÂY: Value phải được encode (giống PaymentServlet.java)
                 hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
 
                 if (itr.hasNext()) {
