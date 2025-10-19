@@ -3,14 +3,13 @@ package com.medconnect.controller;
 import com.medconnect.dto.ScheduleDTO;
 import com.medconnect.entity.User;
 import com.medconnect.exception.TimeSlotOverlapException;
-import com.medconnect.repository.UserRepository; // 1. IMPORT UserRepository
+import com.medconnect.repository.UserRepository;
 import com.medconnect.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails; // 2. IMPORT UserDetails
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,7 +46,7 @@ public class DoctorScheduleController {
 
         try {
             // 4. SỬA LẠI CÁCH LẤY USER ID
-            String email = ((UserDetails) auth.getPrincipal()).getUsername();
+            String email = auth.getName();
             User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Authenticated user not found in database for email: " + email));
 
@@ -70,7 +69,7 @@ public class DoctorScheduleController {
     @DeleteMapping("/api/schedules/{id}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable("id") Integer scheduleId, Authentication auth) {
         try {
-            String email = ((UserDetails) auth.getPrincipal()).getUsername();
+            String email = auth.getName();
             User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
@@ -87,7 +86,7 @@ public class DoctorScheduleController {
                                                @Valid @RequestBody ScheduleDTO dto,
                                                Authentication auth) {
         try {
-            String email = ((UserDetails) auth.getPrincipal()).getUsername();
+            String email = auth.getName();
             User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
@@ -105,7 +104,7 @@ public class DoctorScheduleController {
     @ResponseBody
     public ResponseEntity<List<ScheduleDTO>> getDoctorSchedules(Authentication auth) {
         // 5. ÁP DỤNG SỬA LỖI TƯƠNG TỰ CHO API ENDPOINT
-        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        String email = auth.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found in database for email: " + email));
 

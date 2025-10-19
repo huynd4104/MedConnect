@@ -9,12 +9,10 @@ import com.medconnect.repository.UserRepository;
 import com.medconnect.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -27,8 +25,8 @@ public class PatientDashboardController {
 
     @GetMapping("/patient-dashboard")
     public String showDashboard(Model model, Authentication auth) {
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        String email = userDetails.getUsername();
+        // Lấy email trực tiếp từ Authentication, hoạt động cho cả form login và OAuth2
+        String email = auth.getName();
 
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));

@@ -11,7 +11,7 @@ import com.medconnect.repository.UserRepository;
 import com.medconnect.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.UserDetails; // <-- Đã xóa
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,57 +36,60 @@ public class DoctorProfileController {
 
     @GetMapping("/doctor-profile")
     public String showProfileForm(Model model, Authentication auth) {
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        String email = userDetails.getUsername();
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+        // 1. Lấy email bằng auth.getName() (Đã sửa từ trước)
+        String userEmail = auth.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
 
-        Optional<Doctor> existingDoctorOpt = doctorRepository.findByUser(currentUser);
-
+        Optional<Doctor> doctorOpt = doctorRepository.findByUser(user);
         DoctorProfileDTO dto = new DoctorProfileDTO();
-        if (existingDoctorOpt.isPresent()) {
-            Doctor doctor = existingDoctorOpt.get();
-            // Map dữ liệu cũ
+        List<DoctorDocument> documents = List.of();
+
+        // Chuẩn bị biến cho status và reason
+        String doctorStatus = null;
+        String rejectionReason = null;
+
+        if (doctorOpt.isPresent()) {
+            Doctor doctor = doctorOpt.get();
             dto.setExperienceYears(doctor.getExperienceYears());
             dto.setLicenseNumber(doctor.getLicenseNumber());
-            if (doctor.getSpecialization() != null) {
-                dto.setSpecializationId(doctor.getSpecialization().getSpecializationId());
-            }
+            dto.setSpecializationId(doctor.getSpecialization() != null ? doctor.getSpecialization().getSpecializationId() : null);
 
-            // >> 3. LẤY VÀ SET ĐƯỜNG DẪN ẢNH, GIẤY TỜ
             dto.setExistingPhotoPath(doctor.getPhotoPath());
-            List<DoctorDocument> documents = doctorDocumentRepository.findByDoctorDoctorId(doctor.getDoctorId());
-            dto.setExistingDocuments(documents);
 
+            // Thay vào đó, lấy giá trị để truyền riêng ra view
+            doctorStatus = doctor.getStatus().name();
+            rejectionReason = doctor.getRejectionReason();
+
+            // === SỬA LỖI 3: Gọi đúng phương thức repository ===
+            // Dòng cũ gây lỗi: documents = doctorDocumentRepository.findByDoctor(doctor);
+            documents = doctorDocumentRepository.findByDoctorDoctorId(doctor.getDoctorId()); // ĐÃ SỬA
         }
 
+        dto.setExistingDocuments(documents);
         model.addAttribute("doctorProfileDTO", dto);
+
+        // Thêm các thuộc tính status và reason riêng biệt cho view
+        // file .html của bạn có thể dùng th:if="${doctorStatus}" để hiển thị
+        model.addAttribute("doctorStatus", doctorStatus);
+        model.addAttribute("rejectionReason", rejectionReason);
+
         model.addAttribute("specializations", specializationRepository.findAll());
         return "doctor-profile";
     }
 
-
     @PostMapping("/doctor-profile")
-    public String completeProfile(@ModelAttribute("doctorProfileDTO") DoctorProfileDTO dto, BindingResult result, Authentication auth, RedirectAttributes redirectAttributes) {
-        // Giữ lại phần kiểm tra lỗi validation nếu cần
-        if (result.hasErrors()) {
-            // Thay vì redirect, tốt hơn là trả về view với lỗi
-            // Nhưng theo logic hiện tại, ta tạm giữ redirect
-            redirectAttributes.addFlashAttribute("error", "MSG09: All fields are required.");
+    public String submitProfile(@ModelAttribute DoctorProfileDTO dto,
+                                BindingResult bindingResult,
+                                Authentication auth,
+                                RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Dữ liệu không hợp lệ.");
             return "redirect:/doctor-profile";
         }
         try {
-            // Lấy principal từ Spring Security
-            Object principal = auth.getPrincipal();
-            String userEmail;
-
-            if (principal instanceof UserDetails) {
-                userEmail = ((UserDetails) principal).getUsername();
-            } else {
-                userEmail = principal.toString();
-            }
-
-            // Dùng email để tìm User entity trong database
+            // Lấy email (Đã sửa từ trước)
+            String userEmail = auth.getName();
             User user = userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
 

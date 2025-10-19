@@ -30,8 +30,8 @@ public class VideoCallController {
     public String joinVideoCall(@PathVariable Integer appointmentId, Model model, Authentication auth) { // THÊM Authentication
         try {
             // 1. Lấy thông tin người dùng đang đăng nhập
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            User currentUser = userRepository.findByEmail(userDetails.getUsername())
+            String email = auth.getName();
+            User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
 
             // 2. Lấy thông tin lịch hẹn
@@ -68,7 +68,7 @@ public class VideoCallController {
 
             // 6. Tạo ZegoToken (Zego yêu cầu userId phải là String)
             String zegoUserId = String.valueOf(currentUser.getUserId());
-            String zegoUserName = userDetails.getUsername(); // Lấy email làm tên
+            String zegoUserName = email; // Lấy email làm tên
             String token = videoService.generateZegoToken(zegoUserId, sessionId);
 
             // 7. Gửi toàn bộ thông tin cần thiết sang template video-call.html

@@ -40,8 +40,8 @@ public class PaymentController {
                                   RedirectAttributes redirectAttributes) {
         try {
             // 1. Lấy thông tin bệnh nhân đang đăng nhập
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            User currentUser = userRepository.findByEmail(userDetails.getUsername())
+            String email = auth.getName();
+            User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
             Patient currentPatient = patientRepository.findByUser(currentUser)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân"));

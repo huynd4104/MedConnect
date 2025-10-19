@@ -29,8 +29,8 @@ public class PatientProfileController {
     @GetMapping("/patient-profile")
     public String showProfileForm(Model model, Authentication auth) {
         // Lấy thông tin người dùng hiện tại
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        User currentUser = userRepository.findByEmail(userDetails.getUsername())
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Patient patient = patientRepository.findByUser(currentUser)
                 .orElseThrow(() -> new RuntimeException("Patient profile not found"));
@@ -58,8 +58,8 @@ public class PatientProfileController {
         }
         try {
             // Lấy patientId một cách an toàn hơn
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            User currentUser = userRepository.findByEmail(userDetails.getUsername())
+            String email = auth.getName();
+            User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             Patient patient = patientRepository.findByUser(currentUser)
                     .orElseThrow(() -> new RuntimeException("Patient profile not found"));

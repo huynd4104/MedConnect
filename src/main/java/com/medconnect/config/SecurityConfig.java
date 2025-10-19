@@ -1,7 +1,9 @@
 package com.medconnect.config;
 
 import com.medconnect.service.CustomAuthenticationException;
+import com.medconnect.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -63,7 +68,11 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .successHandler(customAuthenticationSuccessHandler())
+                        // !! DÒNG QUAN TRỌNG: BẢO SPRING DÙNG SERVICE CỦA BẠN !!
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .successHandler(customAuthenticationSuccessHandler()) // Dùng lại successHandler của bạn
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/access-denied")

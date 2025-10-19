@@ -6,7 +6,6 @@ import com.medconnect.repository.*;
 import com.medconnect.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,10 +33,8 @@ public class BookAppointmentController {
             Doctor doctor = doctorRepository.findById(doctorId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy bác sĩ"));
 
-            // *** BẮT ĐẦU THÊM MỚI ***
             // Lấy danh sách lịch làm việc (chỉ lấy các lịch đang active)
             List<Schedule> schedules = scheduleRepository.findByDoctor_DoctorIdAndActiveTrue(doctorId);
-            // *** KẾT THÚC THÊM MỚI ***
 
             AppointmentDTO dto = new AppointmentDTO();
             dto.setDoctorId(doctorId);
@@ -65,11 +62,9 @@ public class BookAppointmentController {
 
         try {
             // 1. Lấy User (bạn đã sửa ở bước trước)
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            User currentUser = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+            String email = auth.getName();
+            User currentUser = userRepository.findByEmail(email).orElseThrow();
 
-            // 2. SỬA LẠI CHỖ NÀY
-            // Thay vì gọi "void", hãy nhận lại đối tượng Appointment
             Appointment savedAppointment = appointmentService.bookAppointment(currentUser, dto);
 
             // 3. Chuyển hướng đến /payment KÈM THEO ID
@@ -87,8 +82,8 @@ public class BookAppointmentController {
                                     RedirectAttributes redirectAttributes) {
         try {
             // 1. Lấy thông tin bệnh nhân đang đăng nhập
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            User currentUser = userRepository.findByEmail(userDetails.getUsername())
+            String email = auth.getName();
+            User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
             Patient currentPatient = patientRepository.findByUser(currentUser)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân"));
