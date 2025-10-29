@@ -2,31 +2,55 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}" th:if="${_csrf}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" th:if="${_csrf}"/>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Optional for icons -->
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> </head>
 <body>
 <header th:fragment="header" class="bg-indigo-700 text-white p-4 shadow-md">
     <div class="container mx-auto flex flex-wrap justify-between items-center">
         <a href="/" class="text-3xl font-bold tracking-wide hover:text-indigo-200 transition">MedConnect</a>
-        <nav class="flex flex-col md:flex-row gap-4 mt-4 md:mt-0">
-            <a href="/" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-home mr-1"></i> Trang chủ</a>
+        <nav class="flex flex-col md:flex-row gap-4 mt-4 md:mt-0 items-center"> <a href="/" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-home mr-1"></i> Trang chủ</a>
             <a href="/search-doctors" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-search mr-1"></i> Tìm bác sĩ</a>
             <a th:href="@{/patient-dashboard}" sec:authorize="hasRole('Patient')" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-user mr-1"></i> Bảng điều khiển</a>
             <a th:href="@{/doctor-dashboard}" sec:authorize="hasRole('Doctor')" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-user-md mr-1"></i> Bảng điều khiển</a>
+
             <div sec:authorize="hasRole('Admin')" class="flex flex-col md:flex-row gap-4">
                 <a th:href="@{/admin-doctor-approval}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-check mr-1"></i> Phê duyệt BS</a>
                 <a th:href="@{/admin-specializations}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-stethoscope mr-1"></i> Chuyên khoa</a>
                 <a th:href="@{/admin-doctor-list}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-list mr-1"></i> DS Bác sĩ</a>
                 <a th:href="@{/admin-patient-list}" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-users mr-1"></i> DS Bệnh nhân</a>
             </div>
+
+            <div sec:authorize="isAuthenticated()" class="relative flex items-center">
+                <button id="notification-bell" class="relative text-white hover:text-indigo-200 transition p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span id="notification-count"
+                          class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full hidden">
+                        0 </span>
+                </button>
+                <div id="notification-dropdown" class="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg py-1 z-50 hidden top-full border border-gray-200 max-h-80 overflow-y-auto">
+                    <div class="px-4 py-2 border-b">
+                        <span class="font-semibold text-gray-800">Thông báo</span>
+                    </div>
+                    <div id="notification-list" class="divide-y divide-gray-100">
+                        <div id="no-notifications" class="px-4 py-3 text-sm text-gray-500 text-center">Chưa có thông báo mới.</div>
+                    </div>
+                    <div class="px-4 py-2 border-t text-center">
+                        <a href="#" class="text-indigo-600 hover:underline text-sm">Xem tất cả</a> </div>
+                </div>
+                <button id="enable-notifications-btn" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap">Bật Thông báo</button>
+            </div>
+
             <div sec:authorize="isAuthenticated()">
                 <form th:action="@{/logout}" method="post" class="inline">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
                     <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition flex items-center">
                         <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
                     </button>
                 </form>
             </div>
+
             <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition flex items-center">
                 <i class="fas fa-sign-in-alt mr-2"></i> Đăng nhập
             </a>
@@ -36,5 +60,40 @@
         </nav>
     </div>
 </header>
+
+<th:block th:fragment="firebase-scripts">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
+    <script th:src="@{/js/firebase-init.js}" defer></script>
+</th:block>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+        const notificationList = document.getElementById('notification-list');
+        const noNotificationsMessage = document.getElementById('no-notifications');
+        const notificationCountBadge = document.getElementById('notification-count');
+
+        if (notificationBell && notificationDropdown) {
+            notificationBell.addEventListener('click', (event) => {
+                event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                notificationDropdown.classList.toggle('hidden');
+                // Nếu mở dropdown, có thể gọi API để lấy thông báo mới nhất
+                if (!notificationDropdown.classList.contains('hidden')) {
+                    fetchNotifications(); // Gọi hàm lấy thông báo (xem ví dụ bên dưới)
+                }
+            });
+
+            // Đóng dropdown khi click ra ngoài
+            document.addEventListener('click', (event) => {
+                if (!notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

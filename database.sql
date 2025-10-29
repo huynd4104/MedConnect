@@ -15,7 +15,8 @@ CREATE TABLE users (
                        created_at DATETIME DEFAULT GETDATE() NOT NULL,
                        last_login DATETIME NULL,
                        failed_login_attempts INT DEFAULT 0 NOT NULL,  -- Error E5 khóa tài khoản nhập sai 5 lần
-                       lockout_end_time DATETIME NULL
+                       lockout_end_time DATETIME NULL,
+                       fcm_token NVARCHAR(MAX) NULL
 );
 GO
 

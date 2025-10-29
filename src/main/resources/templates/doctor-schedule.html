@@ -5,14 +5,15 @@
     <title>Quản lý lịch làm việc - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Thêm Font Awesome để đồng bộ icon -->
     <style>
-        /* Tùy chỉnh FullCalendar */
+        /* Giữ nguyên tùy chỉnh FullCalendar, nhưng điều chỉnh nhẹ để khớp màu indigo */
         .fc .fc-timegrid-slot {
-            height: 2.5rem; /* Tăng chiều cao slot thời gian */
-            font-size: 0.9rem; /* Kích thước chữ nhỏ hơn */
+            height: 2.5rem;
+            font-size: 0.9rem;
         }
         .fc .fc-col-header-cell {
-            background-color: #f3f4f6; /* Màu nền header nhẹ */
+            background-color: #f3f4f6;
             font-weight: 600;
             padding: 0.75rem;
             font-size: 1rem;
@@ -41,24 +42,26 @@
             font-size: 0.9rem;
         }
         .fc .fc-button:hover {
-            background-color: #6b7280; /* Màu hover nhẹ */
+            background-color: #6b7280;
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased"> <!-- Đồng bộ body với dashboard -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<main class="container mx-auto px-4 py-8">
-    <div class="max-w-6xl mx-auto">
-        <h1 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Lịch Làm Việc Của Tôi</h1>
+<section class="container mx-auto py-12 px-4 md:px-0"> <!-- Đồng bộ với section của dashboard -->
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Lịch Làm Việc Của Tôi</h1> <!-- Đồng bộ h1 -->
 
+    <div class="max-w-6xl mx-auto">
         <div th:if="${success}" class="mb-6 p-4 bg-green-50 border border-green-300 text-green-700 rounded-md text-center text-sm" th:text="${success}"></div>
         <div th:if="${error}" class="mb-6 p-4 bg-red-50 border border-red-300 text-red-700 rounded-md text-center text-sm" th:text="${error}"></div>
 
-        <div id="calendar" class="bg-white p-4 rounded-md shadow-md mb-8"></div>
+        <div id="calendar" class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 transform transition duration-300"></div> <!-- Đồng bộ block calendar -->
 
-        <form th:action="@{/doctor-schedule}" th:object="${scheduleDTO}" method="post" class="bg-white p-6 rounded-md shadow-md space-y-5">
-            <h2 class="text-xl font-semibold text-gray-700">Thêm Khung Giờ Mới</h2>
+        <form th:action="@{/doctor-schedule}" th:object="${scheduleDTO}" method="post" class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 transform transition duration-300 space-y-5"> <!-- Đồng bộ form -->
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center"> <!-- Đồng bộ h2, thêm icon nếu muốn -->
+                <i class="fas fa-calendar mr-2 text-indigo-500"></i> Thêm Khung Giờ Mới
+            </h2>
 
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
@@ -110,25 +113,25 @@
             </div>
         </form>
     </div>
-</main>
+</section>
 
-<div id="scheduleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-md rounded-md bg-white">
+<div id="scheduleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center"> <!-- Đồng bộ modal với dashboard -->
+    <div class="relative p-8 bg-white w-full max-w-md m-auto flex-col flex rounded-lg shadow-lg">
         <div id="viewMode">
-            <h3 class="text-lg font-semibold text-gray-800 text-center mb-4">Chi tiết Khung Giờ</h3>
+            <h3 class="text-2xl font-semibold text-gray-800 text-center mb-4">Chi tiết Khung Giờ</h3>
             <div class="space-y-2 text-center">
                 <p id="modal-event-title" class="text-base font-medium text-gray-700"></p>
                 <p id="modal-event-time" class="text-sm text-gray-500"></p>
             </div>
-            <div class="flex justify-center gap-3 mt-6">
-                <button id="editButton" class="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none">Sửa</button>
-                <button id="deleteButton" class="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none">Xóa</button>
-                <button id="closeModalButton" class="px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md shadow-sm focus:outline-none">Đóng</button>
+            <div class="flex justify-center gap-4 mt-6">
+                <button id="editButton" class="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Sửa</button>
+                <button id="deleteButton" class="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Xóa</button>
+                <button id="closeModalButton" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Đóng</button>
             </div>
         </div>
 
         <div id="editMode" class="hidden">
-            <h3 class="text-lg font-semibold text-gray-800 text-center mb-4">Chỉnh Sửa Khung Giờ</h3>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Chỉnh Sửa Khung Giờ</h3>
             <form id="editScheduleForm" class="space-y-4">
                 <div>
                     <label for="editDayOfWeek" class="block text-sm font-medium text-gray-700">Ngày trong tuần</label>
@@ -157,9 +160,9 @@
                         <option value="InPerson">Tư vấn Trực tiếp</option>
                     </select>
                 </div>
-                <div class="flex justify-center gap-3 mt-4">
-                    <button type="submit" class="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none">Lưu thay đổi</button>
-                    <button type="button" id="cancelEditButton" class="px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md shadow-sm focus:outline-none">Hủy</button>
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="submit" class="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Lưu thay đổi</button>
+                    <button type="button" id="cancelEditButton" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Hủy</button>
                 </div>
             </form>
         </div>

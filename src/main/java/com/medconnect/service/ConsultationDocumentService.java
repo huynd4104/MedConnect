@@ -54,7 +54,7 @@ public class ConsultationDocumentService {
             if (appointment == null) {
                 appointment = appointmentRepository.findById(dto.getAppointmentId()).orElseThrow();
             }
-            notificationService.sendPushNotification(appointment.getPatient().getUser(), "Tài liệu mới", "Bạn có tài liệu tư vấn mới.");
+            notificationService.sendPushNotification(appointment.getPatient().getUser(), "New Document", "Bạn có tài liệu tư vấn mới.");
         }
     }
 

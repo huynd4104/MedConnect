@@ -1,6 +1,7 @@
 package com.medconnect.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,6 +46,9 @@ public class User {
 
     @Column(name = "lockout_end_time")
     private LocalDateTime lockoutEndTime;
+
+    @Column(name = "fcm_token")
+    private String fcmToken;
 
     public enum Role {
         Patient, Doctor, Admin

@@ -26,6 +26,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // bỏ qua kiểm tra CSRF cho các API
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         // THÊM DÒNG NÀY ĐỂ CHO PHÉP TÀI NGUYÊN TĨNH
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -34,12 +37,15 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/", "/index", "/register", "/login", "/forgot-password", "/verify", "/search-doctors", "/doctor-profile-view/**").permitAll()
 
+                        // --- !!! DI CHUYỂN DÒNG NÀY LÊN TRÊN anyRequest() !!! ---
+                        .requestMatchers("/api/users/update-fcm-token").authenticated()
+
                         // Các URL theo vai trò
                         .requestMatchers("/patient-profile", "/patient-dashboard", "/book-appointment", "/payment", "/payment-callback", "/cancel-appointment", "/review").hasRole("Patient")
                         .requestMatchers("/doctor-profile", "/doctor-schedule", "/doctor-schedule/**", "/doctor-dashboard/**", "/write-summary", "/delete-document/**").hasRole("Doctor")
                         .requestMatchers("/admin-doctor-approval", "/admin-specializations", "/admin-doctor-list", "/admin-patient-list").hasRole("Admin")
 
-                        // Tất cả các request khác cần xác thực
+                        // --- !!! anyRequest() PHẢI ĐẶT CUỐI CÙNG TRONG authorizeHttpRequests !!! ---
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -47,7 +53,6 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .loginProcessingUrl("/login")
                         .successHandler(customAuthenticationSuccessHandler())
-                        // THAY THẾ BỘ XỬ LÝ LỖI BẰNG CODE NGAY TẠI ĐÂY
                         .failureHandler((request, response, exception) -> {
                             String errorMessage;
                             if (exception instanceof BadCredentialsException) {
@@ -68,11 +73,10 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        // !! DÒNG QUAN TRỌNG: BẢO SPRING DÙNG SERVICE CỦA BẠN !!
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
-                        .successHandler(customAuthenticationSuccessHandler()) // Dùng lại successHandler của bạn
+                        .successHandler(customAuthenticationSuccessHandler())
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/access-denied")
