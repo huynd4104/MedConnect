@@ -36,8 +36,17 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
 
         // Notify doctor
-        notificationService.sendPushNotification(doctor.getUser(), "New Appointment", "Bạn có một cuộc hẹn mới, vui lòng kiểm tra trong trang quản lý.");
+        notificationService.sendPushNotification(
+                doctor.getUser(),
+                "New Appointment",
+                "Bạn có một cuộc hẹn mới, vui lòng kiểm tra trong trang quản lý."
+        );
 
+        notificationService.sendPushNotification(
+                patient.getUser(),
+                "New Appointment",
+                "Bạn đã đặt lịch hẹn với bác sĩ " + doctor.getUser().getEmail() + " lúc " + dto.getAppointmentDateTime().toString() + ", xin vui lòng thanh toán."
+        );
         try {
             String subject = "Xác nhận lịch hẹn thành công";
             String content = "Xin chào " + patient.getFullName() + ",<br>" +

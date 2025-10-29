@@ -5,7 +5,10 @@
     <title>Quản lý lịch làm việc - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Thêm Font Awesome để đồng bộ icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+
     <style>
         /* Giữ nguyên tùy chỉnh FullCalendar, nhưng điều chỉnh nhẹ để khớp màu indigo */
         .fc .fc-timegrid-slot {

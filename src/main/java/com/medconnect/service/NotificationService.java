@@ -41,37 +41,35 @@ public class NotificationService {
     }
 
 
-    public void sendPushNotification(User user, String title, String body) {
-        // Lấy token thật từ User entity
+    public void sendPushNotification(User user, String title, String body) { // Remove link parameter here
         String deviceToken = user.getFcmToken();
 
-        // Chỉ gửi FCM nếu có token
         if (deviceToken != null && !deviceToken.isEmpty()) {
-            Message message = Message.builder()
-                    .putData("title", title) // Dùng data payload để tùy chỉnh thông báo ở client
+            // Save to DB first to get the ID
+            Notification savedNotification = saveNotificationToDb(user, title, body); // Pass only needed params
+
+            Message.Builder messageBuilder = Message.builder()
+                    .putData("title", title)
                     .putData("body", body)
-                    // .setNotification(com.google.firebase.messaging.Notification.builder() // Có thể dùng Notification payload nếu muốn thông báo hệ thống đơn giản
-                    //         .setTitle(title)
-                    //         .setBody(body)
-                    //         .build())
-                    .setToken(deviceToken) // <-- SỬ DỤNG TOKEN THẬT
-                    .build();
+                    .putData("notificationId", String.valueOf(savedNotification.getNotificationId())) // Send ID
+                    .putData("sentAt", savedNotification.getSentAt().toString()) // Send time
+                    .setToken(deviceToken);
+
+            Message message = messageBuilder.build();
+
             try {
                 String response = FirebaseMessaging.getInstance().send(message);
                 System.out.println("Successfully sent FCM message: " + response + " to user: " + user.getEmail());
             } catch (FirebaseMessagingException e) {
                 System.err.println("Failed to send FCM message to user: " + user.getEmail() + ", Error: " + e.getMessage());
-                // Fallback to email only if FCM fails
                 sendEmailFallback(user, title, body);
             }
         } else {
-            // Nếu không có token, chỉ gửi email
             System.out.println("No FCM token for user: " + user.getEmail() + ". Sending email fallback.");
             sendEmailFallback(user, title, body);
+            // Still save to DB even if only email is sent
+            saveNotificationToDb(user, title, body);
         }
-
-        // Lưu vào DB (giữ nguyên)
-        saveNotificationToDb(user, title, body);
     }
 
     // Tách logic gửi mail và lưu DB ra hàm riêng cho rõ ràng
@@ -84,14 +82,14 @@ public class NotificationService {
         }
     }
 
-    private void saveNotificationToDb(User user, String title, String body) {
+    private Notification saveNotificationToDb(User user, String title, String body) {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setMessage(body);
-        // Lưu title vào notificationType có vẻ hợp lý hơn
         notification.setNotificationType(title);
-        notification.setRead(false); // Đảm bảo mặc định là chưa đọc
-        notification.setSentAt(LocalDateTime.now()); // Lấy thời gian hiện tại chính xác hơn
-        notificationRepository.save(notification);
+        notification.setRead(false);
+        notification.setSentAt(LocalDateTime.now());
+        // Removed: notification.setLink(link);
+        return notificationRepository.save(notification); // Return the saved entity to get the ID
     }
 }

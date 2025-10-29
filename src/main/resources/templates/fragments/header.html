@@ -10,7 +10,8 @@
 <header th:fragment="header" class="bg-indigo-700 text-white p-4 shadow-md">
     <div class="container mx-auto flex flex-wrap justify-between items-center">
         <a href="/" class="text-3xl font-bold tracking-wide hover:text-indigo-200 transition">MedConnect</a>
-        <nav class="flex flex-col md:flex-row gap-4 mt-4 md:mt-0 items-center"> <a href="/" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-home mr-1"></i> Trang chủ</a>
+        <nav class="flex flex-col md:flex-row gap-4 mt-4 md:mt-0 items-center">
+            <a href="/" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-home mr-1"></i> Trang chủ</a>
             <a href="/search-doctors" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-search mr-1"></i> Tìm bác sĩ</a>
             <a th:href="@{/patient-dashboard}" sec:authorize="hasRole('Patient')" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-user mr-1"></i> Bảng điều khiển</a>
             <a th:href="@{/doctor-dashboard}" sec:authorize="hasRole('Doctor')" class="hover:text-indigo-200 transition flex items-center"><i class="fas fa-user-md mr-1"></i> Bảng điều khiển</a>
@@ -29,18 +30,16 @@
                           class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full hidden">
                         0 </span>
                 </button>
-                <div id="notification-dropdown" class="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg py-1 z-50 hidden top-full border border-gray-200 max-h-80 overflow-y-auto">
-                    <div class="px-4 py-2 border-b">
-                        <span class="font-semibold text-gray-800">Thông báo</span>
+                <div id="notification-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-1 z-50 hidden top-full border border-gray-200 max-h-96 overflow-y-auto">
+                    <div class="px-4 py-3 border-b flex justify-between items-center">
+                        <span class="font-semibold text-gray-800 text-base">Thông báo</span>
+                        <button id="mark-all-read-btn" class="text-xs text-indigo-600 hover:underline disabled:text-gray-400 disabled:no-underline" disabled>Đánh dấu tất cả đã đọc</button>
                     </div>
                     <div id="notification-list" class="divide-y divide-gray-100">
-                        <div id="no-notifications" class="px-4 py-3 text-sm text-gray-500 text-center">Chưa có thông báo mới.</div>
+                        <div id="no-notifications" class="px-4 py-4 text-sm text-gray-500 text-center">Chưa có thông báo mới.</div>
                     </div>
-                    <div class="px-4 py-2 border-t text-center">
-                        <a href="#" class="text-indigo-600 hover:underline text-sm">Xem tất cả</a> </div>
                 </div>
-                <button id="enable-notifications-btn" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap">Bật Thông báo</button>
-            </div>
+                <button id="enable-notifications-btn" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap hidden">Bật Thông báo</button> </div>
 
             <div sec:authorize="isAuthenticated()">
                 <form th:action="@{/logout}" method="post" class="inline">
@@ -50,7 +49,6 @@
                     </button>
                 </form>
             </div>
-
             <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition flex items-center">
                 <i class="fas fa-sign-in-alt mr-2"></i> Đăng nhập
             </a>
@@ -67,32 +65,229 @@
     <script th:src="@{/js/firebase-init.js}" defer></script>
 </th:block>
 
-<script th:inline="javascript">
+<script th:inline="javascript" sec:authorize="isAuthenticated()">
+    /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', () => {
         const notificationBell = document.getElementById('notification-bell');
         const notificationDropdown = document.getElementById('notification-dropdown');
         const notificationList = document.getElementById('notification-list');
         const noNotificationsMessage = document.getElementById('no-notifications');
         const notificationCountBadge = document.getElementById('notification-count');
+        const markAllReadBtn = document.getElementById('mark-all-read-btn');
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
+        let unreadNotifications = [];
+
+        // --- Function to fetch unread notifications ---
+        async function fetchNotifications() {
+            console.log("Fetching notifications...");
+            try {
+                const response = await fetch('/api/notifications/unread', {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to fetch notifications:', response.statusText);
+                    // Thêm log chi tiết hơn
+                    console.log('Response status:', response.status);
+                    const errorText = await response.text();
+                    console.log('Error response body:', errorText);
+                    return;
+                }
+
+                unreadNotifications = await response.json();
+                console.log("Fetched notifications:", unreadNotifications);
+                updateNotificationUI(unreadNotifications);
+
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                notificationList.innerHTML = '<div class="px-4 py-3 text-sm text-red-500 text-center">Lỗi khi tải thông báo.</div>';
+                updateBadge(0);
+            }
+        }
+
+        // --- Function to update badge and dropdown list ---
+        function updateNotificationUI(notifications) {
+            const count = notifications.length;
+            updateBadge(count);
+
+            if (count === 0) {
+                notificationList.innerHTML = '';
+                noNotificationsMessage.style.display = 'block';
+                markAllReadBtn.disabled = true;
+            } else {
+                noNotificationsMessage.style.display = 'none';
+                notificationList.innerHTML = '';
+                markAllReadBtn.disabled = false;
+
+                notifications.forEach(notif => {
+                    const item = createNotificationItem(notif);
+                    notificationList.appendChild(item);
+                });
+            }
+        }
+
+        // --- Function to update the notification count badge ---
+        function updateBadge(count) {
+            if (notificationCountBadge) {
+                notificationCountBadge.textContent = count;
+                if (count > 0) {
+                    notificationCountBadge.classList.remove('hidden');
+                } else {
+                    notificationCountBadge.classList.add('hidden');
+                }
+            }
+        }
+
+        // --- Function to create a single notification item HTML (NO LINK) ---
+        function createNotificationItem(notification) {
+            const div = document.createElement('div');
+            div.classList.add('px-4', 'py-3', 'hover:bg-gray-100', 'cursor-pointer');
+            div.dataset.notificationId = notification.notificationId; // Store ID for marking as read
+
+            div.innerHTML = `
+            <p class="text-sm font-medium text-gray-800 truncate">${notification.notificationType || 'Thông báo'}</p>
+            <p class="text-sm text-gray-600">${notification.message}</p>
+            <p class="text-xs text-gray-400 mt-1">${formatTimeAgo(notification.sentAt)}</p>
+        `;
+
+            // Add click listener ONLY for marking as read
+            div.addEventListener('click', handleNotificationClick);
+
+            return div;
+        }
+
+        // --- Handler for clicking a notification item (NO REDIRECT) ---
+        async function handleNotificationClick(event) {
+            const item = event.currentTarget;
+            const notificationId = item.dataset.notificationId;
+
+            // 1. Mark as read on the backend
+            console.log(`Marking notification ${notificationId} as read...`);
+            try {
+                const headers = { 'Accept': 'application/json' };
+                if (csrfToken && csrfHeader) {
+                    headers[csrfHeader] = csrfToken;
+                }
+
+                const response = await fetch(`/api/notifications/mark-read/${notificationId}`, {
+                    method: 'POST',
+                    headers: headers
+                });
+
+                if (response.ok) {
+                    console.log(`Notification ${notificationId} marked as read.`);
+                    // Remove the item visually
+                    item.remove();
+                    // Update badge count
+                    const currentCount = parseInt(notificationCountBadge.textContent || '0');
+                    updateBadge(Math.max(0, currentCount - 1));
+                    // Check if list becomes empty
+                    if (notificationList.childElementCount === 0) {
+                        noNotificationsMessage.style.display = 'block';
+                        markAllReadBtn.disabled = true;
+                    }
+                    // Don't redirect, maybe close dropdown after a short delay?
+                    // setTimeout(() => { notificationDropdown.classList.add('hidden'); }, 300);
+
+                } else {
+                    console.error('Failed to mark notification as read:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        }
+
+        // --- Handler for clicking "Mark all as read" (No change needed here) ---
+        async function handleMarkAllReadClick() {
+            console.log("Marking all notifications as read...");
+            try {
+                const headers = { 'Accept': 'application/json' };
+                if (csrfToken && csrfHeader) {
+                    headers[csrfHeader] = csrfToken;
+                }
+                const response = await fetch('/api/notifications/mark-all-read', {
+                    method: 'POST',
+                    headers: headers
+                });
+
+                if (response.ok) {
+                    console.log("All notifications marked as read.");
+                    unreadNotifications = [];
+                    updateNotificationUI(unreadNotifications);
+                    notificationDropdown.classList.add('hidden');
+                } else {
+                    console.error('Failed to mark all notifications as read:', response.statusText);
+                    alert('Đã xảy ra lỗi khi đánh dấu tất cả thông báo.');
+                }
+            } catch (error) {
+                console.error('Error marking all notifications as read:', error);
+                alert('Đã xảy ra lỗi mạng.');
+            }
+        }
+
+        // --- Helper function to format time (optional, no change needed) ---
+        function formatTimeAgo(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " năm trước";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " tháng trước";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " ngày trước";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " giờ trước";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " phút trước";
+            return "Vừa xong";
+        }
+
+        // --- Event Listeners (No change needed here) ---
         if (notificationBell && notificationDropdown) {
             notificationBell.addEventListener('click', (event) => {
-                event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                event.stopPropagation();
+                console.log("Bell clicked!"); // Log khi click chuông
+                const isHiddenCurrently = notificationDropdown.classList.contains('hidden');
+                console.log("Dropdown is hidden:", isHiddenCurrently);
                 notificationDropdown.classList.toggle('hidden');
-                // Nếu mở dropdown, có thể gọi API để lấy thông báo mới nhất
-                if (!notificationDropdown.classList.contains('hidden')) {
-                    fetchNotifications(); // Gọi hàm lấy thông báo (xem ví dụ bên dưới)
+                console.log("Dropdown hidden after toggle:", notificationDropdown.classList.contains('hidden'));
+                // Fetch notifications only when opening the dropdown
+                if (isHiddenCurrently) { // Fetch if it WAS hidden (meaning it's now open)
+                    fetchNotifications();
                 }
             });
 
-            // Đóng dropdown khi click ra ngoài
             document.addEventListener('click', (event) => {
                 if (!notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
                     notificationDropdown.classList.add('hidden');
                 }
             });
         }
+
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', handleMarkAllReadClick);
+        }
+
+
+        // --- Initial Fetch ---
+        fetchNotifications();
+
+        // --- Make functions accessible globally ---
+        window.medconnect = {
+            fetchNotifications,
+            updateBadge,
+            createNotificationItem,
+            updateNotificationUI
+        };
+
     });
+    /*]]>*/
 </script>
 
 </body>
