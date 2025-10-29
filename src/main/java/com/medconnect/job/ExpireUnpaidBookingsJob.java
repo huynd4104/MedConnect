@@ -24,7 +24,7 @@ public class ExpireUnpaidBookingsJob implements Job {
         appointmentRepository.findUnpaidAppointments(start, end).forEach(appointment -> {
             appointment.setStatus(Appointment.Status.Cancelled);
             appointmentRepository.save(appointment);
-            notificationService.sendPushNotification(appointment.getPatient().getUser(), "Expired Booking", "Your booking has expired due to unpaid.");
+            notificationService.sendPushNotification(appointment.getPatient().getUser(), "Expired Booking", "Đặt chỗ của bạn đã hết hạn do chưa thanh toán.");
         });
     }
 }
