@@ -34,6 +34,30 @@
             </div>
 
             <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-user mr-2 text-indigo-500"></i> Họ và Tên
+                </label>
+                <input type="text" th:field="*{fullName}" id="fullName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-phone mr-2 text-indigo-500"></i> Số điện thoại
+                </label>
+                <input type="tel" th:field="*{phoneNumber}" id="phoneNumber" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label for="clinicAddress" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <i class="fas fa-map-marker-alt mr-2 text-indigo-500"></i> Địa chỉ phòng khám
+                </label>
+                <input type="text" th:field="*{clinicAddress}" id="clinicAddress" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <span th:if="${#fields.hasErrors('clinicAddress')}" th:errors="*{clinicAddress}" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
                 <label for="experienceYears" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <i class="fas fa-briefcase mr-2 text-indigo-500"></i> Số năm kinh nghiệm
                 </label>

@@ -22,44 +22,40 @@
     <!-- Thông tin cá nhân -->
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 transform transition duration-300">
         <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-user-md mr-2 text-indigo-500">
-            </i>
-            Thông tin cá nhân
+            <i class="fas fa-user-md mr-2 text-indigo-500"></i> Thông tin cá nhân
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <p class="text-gray-700">
-            <span class="font-medium">
-              Email:
-            </span>
-                <span th:text="${doctor.user.email}">
-            </span>
+                <span class="font-medium">Họ tên:</span>
+                <span th:text="${doctor.fullName} ?: 'Chưa cập nhật'"></span>
             </p>
             <p class="text-gray-700">
-            <span class="font-medium">
-              Chuyên khoa:
-            </span>
-                <span th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'">
-            </span>
+                <span class="font-medium">Email:</span>
+                <span th:text="${doctor.user.email}"></span>
             </p>
             <p class="text-gray-700">
-            <span class="font-medium">
-              Số năm kinh nghiệm:
-            </span>
-                <span th:text="${doctor.experienceYears}">
-            </span>
+                <span class="font-medium">Số điện thoại:</span>
+                <span th:text="${doctor.phoneNumber} ?: 'Chưa cập nhật'"></span>
             </p>
             <p class="text-gray-700">
-            <span class="font-medium">
-              Trạng thái:
-            </span>
-                <span th:text="${doctor.status}">
-            </span>
+                <span class="font-medium">Chuyên khoa:</span>
+                <span th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></span>
+            </p>
+            <p class="text-gray-700">
+                <span class="font-medium">Số năm kinh nghiệm:</span>
+                <span th:text="${doctor.experienceYears}"></span>
+            </p>
+            <p class="text-gray-700">
+                <span class="font-medium">Địa chỉ phòng khám:</span>
+                <span th:text="${doctor.clinicAddress} ?: 'Chưa cập nhật'"></span>
+            </p>
+            <p class="text-gray-700">
+                <span class="font-medium">Trạng thái:</span>
+                <span th:text="${doctor.status}"></span>
             </p>
         </div>
         <a th:href="@{/doctor-profile}" class="text-indigo-600 hover:text-indigo-800 font-medium mt-6 inline-block transition">
-            Chỉnh sửa hồ sơ
-            <i class="fas fa-edit ml-1">
-            </i>
+            Chỉnh sửa hồ sơ <i class="fas fa-edit ml-1"></i>
         </a>
     </div>
     <!-- Lịch hẹn sắp tới -->

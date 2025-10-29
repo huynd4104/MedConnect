@@ -19,6 +19,7 @@
         <table class="w-full table-auto min-w-max border-collapse">
             <thead class="bg-indigo-100 text-indigo-800">
             <tr>
+                <th class="p-3 text-left">Họ và Tên</th>
                 <th class="p-3 text-left">Email</th>
                 <th class="p-3 text-left">Chuyên khoa</th>
                 <th class="p-3 text-left">Kinh nghiệm (năm)</th>
@@ -27,6 +28,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
             <tr th:each="doctor : ${doctors}" class="transition duration-200 hover:bg-gray-50">
+                <td class="p-3" th:text="${doctor.fullName}"></td>
                 <td class="p-3" th:text="${doctor.user.email}"></td>
                 <td class="p-3" th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></td>
                 <td class="p-3" th:text="${doctor.experienceYears}"></td>

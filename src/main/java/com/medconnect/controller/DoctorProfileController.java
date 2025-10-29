@@ -36,7 +36,7 @@ public class DoctorProfileController {
 
     @GetMapping("/doctor-profile")
     public String showProfileForm(Model model, Authentication auth) {
-        // 1. Lấy email bằng auth.getName() (Đã sửa từ trước)
+        // 1. Lấy email bằng auth.getName()
         String userEmail = auth.getName();
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
@@ -51,26 +51,25 @@ public class DoctorProfileController {
 
         if (doctorOpt.isPresent()) {
             Doctor doctor = doctorOpt.get();
+            dto.setFullName(doctor.getFullName());
+            dto.setPhoneNumber(doctor.getPhoneNumber());
+            dto.setClinicAddress(doctor.getClinicAddress());
             dto.setExperienceYears(doctor.getExperienceYears());
             dto.setLicenseNumber(doctor.getLicenseNumber());
             dto.setSpecializationId(doctor.getSpecialization() != null ? doctor.getSpecialization().getSpecializationId() : null);
 
             dto.setExistingPhotoPath(doctor.getPhotoPath());
 
-            // Thay vào đó, lấy giá trị để truyền riêng ra view
             doctorStatus = doctor.getStatus().name();
             rejectionReason = doctor.getRejectionReason();
 
-            // === SỬA LỖI 3: Gọi đúng phương thức repository ===
-            // Dòng cũ gây lỗi: documents = doctorDocumentRepository.findByDoctor(doctor);
-            documents = doctorDocumentRepository.findByDoctorDoctorId(doctor.getDoctorId()); // ĐÃ SỬA
+            documents = doctorDocumentRepository.findByDoctorDoctorId(doctor.getDoctorId());
         }
 
         dto.setExistingDocuments(documents);
         model.addAttribute("doctorProfileDTO", dto);
 
         // Thêm các thuộc tính status và reason riêng biệt cho view
-        // file .html của bạn có thể dùng th:if="${doctorStatus}" để hiển thị
         model.addAttribute("doctorStatus", doctorStatus);
         model.addAttribute("rejectionReason", rejectionReason);
 

@@ -10,6 +10,7 @@ import com.medconnect.repository.DoctorRepository;
 import com.medconnect.repository.SpecializationRepository;
 import com.medconnect.repository.UserRepository; // << Import thêm
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +51,9 @@ public class DoctorService {
         doctor.setSpecialization(spec);
         doctor.setExperienceYears(dto.getExperienceYears());
         doctor.setLicenseNumber(dto.getLicenseNumber());
+        doctor.setFullName(dto.getFullName());
+        doctor.setPhoneNumber(dto.getPhoneNumber());
+        doctor.setClinicAddress(dto.getClinicAddress());
 
         // Upload ảnh đại diện (nếu có)
         if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
@@ -113,6 +117,7 @@ public class DoctorService {
         return doctorRepository.findByStatus(Doctor.Status.Pending);
     }
 
+    @CacheEvict(value = "doctors", allEntries = true)
     public void approveDoctor(Integer doctorId, boolean approve, String reason) {
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow();
         if (approve) {

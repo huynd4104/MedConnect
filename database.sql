@@ -48,6 +48,9 @@ CREATE TABLE doctors (
                          doctor_id INT IDENTITY(1,1) PRIMARY KEY, -- Khóa chính tự tăng
                          user_id INT NOT NULL,             -- Khóa ngoại, và là duy nhất (UNIQUE)
                          specialization_id INT NULL,
+                         full_name NVARCHAR(255) NULL,
+                         phone_number NVARCHAR(20) NULL,
+                         clinic_address NVARCHAR(500) NULL,
                          experience_years INT NOT NULL,
                          license_number NVARCHAR(100) NOT NULL,
                          photo_path NVARCHAR(500) NULL,

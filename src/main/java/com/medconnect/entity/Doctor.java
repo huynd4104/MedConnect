@@ -22,6 +22,15 @@ public class Doctor {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @Column(name = "full_name", length = 255, nullable = true)
+    private String fullName;
+
+    @Column(name = "phone_number", length = 20, nullable = true)
+    private String phoneNumber;
+
+    @Column(name = "clinic_address", length = 500, nullable = true)
+    private String clinicAddress;
+
     @ManyToOne
     @JoinColumn(name = "specialization_id", nullable = true)
     private Specialization specialization;
