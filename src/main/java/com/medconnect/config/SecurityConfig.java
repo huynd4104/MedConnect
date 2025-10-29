@@ -37,7 +37,10 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/", "/index", "/register", "/login", "/forgot-password", "/verify", "/search-doctors", "/doctor-profile-view/**").permitAll()
 
-                        // --- !!! DI CHUYỂN DÒNG NÀY LÊN TRÊN anyRequest() !!! ---
+                        .requestMatchers("/api/notifications/unread").authenticated()
+                        .requestMatchers("/api/notifications/mark-read/**").authenticated()
+                        .requestMatchers("/api/notifications/mark-all-read").authenticated()
+
                         .requestMatchers("/api/users/update-fcm-token").authenticated()
 
                         // Các URL theo vai trò
@@ -45,7 +48,6 @@ public class SecurityConfig {
                         .requestMatchers("/doctor-profile", "/doctor-schedule", "/doctor-schedule/**", "/doctor-dashboard/**", "/write-summary", "/delete-document/**").hasRole("Doctor")
                         .requestMatchers("/admin-doctor-approval", "/admin-specializations", "/admin-doctor-list", "/admin-patient-list").hasRole("Admin")
 
-                        // --- !!! anyRequest() PHẢI ĐẶT CUỐI CÙNG TRONG authorizeHttpRequests !!! ---
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

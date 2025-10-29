@@ -45,7 +45,7 @@ public class AppointmentService {
         notificationService.sendPushNotification(
                 patient.getUser(),
                 "New Appointment",
-                "Bạn đã đặt lịch hẹn với bác sĩ " + doctor.getUser().getEmail() + " lúc " + dto.getAppointmentDateTime().toString() + ", xin vui lòng thanh toán."
+                "Bạn đã đặt lịch hẹn với bác sĩ " + doctor.getFullName() + ", xin vui lòng thanh toán."
         );
         try {
             String subject = "Xác nhận lịch hẹn thành công";

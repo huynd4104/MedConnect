@@ -28,7 +28,7 @@ public class Notification {
     @Column(name = "notification_type", nullable = false)
     private String notificationType;
 
-    @Column(name = "is_read", nullable = false)
+    @Column(name = "[read]", nullable = false)
     private Boolean read = false;
 
     @Column(name = "sent_at", nullable = false)
