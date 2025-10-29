@@ -8,7 +8,7 @@ import com.medconnect.repository.ConsultationDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional; // <-- THÊM IMPORT
+import java.util.Optional; // <-- KIỂM TRA IMPORT NẾU CHƯA CÓ
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +18,6 @@ public class ConsultationDocumentService {
     private final NotificationService notificationService;
 
     public void writeDocument(ConsultationDocumentDTO dto) {
-        // Validate format...
         if (!validatePrescriptionFormat(dto.getContent())) {
             throw new RuntimeException("MSG25: Prescription does not meet regulations.");
         }
@@ -27,35 +26,40 @@ public class ConsultationDocumentService {
         Optional<ConsultationDocument> existingDocOpt = documentRepository.findByAppointmentAppointmentId(dto.getAppointmentId());
 
         ConsultationDocument doc;
-        boolean isNewDocument = false;
 
         if (existingDocOpt.isPresent()) {
-            // Nếu có, lấy ra để cập nhật
             doc = existingDocOpt.get();
         } else {
-            // Nếu không, tạo mới
             doc = new ConsultationDocument();
             Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy Appointment: " + dto.getAppointmentId()));
             doc.setAppointment(appointment);
-            isNewDocument = true; // Đánh dấu là tài liệu mới để gửi thông báo
         }
 
-        // Cập nhật nội dung và loại từ DTO
         doc.setDocumentType(dto.getDocumentType());
         doc.setContent(dto.getContent());
 
         documentRepository.save(doc);
 
-        // Chỉ gửi thông báo nếu đây là lần đầu tiên tạo tài liệu
-        if (isNewDocument) {
-            // Đảm bảo appointment không null (vì doc cũ có thể không load appointment)
-            Appointment appointment = doc.getAppointment();
-            if (appointment == null) {
-                appointment = appointmentRepository.findById(dto.getAppointmentId()).orElseThrow();
-            }
-            notificationService.sendPushNotification(appointment.getPatient().getUser(), "New Document", "Bạn có tài liệu tư vấn mới.");
+        Appointment appointment = doc.getAppointment();
+        if (appointment == null) {
+            appointment = appointmentRepository.findById(dto.getAppointmentId()).orElseThrow();
+            doc.setAppointment(appointment);
         }
+
+        String notificationTitle = doc.getDocumentType() == ConsultationDocument.DocumentType.Prescription
+                ? "New Prescription"
+                : "New Summary";
+        String notificationMessage = doc.getDocumentType() == ConsultationDocument.DocumentType.Prescription
+                ? "Bác sĩ đã cập nhật đơn thuốc cho bạn."
+                : "Bác sĩ đã cập nhật tóm tắt tư vấn cho bạn.";
+
+        // Gửi thông báo cho bệnh nhân
+        notificationService.sendPushNotification(
+                appointment.getPatient().getUser(),
+                notificationTitle,
+                notificationMessage
+        );
     }
 
     private boolean validatePrescriptionFormat(String content) {

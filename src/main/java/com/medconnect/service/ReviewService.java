@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final AppointmentRepository appointmentRepository;
+    private final NotificationService notificationService;
 
-    // THAY THẾ TOÀN BỘ PHƯƠNG THỨC NÀY
     public void leaveReview(ReviewDTO dto) {
         Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn."));
@@ -27,7 +27,6 @@ public class ReviewService {
             throw new RuntimeException("MSG28: Review contains invalid content.");
         }
 
-        // --- LOGIC CẬP NHẬT/TẠO MỚI ---
         // 1. Tìm review cũ (nếu có) bằng appointmentId, nếu không thấy thì tạo mới
         Review review = reviewRepository.findByAppointmentAppointmentId(dto.getAppointmentId())
                 .orElse(new Review());
@@ -43,7 +42,25 @@ public class ReviewService {
         review.setAnonymous(dto.getAnonymous());
 
         // 4. Lưu (JPA sẽ tự biết đây là update hay insert)
-        reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+
+        // --- GỬI THÔNG BÁO CHO BÁC SĨ ---
+        // 5. Lấy thông tin bác sĩ từ cuộc hẹn
+        Appointment apptForNotification = savedReview.getAppointment();
+        if (apptForNotification == null) {
+            apptForNotification = appointmentRepository.findById(dto.getAppointmentId()).orElseThrow();
+        }
+
+        // Tạo nội dung thông báo
+        String patientName = dto.getAnonymous() ? "Một bệnh nhân ẩn danh" : apptForNotification.getPatient().getFullName();
+        String notificationMessage = patientName + " đã để lại đánh giá " + dto.getRating() + " sao cho cuộc hẹn.";
+
+        // Gửi thông báo
+        notificationService.sendPushNotification(
+                apptForNotification.getDoctor().getUser(),
+                "New Review",
+                notificationMessage
+        );
     }
 
     private boolean containsPII(String comment) {

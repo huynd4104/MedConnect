@@ -32,7 +32,7 @@ public class NotificationController {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
 
-        List<Notification> unreadNotifications = notificationRepository.findByUserUserIdAndReadFalse(currentUser.getUserId());
+        List<Notification> unreadNotifications = notificationRepository.findByUserUserIdAndReadFalseOrderBySentAtDesc(currentUser.getUserId());
         return ResponseEntity.ok(unreadNotifications);
     }
 
@@ -73,7 +73,7 @@ public class NotificationController {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
 
-        List<Notification> unreadNotifications = notificationRepository.findByUserUserIdAndReadFalse(currentUser.getUserId());
+        List<Notification> unreadNotifications = notificationRepository.findByUserUserIdAndReadFalseOrderBySentAtDesc(currentUser.getUserId());
         if (!unreadNotifications.isEmpty()) {
             for (Notification notification : unreadNotifications) {
                 notification.setRead(true);

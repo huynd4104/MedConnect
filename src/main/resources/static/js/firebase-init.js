@@ -496,5 +496,5 @@ function showForegroundNotification(title, body) {
         if (document.body.contains(notificationDiv)) {
             closeBtn.onclick({stopPropagation: () => {}}); // Gọi hàm đóng để có hiệu ứng
         }
-    }, 10000);
+    }, 5000);
 }
