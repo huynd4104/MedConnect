@@ -67,7 +67,7 @@
             <thead class="bg-indigo-100 text-indigo-800">
             <tr>
                 <th class="p-3 text-left">
-                    Ngày
+                    Thời gian hẹn
                 </th>
                 <th class="p-3 text-left">
                     Bác sĩ
@@ -85,18 +85,18 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
             <tr th:each="app : ${appointments}" class="transition duration-200">
-                <td th:text="${app.appointmentDateTime}" class="p-3">
+                <td th:text="${#temporals.format(app.appointmentDateTime, 'HH:mm dd/MM/yyyy')}" class="p-3">
                 </td>
                 <td th:text="${app.doctor.user.email}" class="p-3">
                 </td>
                 <td class="p-3">
             <span th:switch="${app.consultationType.name()}">
-              <span th:case="'InPerson'">
-                Trực tiếp
-              </span>
-              <span th:case="'Online'">
-                Trực tuyến
-              </span>
+                  <span th:case="'InPerson'" class="text-green-600 font-medium">
+                    Trực tiếp
+                  </span>
+                  <span th:case="'Online'" class="text-blue-600 font-medium">
+                    Trực tuyến
+                  </span>
             </span>
                 </td>
                 <td class="p-3">

@@ -43,7 +43,7 @@
             text-align: center;
             white-space: nowrap;
             transition: all 0.2s;
-            margin: 0 -2rem;
+            margin: 0 -2.5rem;
         }
 
         .action-btn i {
@@ -134,12 +134,12 @@
                 <th:block th:each="app : ${appointments}">
                     <!-- DÒNG 1: Thông tin chính -->
                     <tr class="hover:bg-gray-50">
-                        <td rowspan="3" th:text="${app.appointmentDateTime}"></td>
+                        <td rowspan="3" th:text="${#temporals.format(app.appointmentDateTime, 'HH:mm dd/MM/yyyy')}"></td>
                         <td rowspan="3" th:text="${app.patient.fullName}"></td>
                         <td rowspan="3">
                             <span th:switch="${app.consultationType.name()}">
-                                <span th:case="'InPerson'">Trực tiếp</span>
-                                <span th:case="'Online'">Trực tuyến</span>
+                                <span th:case="'InPerson'" class="text-green-600 font-medium">Trực tiếp</span>
+                                <span th:case="'Online'" class="text-blue-600 font-medium">Trực tuyến</span>
                             </span>
                         </td>
                         <td rowspan="3">

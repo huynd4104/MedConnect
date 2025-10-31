@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class BookAppointmentController {
 
             // Lấy danh sách lịch làm việc (chỉ lấy các lịch đang active)
             List<Schedule> schedules = scheduleRepository.findByDoctor_DoctorIdAndActiveTrue(doctorId);
+            schedules.sort(Comparator.comparing(Schedule::getStartTime));
 
             AppointmentDTO dto = new AppointmentDTO();
             dto.setDoctorId(doctorId);

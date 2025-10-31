@@ -33,7 +33,7 @@ public class EmailService {
                 "  .content { padding: 30px; color: #333; }" +
                 "  .content p { margin-bottom: 20px; font-size: 16px; }" +
                 "  .button-container { text-align: center; margin: 30px 0}" +
-                "  .button { display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; }" +
+                "  .button { display: inline-block; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; }" +
                 "  .footer { background-color: #008001; color: #888; padding: 20px; text-align: center; font-size: 12px; border-top: 1px solid #ddd; }" +
                 "  .preheader { display: none; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; }" +
                 "  blockquote { border-left: 4px solid #e5e7eb; padding-left: 15px; margin-left: 0; font-style: italic; color: #555; background-color: #f9fafb; padding-top: 10px; padding-bottom: 10px; }" +
@@ -161,6 +161,30 @@ public class EmailService {
                 "<p>Cảm ơn bạn đã đồng hành cùng MedConnect.</p>";
 
         String htmlContent = createHtmlTemplate("Lịch hẹn mới", preheader, body);
+        sendEmail(toEmail, subject, htmlContent);
+    }
+
+    public void sendDoctorRejectionEmail(String toEmail, String doctorName, String reason) throws MessagingException {
+        String subject = "Hồ sơ MedConnect của bạn đã bị từ chối";
+        String preheader = "Thông tin về việc xét duyệt hồ sơ bác sĩ của bạn tại MedConnect.";
+
+        // Xử lý tên, nếu rỗng thì dùng email
+        String helloName = (doctorName != null && !doctorName.isBlank()) ? doctorName : toEmail;
+
+        String body = "<p>Chào Bác sĩ " + helloName + ",</p>" +
+                "<p>Chúng tôi rất tiếc phải thông báo rằng hồ sơ đăng ký bác sĩ của bạn tại MedConnect đã không được phê duyệt.</p>" +
+                "<p><strong>Lý do từ chối:</strong></p>" +
+                // Thêm một blockquote để làm nổi bật lý do
+                "<blockquote style='border-left: 4px solid #e5e7eb; padding-left: 15px; margin-left: 0; font-style: italic; color: #555; background-color: #f9fafb; padding-top: 10px; padding-bottom: 10px;'>" +
+                reason +
+                "</blockquote>" +
+                "<p>Bạn có thể cập nhật lại hồ sơ của mình và gửi duyệt lại bất cứ lúc nào bằng cách đăng nhập vào tài khoản.</p>" +
+                "<div class='button-container'>" +
+                "<a href='http://localhost:8080/doctor-profile' class='button'>Cập nhật hồ sơ</a>" +
+                "</div>" +
+                "<p>Trân trọng,<br>Đội ngũ MedConnect</p>";
+
+        String htmlContent = createHtmlTemplate("Hồ sơ bị từ chối", preheader, body);
         sendEmail(toEmail, subject, htmlContent);
     }
 }

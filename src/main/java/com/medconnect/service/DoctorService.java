@@ -30,6 +30,8 @@ public class DoctorService {
     private final SpecializationRepository specializationRepository;
     private final DoctorDocumentRepository doctorDocumentRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final NotificationService notificationService;
 
     public void completeProfile(Integer userId, DoctorProfileDTO dto) throws IOException {
         // 1. Lấy đối tượng User từ userId
@@ -119,14 +121,39 @@ public class DoctorService {
     @CacheEvict(value = "doctors", allEntries = true)
     public void approveDoctor(Integer doctorId, boolean approve, String reason) {
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow();
+
         if (approve) {
             doctor.setStatus(Doctor.Status.Approved);
+
         } else {
             doctor.setStatus(Doctor.Status.Rejected);
             doctor.setRejectionReason(reason);
+
+            try {
+                String toEmail = doctor.getUser().getEmail();
+                String doctorName = doctor.getFullName(); // Lấy tên đầy đủ
+
+                // Đảm bảo lý do không bị null/rỗng khi gửi mail
+                String rejectionReason = (reason != null && !reason.isBlank())
+                        ? reason
+                        : "Không có lý do cụ thể được cung cấp.";
+
+                // Gọi service email
+                emailService.sendDoctorRejectionEmail(toEmail, doctorName, rejectionReason);
+
+            } catch (Exception e) {
+                System.err.println("LỖI: Không thể gửi email từ chối cho bác sĩ " + doctorId + ": " + e.getMessage());
+                e.printStackTrace();
+            }
         }
+
         doctorRepository.save(doctor);
-        // Notify doctor via NotificationService
+
+        notificationService.sendPushNotification(
+                doctor.getUser(),
+                "Application rejection",
+                "Hồ sơ của bạn đã bị từ chối, lý do chi tiết vui lòng kiểm tra trong mail."
+        );
     }
 
     public List<Doctor> getAllDoctors() {
