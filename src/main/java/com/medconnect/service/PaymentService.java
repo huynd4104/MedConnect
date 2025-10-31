@@ -1,6 +1,8 @@
 package com.medconnect.service;
 
 import com.medconnect.entity.Appointment;
+import com.medconnect.entity.Doctor;
+import com.medconnect.entity.Patient;
 import com.medconnect.entity.Payment;
 import com.medconnect.repository.AppointmentRepository;
 import com.medconnect.repository.PaymentRepository;
@@ -26,6 +28,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final AppointmentRepository appointmentRepository;
     private final VideoService videoService;
+    private final NotificationService notificationService;
+    private final EmailService emailService;
 
     @Value("${app.vnpay.tmn-code}")
     private String tmnCode;
@@ -117,17 +121,14 @@ public class PaymentService {
     }
 
     public void processVnpayCallback(Map<String, String> params) {
-        // (Bạn nên giữ logic xác thực vnp_SecureHash của mình ở đây nếu có)
-        // ...
+        // ... (Giữ logic xác thực hash nếu có) ...
 
         String responseCode = params.get("vnp_ResponseCode");
         Integer appointmentId = Integer.parseInt(params.get("vnp_TxnRef"));
 
-        // 1. Lấy các đối tượng liên quan
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn: " + appointmentId));
 
-        // Bạn cần tìm payment record đã tạo trước đó
         Payment payment = paymentRepository.findByAppointmentAppointmentId(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thanh toán cho lịch hẹn: " + appointmentId));
 
@@ -138,32 +139,60 @@ public class PaymentService {
             appointment.setStatus(Appointment.Status.Confirmed);
             appointment.setPaymentStatus(Appointment.PaymentStatus.Paid);
 
-            // *** TẠO VIDEO LINK (LOGIC BỊ THIẾU) ***
+            // Tạo video link
             if (appointment.getConsultationType() == Appointment.ConsultationType.Online) {
-                videoService.initializeSession(appointment); // <-- Sửa ở đây
+                videoService.initializeSession(appointment);
             }
 
             // Cập nhật trạng thái Thanh toán
             payment.setStatus(Payment.Status.Success);
-            payment.setTransactionId(params.get("vnp_TransactionNo")); // Lưu mã giao dịch VNPAY
-            payment.setPaidAt(LocalDateTime.now()); // Lưu thời gian thanh toán
+            payment.setTransactionId(params.get("vnp_TransactionNo"));
+            payment.setPaidAt(LocalDateTime.now());
 
             // Lưu cả hai vào CSDL
             appointmentRepository.save(appointment);
             paymentRepository.save(payment);
 
-            // (Bạn nên gọi NotificationService/EmailService ở đây để báo thành công)
+            // === BẮT ĐẦU THÊM MỚI (GỬI THÔNG BÁO CHO BÁC SĨ) ===
+            try {
+                Doctor doctor = appointment.getDoctor();
+                Patient patient = appointment.getPatient();
+
+                // 1. Gửi Push Notification (Realtime)
+                notificationService.sendPushNotification(
+                        doctor.getUser(),
+                        "Lịch hẹn mới",
+                        "Bạn có một cuộc hẹn mới, vui lòng kiểm tra trong trang quản lý."
+                );
+
+                // 2. Gửi Email
+                String doctorName = (doctor.getFullName() != null && !doctor.getFullName().isEmpty())
+                        ? doctor.getFullName()
+                        : doctor.getUser().getEmail();
+                String patientName = (patient.getFullName() != null && !patient.getFullName().isEmpty())
+                        ? patient.getFullName()
+                        : patient.getUser().getEmail();
+                String appTime = appointment.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("HH:mm 'ngày' dd/MM/yyyy"));
+
+                emailService.sendNewAppointmentNotificationToDoctor(
+                        doctor.getUser().getEmail(),
+                        doctorName,
+                        patientName,
+                        appTime
+                );
+
+            } catch (Exception e) {
+                // Ghi log lỗi gửi thông báo cho bác sĩ (nhưng không làm dừng luồng thanh toán)
+                System.err.println("Lỗi khi gửi thông báo cho bác sĩ sau khi thanh toán: " + e.getMessage());
+                e.printStackTrace();
+            }
+            // === KẾT THÚC THÊM MỚI ===
 
         } else {
             // === 3. THANH TOÁN THẤT BẠI ===
-
-            // Cập nhật trạng thái Thanh toán
             payment.setStatus(Payment.Status.Failed);
             paymentRepository.save(payment);
 
-            // Lịch hẹn không đổi (vẫn là Pending/Pending)
-
-            // Ném ra lỗi để PaymentController bắt được và báo cho người dùng
             throw new RuntimeException("Thanh toán VNPAY thất bại. Mã lỗi: " + responseCode);
         }
     }

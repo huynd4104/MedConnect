@@ -48,6 +48,6 @@ public class Payment {
     }
 
     public enum Status {
-        Pending, Success, Failed
+        Pending, Success, Failed, Refunded
     }
 }
