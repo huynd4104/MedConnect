@@ -31,7 +31,7 @@ public class ReviewController {
     public String showReviewForm(@RequestParam("appointmentId") Integer appointmentId, Model model, RedirectAttributes redirectAttributes) {
 
         try {
-            // 1. Lấy thông tin lịch hẹn (để hiển thị info bác sĩ, v.v.)
+            // 1. Lấy thông tin lịch hẹn
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn: " + appointmentId));
             model.addAttribute("appointment", appointment);
@@ -48,7 +48,7 @@ public class ReviewController {
                     Review review = existingReview.get();
                     reviewDTO = new ReviewDTO();
 
-                    // Lấy ID từ param (an toàn hơn)
+                    // Lấy ID từ param
                     reviewDTO.setAppointmentId(appointmentId);
 
                     // Load data cũ
@@ -66,13 +66,11 @@ public class ReviewController {
             return "review";
 
         } catch (Exception e) {
-            // 4. Nếu có lỗi (ví dụ không tìm thấy ID), quay về dashboard
             redirectAttributes.addFlashAttribute("error", "Lỗi khi tải trang đánh giá: " + e.getMessage());
             return "redirect:/patient-dashboard";
         }
     }
 
-    // Phương thức POST (không đổi so với lần sửa trước)
     @PostMapping("/review")
     public String leaveReview(@ModelAttribute ReviewDTO dto, BindingResult result, RedirectAttributes redirectAttributes) {
 

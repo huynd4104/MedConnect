@@ -82,7 +82,7 @@ public class DoctorDashboardController {
                                     Authentication auth,
                                     RedirectAttributes redirectAttributes) {
         try {
-            // 1. Kiểm tra lý do (bắt buộc)
+            // 1. Kiểm tra lý do
             if (reason == null || reason.isBlank()) {
                 redirectAttributes.addFlashAttribute("error", "Lý do từ chối là bắt buộc.");
                 return "redirect:/doctor-dashboard";

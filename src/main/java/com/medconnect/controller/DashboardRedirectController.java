@@ -16,7 +16,7 @@ public class DashboardRedirectController {
             case Doctor:
                 return "redirect:/doctor-dashboard";
             case Admin:
-                return "redirect:/admin-doctor-approval"; // Or admin dashboard
+                return "redirect:/admin-doctor-approval";
             default:
                 return "redirect:/login";
         }

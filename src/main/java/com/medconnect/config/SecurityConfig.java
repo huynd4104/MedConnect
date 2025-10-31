@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/**") // bỏ qua kiểm tra CSRF cho các API
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        // THÊM DÒNG NÀY ĐỂ CHO PHÉP TÀI NGUYÊN TĨNH
+                        // CHO PHÉP TÀI NGUYÊN TĨNH
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 
                         // Các URL công khai

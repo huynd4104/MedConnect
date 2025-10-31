@@ -32,11 +32,11 @@ public class UserController {
         if (currentUser != null) {
             currentUser.setFcmToken(token);
             userRepository.save(currentUser);
-            System.out.println("Updated FCM token for user: " + email); // Ghi log để kiểm tra
+            System.out.println("Updated FCM token for user: " + email);
             return ResponseEntity.ok().build();
         } else {
             System.err.println("User not found for FCM token update: " + email);
-            return ResponseEntity.notFound().build(); // User not found
+            return ResponseEntity.notFound().build();
         }
     }
 }

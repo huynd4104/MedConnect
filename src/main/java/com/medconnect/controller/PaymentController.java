@@ -62,7 +62,7 @@ public class PaymentController {
                 return "redirect:/patient-dashboard";
             }
 
-            // 5. Tính phí (TẠM THỜI ĐẶT CỨNG LÀ 150.000 VND - BẠN CÓ THỂ THAY ĐỔI SAU)
+            // 5. Tính phí (TẠM THỜI ĐẶT CỨNG LÀ 150.000 VND )
             BigDecimal fee = new BigDecimal("150000");
 
             // 6. Tạo DTO và điền sẵn thông tin
@@ -71,11 +71,11 @@ public class PaymentController {
             dto.setAmount(fee);
 
             // 7. Thêm các đối tượng vào Model
-            model.addAttribute("appointment", appointment); // <-- Sửa lỗi Null
-            model.addAttribute("fee", fee); // <-- Sửa lỗi Null
+            model.addAttribute("appointment", appointment);
+            model.addAttribute("fee", fee);
             model.addAttribute("paymentDTO", dto);
 
-            return "payment"; // Trả về trang thanh toán
+            return "payment";
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
@@ -86,18 +86,16 @@ public class PaymentController {
     @PostMapping("/payment")
     public String processPayment(@ModelAttribute PaymentDTO dto, RedirectAttributes redirectAttributes) {
         try {
-            // Fix 1 (sửa HTML) sẽ đảm bảo dto.getAppointmentId() không còn null
             Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn"));
 
             Payment payment = new Payment();
             payment.setAppointment(appointment);
-            payment.setAmount(dto.getAmount()); // Fix 1 (sửa HTML) cũng đảm bảo cái này không null
+            payment.setAmount(dto.getAmount());
             payment.setPaymentMethod(dto.getPaymentMethod());
             payment.setStatus(Payment.Status.Pending);
 
-            // 3. SỬA LẠI CHỖ NÀY
-            paymentRepository.save(payment); // Dùng repo đã tiêm (inject)
+            paymentRepository.save(payment);
 
             // 4. Tạo URL VNPAY
             String url = paymentService.createVnpayPaymentUrl(payment, "http://localhost:8080/payment-callback");
@@ -108,7 +106,6 @@ public class PaymentController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
 
-            // Xử lý redirect khi bị lỗi (tránh lỗi "input string: null" như trong log)
             if (dto.getAppointmentId() != null) {
                 return "redirect:/payment?appointmentId=" + dto.getAppointmentId();
             } else {

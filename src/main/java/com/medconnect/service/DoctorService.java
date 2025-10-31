@@ -4,11 +4,11 @@ import com.medconnect.dto.DoctorProfileDTO;
 import com.medconnect.entity.Doctor;
 import com.medconnect.entity.DoctorDocument;
 import com.medconnect.entity.Specialization;
-import com.medconnect.entity.User; // << Import thêm
+import com.medconnect.entity.User;
 import com.medconnect.repository.DoctorDocumentRepository;
 import com.medconnect.repository.DoctorRepository;
 import com.medconnect.repository.SpecializationRepository;
-import com.medconnect.repository.UserRepository; // << Import thêm
+import com.medconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ public class DoctorService {
         doctor.setStatus(Doctor.Status.Pending);
         doctorRepository.save(doctor);
 
-        // 7. Xử lý upload giấy tờ chứng nhận (giữ nguyên logic cũ)
+        // 7. Xử lý upload giấy tờ chứng nhận
         if (dto.getCredentials() != null) {
             for (MultipartFile file : dto.getCredentials()) {
                 if (file != null && !file.isEmpty()) {
@@ -95,7 +95,6 @@ public class DoctorService {
         String uniqueFileName = UUID.randomUUID().toString() + extension;
 
         // 2. Định nghĩa đường dẫn tuyệt đối tới thư mục uploads
-        // Lưu ý: "src/main/resources/uploads" là đường dẫn tương đối từ gốc dự án
         Path uploadPath = Paths.get("src/main/resources/uploads");
 
         // 3. Tạo thư mục nếu nó chưa tồn tại
@@ -139,13 +138,12 @@ public class DoctorService {
         DoctorDocument doc = doctorDocumentRepository.findById(documentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy tài liệu với ID: " + documentId));
 
-        // 2. Lấy đường dẫn web của file (ví dụ: /uploads/ten-file.pdf)
+        // 2. Lấy đường dẫn web của file
         String webPath = doc.getFilePath();
 
         if (webPath != null && !webPath.isEmpty()) {
             try {
                 // 3. Xây dựng đường dẫn vật lý đến file trong thư mục resources
-                // Path.of("") trả về thư mục gốc của dự án
                 Path projectRoot = Paths.get("").toAbsolutePath();
                 Path filePath = projectRoot.resolve("src/main/resources/static" + webPath);
 
@@ -153,7 +151,6 @@ public class DoctorService {
                 Files.deleteIfExists(filePath);
 
             } catch (IOException e) {
-                // Ghi log lỗi và re-throw để controller có thể xử lý
                 System.err.println("Lỗi khi xóa file: " + e.getMessage());
                 throw e;
             }

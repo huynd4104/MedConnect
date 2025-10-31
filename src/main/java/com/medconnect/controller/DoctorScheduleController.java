@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorScheduleController {
     private final ScheduleService scheduleService;
-    private final UserRepository userRepository; // 3. INJECT UserRepository
+    private final UserRepository userRepository;
 
     @GetMapping("/doctor-schedule")
     public String showScheduleForm(Model model) {
@@ -45,7 +45,6 @@ public class DoctorScheduleController {
         }
 
         try {
-            // 4. SỬA LẠI CÁCH LẤY USER ID
             String email = auth.getName();
             User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Authenticated user not found in database for email: " + email));
@@ -58,8 +57,6 @@ public class DoctorScheduleController {
             redirectAttributes.addFlashAttribute("scheduleDTO", dto);
             return "redirect:/doctor-schedule";
         } catch (Exception e) {
-            // Log the exception for debugging
-            // e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.");
             redirectAttributes.addFlashAttribute("scheduleDTO", dto);
             return "redirect:/doctor-schedule";
@@ -76,7 +73,6 @@ public class DoctorScheduleController {
             scheduleService.deleteSchedule(scheduleId, currentUser.getUserId());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            // Log lỗi ở đây
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -95,7 +91,6 @@ public class DoctorScheduleController {
         } catch (TimeSlotOverlapException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (Exception e) {
-            // Log lỗi ở đây
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -103,7 +98,6 @@ public class DoctorScheduleController {
     @GetMapping("/api/schedules")
     @ResponseBody
     public ResponseEntity<List<ScheduleDTO>> getDoctorSchedules(Authentication auth) {
-        // 5. ÁP DỤNG SỬA LỖI TƯƠNG TỰ CHO API ENDPOINT
         String email = auth.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found in database for email: " + email));

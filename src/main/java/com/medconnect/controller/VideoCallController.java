@@ -8,22 +8,19 @@ import com.medconnect.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.time.LocalDateTime; // Thêm import này
-
 @Controller
 @RequiredArgsConstructor
 public class VideoCallController {
     private final VideoService videoService;
-    private final AppointmentRepository appointmentRepository; // THÊM
-    private final UserRepository userRepository; // THÊM
+    private final AppointmentRepository appointmentRepository;
+    private final UserRepository userRepository;
 
-    @Value("${app.zegocloud.app-id}") // THÊM: Lấy App ID từ application.properties
+    @Value("${app.zegocloud.app-id}")
     private long zegoAppId;
 
     @GetMapping("/video-call/{appointmentId}")
@@ -53,7 +50,7 @@ public class VideoCallController {
                 return "video-call";
             }
 
-            // (Tùy chọn: Thêm logic chỉ cho phép tham gia 10 phút trước giờ hẹn)
+            // (logic chỉ cho phép tham gia 10 phút trước giờ hẹn)
             // if (LocalDateTime.now().isBefore(appointment.getAppointmentDateTime().minusMinutes(10))) {
             //     model.addAttribute("error", "Chưa đến giờ hẹn. Vui lòng quay lại sau.");
             //     return "video-call";
@@ -77,7 +74,7 @@ public class VideoCallController {
             model.addAttribute("sessionId", sessionId); // Tên phòng (ví dụ: session_15)
             model.addAttribute("userId", zegoUserId);
             model.addAttribute("userName", zegoUserName);
-            model.addAttribute("appointment", appointment); // Gửi cả object lịch hẹn nếu cần
+            model.addAttribute("appointment", appointment);
 
             return "video-call";
 

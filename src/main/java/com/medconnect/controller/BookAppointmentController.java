@@ -41,7 +41,7 @@ public class BookAppointmentController {
 
             model.addAttribute("doctor", doctor);
             model.addAttribute("appointmentDTO", dto);
-            model.addAttribute("schedules", schedules); // <-- THÊM DÒNG NÀY
+            model.addAttribute("schedules", schedules);
 
             return "book-appointment";
 
@@ -61,13 +61,11 @@ public class BookAppointmentController {
         }
 
         try {
-            // 1. Lấy User (bạn đã sửa ở bước trước)
             String email = auth.getName();
             User currentUser = userRepository.findByEmail(email).orElseThrow();
 
             Appointment savedAppointment = appointmentService.bookAppointment(currentUser, dto);
 
-            // 3. Chuyển hướng đến /payment KÈM THEO ID
             return "redirect:/payment?appointmentId=" + savedAppointment.getAppointmentId();
 
         } catch (Exception e) {

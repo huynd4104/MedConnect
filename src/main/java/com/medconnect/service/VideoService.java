@@ -25,7 +25,7 @@ public class VideoService {
 
     public String generateZegoToken(String userId, String sessionId) {
 
-        long expirationInSecondsLong = 3600; // Token có hiệu lực trong 1 giờ (dạng long)
+        long expirationInSecondsLong = 3600; // Token có hiệu lực trong 1 giờ
 
         // 1. Tạo Payload theo yêu cầu của Token04
         JSONObject payloadData = new JSONObject();

@@ -3,7 +3,6 @@ package com.medconnect.service;
 import com.medconnect.dto.RegisterDTO;
 import com.medconnect.entity.Doctor;
 import com.medconnect.entity.Patient;
-import com.medconnect.entity.Specialization;
 import com.medconnect.entity.Token;
 import com.medconnect.entity.User;
 import com.medconnect.repository.DoctorRepository;
@@ -43,22 +42,18 @@ public class RegisterService {
         user.setEmail(dto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         user.setRole(dto.getRole());
-        user = userRepository.saveAndFlush(user);  // Flush để commit User và có ID ngay
+        user = userRepository.saveAndFlush(user);
 
         if (dto.getRole() == User.Role.Doctor) {
             Doctor doctor = new Doctor();
-            doctor.setUser(user);  // Set FK user_id tự động
-            // Set default cho các field NULLable (cập nhật sau ở UC3)
+            doctor.setUser(user);
             doctor.setExperienceYears(0);
             doctor.setLicenseNumber("Pending");
-            // specialization_id NULL ok, set sau
-            // status default 'Pending' ở entity
             doctorRepository.save(doctor);
         } else if (dto.getRole() == User.Role.Patient) {
             Patient patient = new Patient();
-            patient.setUser(user);  // Set FK user_id tự động
-            patient.setFullName("");  // Empty ok cho NOT NULL
-            // Các field khác NULL ok
+            patient.setUser(user);
+            patient.setFullName("");
             patientRepository.save(patient);
         }
 
@@ -75,10 +70,8 @@ public class RegisterService {
         try {
             emailService.sendVerificationEmail(dto.getEmail(), verificationLink);
         } catch (Exception e) {
-            // Log error thay vì nuốt, nhưng không throw để user vẫn register
             System.err.println("Failed to send verification email to " + dto.getEmail() + ": " + e.getMessage());
             e.printStackTrace();
-            // Optional: Gửi fallback notification hoặc notify admin
         }
     }
 

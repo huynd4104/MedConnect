@@ -9,8 +9,6 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Cấu hình để phục vụ các file từ thư mục uploads
-        // Đường dẫn URL "/uploads/**" sẽ được map tới thư mục file:src/main/resources/uploads/
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:src/main/resources/uploads/");
     }

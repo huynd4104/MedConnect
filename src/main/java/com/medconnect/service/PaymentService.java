@@ -15,7 +15,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
@@ -82,7 +81,7 @@ public class PaymentService {
 
         // 3. Tạo chữ ký
         String secureHash = hmacSHA512(hashSecret, hashData.toString());
-        params.put("vnp_SecureHash", secureHash); // Thêm chữ ký vào map
+        params.put("vnp_SecureHash", secureHash);
 
         System.out.println("VNPAY_SECURE_HASH (New): " + secureHash);
 
@@ -90,10 +89,9 @@ public class PaymentService {
         for (Map.Entry<String, String> entry : params.entrySet()) {
             query.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8.toString()));
             query.append('=');
-            query.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString())); // Encode giá trị
+            query.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString()));
             query.append('&');
         }
-        // Xóa dấu '&' cuối cùng
         query.deleteCharAt(query.length() - 1);
 
         String queryStr = query.toString();
@@ -115,14 +113,12 @@ public class PaymentService {
     private String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
-            sb.append(String.format("%02x", b)); // Giữ chữ thường "02x"
+            sb.append(String.format("%02x", b));
         }
         return sb.toString();
     }
 
     public void processVnpayCallback(Map<String, String> params) {
-        // ... (Giữ logic xác thực hash nếu có) ...
-
         String responseCode = params.get("vnp_ResponseCode");
         Integer appointmentId = Integer.parseInt(params.get("vnp_TxnRef"));
 
@@ -153,7 +149,7 @@ public class PaymentService {
             appointmentRepository.save(appointment);
             paymentRepository.save(payment);
 
-            // === BẮT ĐẦU THÊM MỚI (GỬI THÔNG BÁO CHO BÁC SĨ) ===
+            // GỬI THÔNG BÁO CHO BÁC SĨ
             try {
                 Doctor doctor = appointment.getDoctor();
                 Patient patient = appointment.getPatient();
@@ -182,11 +178,9 @@ public class PaymentService {
                 );
 
             } catch (Exception e) {
-                // Ghi log lỗi gửi thông báo cho bác sĩ (nhưng không làm dừng luồng thanh toán)
                 System.err.println("Lỗi khi gửi thông báo cho bác sĩ sau khi thanh toán: " + e.getMessage());
                 e.printStackTrace();
             }
-            // === KẾT THÚC THÊM MỚI ===
 
         } else {
             // === 3. THANH TOÁN THẤT BẠI ===

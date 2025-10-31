@@ -61,11 +61,11 @@ public class EmailService {
      */
     private void sendEmail(String toEmail, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); // Đảm bảo UTF-8
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom(fromEmail);
         helper.setTo(toEmail);
         helper.setSubject(subject);
-        helper.setText(htmlContent, true); // true = HTML
+        helper.setText(htmlContent, true);
         mailSender.send(message);
     }
 

@@ -27,7 +27,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("MSG05: Invalid credentials."));
 
         // 2. Kiểm tra các điều kiện custom (verified, blocked, locked)
-        // Đây là logic bạn đã viết trong LoginService cũ
         if (!user.getVerified()) {
             throw new CustomAuthenticationException("MSG06: Please verify your email.");
         }

@@ -47,8 +47,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
         // 4. Trả về một DefaultOAuth2User mới đã chứa role của bạn
-        // Thuộc tính "name" (hoặc "email") là key để Spring Security biết
-        // cách lấy Principal name (tên người dùng)
         return new DefaultOAuth2User(authorities, attributes, "email");
     }
 
@@ -60,9 +58,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         newUser.setPasswordHash(passwordEncoder.encode(UUID.randomUUID().toString()));
 
         // Gán vai trò mặc định cho người dùng mới đăng nhập bằng Google
-        newUser.setRole(Role.Patient); // Giả sử Role.Patient là vai trò mặc định
+        newUser.setRole(Role.Patient); //  Role.Patient là vai trò mặc định
 
-        newUser.setVerified(true); // Tự động xác thực vì họ đã qua Google
+        newUser.setVerified(true); // Tự động xác thực
         newUser.setBlocked(false);
 
         return userRepository.save(newUser);

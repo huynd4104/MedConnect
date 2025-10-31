@@ -8,7 +8,7 @@ import com.medconnect.repository.ConsultationDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional; // <-- KIỂM TRA IMPORT NẾU CHƯA CÓ
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +64,6 @@ public class ConsultationDocumentService {
 
     private boolean validatePrescriptionFormat(String content) {
         // Logic check Ministry of Health regulations
-        return true; // Demo
+        return true;
     }
 }

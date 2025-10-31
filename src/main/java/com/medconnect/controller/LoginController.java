@@ -28,7 +28,6 @@ public class LoginController {
             model.addAttribute("loginDTO", new LoginDTO());
         }
 
-        // Lấy lỗi đăng nhập từ session (nếu có)
         HttpSession session = request.getSession(false);
         String errorMessage = null;
         if (session != null) {

@@ -70,7 +70,6 @@ public class AppointmentService {
             );
 
         } catch (Exception e) {
-            // Log lỗi (ví dụ: Gửi mail thất bại)
             e.printStackTrace();
         }
 
@@ -143,7 +142,6 @@ public class AppointmentService {
                     reason
             );
         } catch (Exception e) {
-            // Ghi log lỗi gửi mail
             System.err.println("Lỗi khi gửi email từ chối: " + e.getMessage());
         }
     }

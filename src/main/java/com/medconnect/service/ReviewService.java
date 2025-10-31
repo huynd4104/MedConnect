@@ -65,6 +65,6 @@ public class ReviewService {
 
     private boolean containsPII(String comment) {
         // Logic check PII
-        return false; // Demo
+        return false;
     }
 }

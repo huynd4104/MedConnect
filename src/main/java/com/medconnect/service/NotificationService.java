@@ -25,22 +25,6 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final EmailService emailService;
 
-    @PostConstruct
-    public void initFirebase() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            FileInputStream serviceAccount =
-                    new FileInputStream("src/main/resources/firebase-service-account.json");
-
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-
-            FirebaseApp.initializeApp(options);
-            System.out.println("✅ Firebase initialized successfully!");
-        }
-    }
-
-
     public void sendPushNotification(User user, String title, String body) { // Remove link parameter here
         String deviceToken = user.getFcmToken();
 

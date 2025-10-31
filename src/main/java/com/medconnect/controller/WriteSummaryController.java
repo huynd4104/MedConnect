@@ -4,8 +4,8 @@ import com.medconnect.dto.ConsultationDocumentDTO;
 import com.medconnect.service.ConsultationDocumentService;
 import com.medconnect.entity.Appointment;
 import com.medconnect.repository.AppointmentRepository;
-import com.medconnect.entity.ConsultationDocument; // <-- THÊM IMPORT
-import com.medconnect.repository.ConsultationDocumentRepository; // <-- THÊM IMPORT
+import com.medconnect.entity.ConsultationDocument;
+import com.medconnect.repository.ConsultationDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.Optional; // <-- THÊM IMPORT
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 public class WriteSummaryController {
     private final ConsultationDocumentService documentService;
     private final AppointmentRepository appointmentRepository;
-    private final ConsultationDocumentRepository documentRepository; // <-- THÊM DÒNG NÀY
+    private final ConsultationDocumentRepository documentRepository;
 
     @GetMapping("/write-summary/{appointmentId}")
     public String showForm(@PathVariable("appointmentId") Integer appointmentId, Model model) {
@@ -33,7 +33,6 @@ public class WriteSummaryController {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Appointment với ID: " + appointmentId));
         model.addAttribute("appointment", appointment);
 
-        // --- BẮT ĐẦU SỬA ---
         // 2. Tìm tài liệu cũ nếu có
         Optional<ConsultationDocument> docOptional = documentRepository.findByAppointmentAppointmentId(appointmentId);
 
@@ -50,8 +49,6 @@ public class WriteSummaryController {
             dto = new ConsultationDocumentDTO();
             dto.setAppointmentId(appointmentId);
         }
-        // --- KẾT THÚC SỬA ---
-
         // 3. Đưa DTO vào model
         model.addAttribute("consultationDocumentDTO", dto);
 
@@ -65,7 +62,7 @@ public class WriteSummaryController {
             return "redirect:/write-summary/" + dto.getAppointmentId();
         }
         try {
-            documentService.writeDocument(dto); // Hàm này cũng sẽ được sửa
+            documentService.writeDocument(dto);
             redirectAttributes.addFlashAttribute("success", "Lưu tài liệu thành công.");
             return "redirect:/doctor-dashboard";
         } catch (Exception e) {

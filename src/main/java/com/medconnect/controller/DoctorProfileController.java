@@ -36,7 +36,6 @@ public class DoctorProfileController {
 
     @GetMapping("/doctor-profile")
     public String showProfileForm(Model model, Authentication auth) {
-        // 1. Lấy email bằng auth.getName()
         String userEmail = auth.getName();
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
@@ -87,7 +86,7 @@ public class DoctorProfileController {
             return "redirect:/doctor-profile";
         }
         try {
-            // Lấy email (Đã sửa từ trước)
+            // Lấy email
             String userEmail = auth.getName();
             User user = userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));

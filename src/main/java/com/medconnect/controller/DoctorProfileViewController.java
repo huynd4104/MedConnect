@@ -22,7 +22,7 @@ public class DoctorProfileViewController {
         Doctor doctor = doctorRepository.findById(id).orElseThrow();
         if (doctor.getStatus() != Doctor.Status.Approved) {
             model.addAttribute("error", "MSG20: Profile unavailable.");
-            return "error"; // Or redirect
+            return "error";
         }
         model.addAttribute("doctor", doctor);
         model.addAttribute("reviews", reviewRepository.findByDoctorId(id));
