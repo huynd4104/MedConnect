@@ -174,34 +174,3 @@ CREATE TABLE notifications (
                                CONSTRAINT fk_notifications_users FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 GO
-
--- Table for Activity Logs (mentioned in various UC for logging)
-CREATE TABLE activity_logs (
-                               log_id INT IDENTITY(1,1) PRIMARY KEY,
-                               user_id INT NULL,
-                               action NVARCHAR(255) NOT NULL,  -- e.g., 'Login', 'AppointmentBooked'
-                               details NVARCHAR(500) NULL,
-                               timestamp DATETIME DEFAULT GETDATE() NOT NULL,
-                               CONSTRAINT fk_activity_logs_users FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-GO
-
-
--- Insert Admin user
-INSERT INTO users (email, password_hash, role, verified, blocked, created_at)
-VALUES (
-           'admin@medconnect.vn',  -- email
-           'RWVgOrhLznxk2yyG8Ner8Q==',  -- Hashed password (meets BR-01: ≥ 8 characters, letters, numbers)
-           'Admin',  -- Role as per Actor.docx
-           1,  -- Verified = true (auto-verified for admin)
-           0,  -- Blocked = false
-           GETDATE()  -- created_at
-       );
-GO
-
--- Log the creation of Admin account in activity_logs
-INSERT INTO activity_logs (user_id, action, details, timestamp)
-SELECT user_id, 'AdminAccountCreated', 'Created new admin account with email admin@medconnect.vn', GETDATE()
-FROM users
-WHERE email = 'admin@medconnect.vn';
-GO

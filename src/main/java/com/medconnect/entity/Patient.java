@@ -29,7 +29,8 @@ public class Patient {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "address")
+    @Column(name = "address",
+            columnDefinition = "NVARCHAR(500) COLLATE Vietnamese_CI_AS")
     private String address;
 
     @Column(name = "date_of_birth")

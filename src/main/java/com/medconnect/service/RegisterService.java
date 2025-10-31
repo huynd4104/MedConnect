@@ -11,11 +11,13 @@ import com.medconnect.repository.PatientRepository;
 import com.medconnect.repository.TokenRepository;
 import com.medconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Scanner;
 import java.util.UUID;
 
 @Service
@@ -88,5 +90,16 @@ public class RegisterService {
         token.setUsed(true);
         userRepository.save(user);
         tokenRepository.save(token);
+    }
+
+    public static void main(String[] args) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Nhập password: ");
+        String password = scanner.nextLine();
+
+        String encodedPassword = encoder.encode(password);
+        System.out.println("Hash Password: " + encodedPassword);
     }
 }

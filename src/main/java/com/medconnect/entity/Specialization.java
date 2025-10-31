@@ -18,7 +18,8 @@ public class Specialization {
     @Column(name = "specialization_id")
     private Integer specializationId;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false,
+            columnDefinition = "NVARCHAR(100) COLLATE Vietnamese_CI_AS")
     private String name;
 
     @Column(name = "description")
