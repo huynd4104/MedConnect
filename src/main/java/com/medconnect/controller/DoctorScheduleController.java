@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -79,14 +80,14 @@ public class DoctorScheduleController {
 
     @PutMapping("/api/schedules/{id}")
     public ResponseEntity<Void> updateSchedule(@PathVariable("id") Integer scheduleId,
-                                               @Valid @RequestBody ScheduleDTO dto,
+                                               @Valid @RequestBody ScheduleDTO dto, // DTO này sẽ chứa list "slots" với 1 phần tử
                                                Authentication auth) {
         try {
             String email = auth.getName();
             User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
-            scheduleService.updateSchedule(scheduleId, dto, currentUser.getUserId());
+            scheduleService.updateSchedule(scheduleId, dto, currentUser.getUserId()); // Service đã được cập nhật
             return ResponseEntity.ok().build();
         } catch (TimeSlotOverlapException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -104,5 +105,23 @@ public class DoctorScheduleController {
 
         List<ScheduleDTO> schedules = scheduleService.getSchedulesByUserId(currentUser.getUserId());
         return ResponseEntity.ok(schedules);
+    }
+
+    /**
+     * API endpoint để lấy các slot còn trống
+     */
+    @GetMapping("/api/schedules/available")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> getAvailableSlots(@RequestParam("dayOfWeek") Integer dayOfWeek, Authentication auth) {
+        try {
+            String email = auth.getName();
+            User currentUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+            Map<String, String> slots = scheduleService.getAvailableTimeSlots(currentUser.getUserId(), dayOfWeek);
+            return ResponseEntity.ok(slots);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

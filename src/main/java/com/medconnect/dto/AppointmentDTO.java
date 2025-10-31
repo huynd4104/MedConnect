@@ -1,12 +1,11 @@
 package com.medconnect.dto;
 
 import com.medconnect.entity.Appointment.ConsultationType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,8 +14,11 @@ public class AppointmentDTO {
     @NotNull(message = "MSG21: Time slot taken. Choose another.")
     private Integer doctorId;
 
-    @NotNull(message = "MSG21: Time slot taken. Choose another.")
-    private LocalDateTime appointmentDateTime;
+    @NotBlank(message = "Vui lòng chọn ngày hẹn.")
+    private String appointmentDate;
+
+    @NotBlank(message = "Vui lòng chọn một khung giờ (slot).")
+    private String appointmentTime;
 
     @NotNull(message = "MSG21: Consultation type is required.")
     private ConsultationType consultationType;

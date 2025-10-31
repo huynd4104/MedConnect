@@ -14,14 +14,12 @@
 <section class="container mx-auto py-12 px-4 md:px-0">
     <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Đặt lịch hẹn</h1>
 
-    <!-- Thông báo lỗi -->
-    <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
+    <div id="errorMessage" th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
+    <div id="jsErrorContainer" class="mx-4 md:mx-8"></div>
 
-    <!-- Container cho hai bảng -->
+
     <div class="grid md:grid-cols-10 gap-8 mx-4 md:mx-8">
-        <!-- Thông tin bác sĩ và Lịch làm việc (bên trái - 70%) -->
         <div class="col-span-full md:col-span-7 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300 flex flex-col gap-6">
-            <!-- Phần Thông tin bác sĩ -->
             <div class="flex flex-col gap-4">
                 <h2 class="text-2xl font-semibold text-indigo-700 flex items-center">
                     <i class="fas fa-user-md mr-2 text-indigo-500"></i> Thông tin bác sĩ
@@ -32,7 +30,6 @@
                 </div>
             </div>
 
-            <!-- Phần Lịch làm việc -->
             <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
                 <table class="min-w-full divide-y divide-gray-200 table-fixed">
                     <thead class="bg-gray-50">
@@ -48,39 +45,52 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                     <tr>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 2}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top"> <ul class="space-y-1">
+                            <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 2}"
+                                th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
+                        </ul>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top">
+                            <ul class="space-y-1">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 3}"
+                                    th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                    th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
                             </ul>
                         </td>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 3}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top">
+                            <ul class="space-y-1">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 4}"
+                                    th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                    th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
                             </ul>
                         </td>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 4}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top">
+                            <ul class="space-y-1">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 5}"
+                                    th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                    th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
                             </ul>
                         </td>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 5}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top">
+                            <ul class="space-y-1">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 6}"
+                                    th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                    th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
                             </ul>
                         </td>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 6}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top">
+                            <ul class="space-y-1">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 7}"
+                                    th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                    th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
                             </ul>
                         </td>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 7}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
-                            </ul>
-                        </td>
-                        <td class="px-4 py-4 text-center text-sm text-gray-600">
-                            <ul class="list-disc pl-4 mx-auto max-w-fit">
-                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 1}" th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"></li>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600 align-top">
+                            <ul class="space-y-1">
+                                <li th:each="schedule : ${schedules}" th:if="${schedule.dayOfWeek == 1}"
+                                    th:text="${schedule.startTime} + ' - ' + ${schedule.endTime} + ' (' + (${schedule.consultationType.name() == 'Online'} ? 'Online' : 'Trực tiếp') + ')'"
+                                    th:classappend="${schedule.consultationType.name() == 'Online'} ? 'text-blue-600' : 'text-green-600'"></li>
                             </ul>
                         </td>
                     </tr>
@@ -89,30 +99,43 @@
             </div>
         </div>
 
-        <!-- Thông tin lịch hẹn (bên phải - 30%) -->
         <div class="col-span-full md:col-span-3 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300">
             <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
                 <i class="fas fa-calendar-plus mr-2 text-indigo-500"></i> Thông tin lịch hẹn
             </h2>
+
             <form th:action="@{/book-appointment}" th:object="${appointmentDTO}" method="post" class="space-y-4">
-                <input type="hidden" th:field="*{doctorId}" />
-                <div>
-                    <label for="appointmentDateTime" class="block text-sm font-medium text-gray-700">Thời gian</label>
-                    <input type="datetime-local" th:field="*{appointmentDateTime}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                    <span th:if="${#fields.hasErrors('appointmentDateTime')}" th:errors="*{appointmentDateTime}" class="text-red-500 text-sm"></span>
-                </div>
+                <input type="hidden" th:field="*{doctorId}" id="doctorId" />
+
                 <div>
                     <label for="consultationType" class="block text-sm font-medium text-gray-700">Loại tư vấn</label>
-                    <select th:field="*{consultationType}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <select th:field="*{consultationType}" id="consultationType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">-- Chọn loại tư vấn --</option>
                         <option value="InPerson">Trực tiếp</option>
                         <option value="Online">Trực tuyến</option>
                     </select>
                     <span th:if="${#fields.hasErrors('consultationType')}" th:errors="*{consultationType}" class="text-red-500 text-sm"></span>
                 </div>
+
+                <div>
+                    <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Chọn ngày</label>
+                    <input type="date" th:field="*{appointmentDate}" id="appointmentDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <span th:if="${#fields.hasErrors('appointmentDate')}" th:errors="*{appointmentDate}" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label for="appointmentTime" class="block text-sm font-medium text-gray-700">Chọn khung giờ</label>
+                    <select th:field="*{appointmentTime}" id="appointmentTime" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" disabled>
+                        <option value="">-- Vui lòng chọn loại tư vấn và ngày --</option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}" class="text-red-500 text-sm"></span>
+                </div>
+
                 <div>
                     <label for="medicalInfo" class="block text-sm font-medium text-gray-700">Thông tin y tế (tùy chọn)</label>
                     <textarea th:field="*{medicalInfo}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="4"></textarea>
                 </div>
+
                 <div class="flex gap-4">
                     <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}" class="w-1/2 bg-gray-500 text-white p-3 rounded-lg font-semibold hover:bg-gray-600 transition flex items-center justify-center">
                         <i class="fas fa-arrow-left mr-2"></i> Quay lại
@@ -127,5 +150,99 @@
 </section>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const consultationTypeSelect = document.getElementById('consultationType');
+        const dateInput = document.getElementById('appointmentDate');
+        const slotSelect = document.getElementById('appointmentTime');
+        const doctorId = document.getElementById('doctorId').value;
+        const jsErrorContainer = document.getElementById('jsErrorContainer');
+        const existingError = document.getElementById('errorMessage');
+
+        // Hàm hiển thị lỗi
+        function showError(message) {
+            // Xóa lỗi cũ (nếu có)
+            if (existingError) {
+                existingError.style.display = 'none';
+            }
+            jsErrorContainer.innerHTML = `<div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl text-center">${message}</div>`;
+        }
+
+        // Hàm xóa lỗi
+        function clearError() {
+            jsErrorContainer.innerHTML = '';
+        }
+
+        // Hàm gọi API
+        async function fetchAvailableSlots() {
+            clearError();
+            const type = consultationTypeSelect.value;
+            const date = dateInput.value;
+
+            // Nếu chưa chọn 1 trong 2, thì vô hiệu hóa
+            if (!type || !date) {
+                slotSelect.innerHTML = '<option value="">-- Vui lòng chọn loại tư vấn và ngày --</option>';
+                slotSelect.disabled = true;
+                return;
+            }
+
+            // Đặt ngày tối thiểu là hôm nay
+            const today = new Date().toISOString().split('T')[0];
+            if (date < today) {
+                showError('Không thể đặt lịch cho ngày trong quá khứ.');
+                slotSelect.innerHTML = '<option value="">-- Ngày không hợp lệ --</option>';
+                slotSelect.disabled = true;
+                return;
+            }
+
+            slotSelect.innerHTML = '<option value="">Đang tải slot...</option>';
+            slotSelect.disabled = true;
+
+            try {
+                const response = await fetch(`/api/appointments/available-slots?doctorId=${doctorId}&date=${date}&type=${type}`);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Lỗi khi tải danh sách slot.');
+                }
+
+                const slots = await response.json(); // Đây là Map<"HH:mm", "HH:mm - HH:mm">
+
+                slotSelect.innerHTML = ''; // Xóa sạch
+
+                const keys = Object.keys(slots);
+
+                if (keys.length === 0) {
+                    slotSelect.innerHTML = '<option value="">-- Không có slot trống cho ngày này --</option>';
+                    slotSelect.disabled = true;
+                } else {
+                    slotSelect.innerHTML = '<option value="">-- Chọn một khung giờ --</option>';
+                    for (const [key, value] of Object.entries(slots)) {
+                        const option = document.createElement('option');
+                        option.value = key; // "HH:mm"
+                        option.textContent = value; // "HH:mm - HH:mm"
+                        slotSelect.appendChild(option);
+                    }
+                    slotSelect.disabled = false;
+                }
+
+            } catch (error) {
+                console.error('Lỗi khi fetch slot:', error);
+                showError('Lỗi khi tải danh sách slot. Vui lòng thử lại.');
+                slotSelect.innerHTML = '<option value="">-- Lỗi khi tải slot --</option>';
+                slotSelect.disabled = true;
+            }
+        }
+
+        // Gắn sự kiện
+        consultationTypeSelect.addEventListener('change', fetchAvailableSlots);
+        dateInput.addEventListener('change', fetchAvailableSlots);
+
+        // Đặt ngày tối thiểu cho input date
+        dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+    });
+</script>
+
 </body>
 </html>

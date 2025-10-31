@@ -3,13 +3,14 @@ package com.medconnect.dto;
 import com.medconnect.entity.Schedule.ConsultationType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,11 +23,8 @@ public class ScheduleDTO implements Serializable {
     @Max(value = 7, message = "Ngày không hợp lệ (phải từ 1-Chủ Nhật đến 7-Thứ Bảy).")
     private Integer dayOfWeek;
 
-    @NotBlank(message = "Giờ bắt đầu không được để trống.")
-    private String startTime;
-
-    @NotBlank(message = "Giờ kết thúc không được để trống.")
-    private String endTime;
+    @NotEmpty(message = "Vui lòng chọn ít nhất một khung giờ.")
+    private List<String> slots;
 
     @NotNull(message = "Loại tư vấn không được để trống.")
     private ConsultationType consultationType;

@@ -13,9 +13,17 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     List<Schedule> findByDoctor_DoctorIdAndActiveTrue(Integer doctorId);
 
+    List<Schedule> findByDoctor_DoctorIdAndActiveTrueAndDayOfWeekAndConsultationType(
+            Integer doctorId,
+            Integer dayOfWeek,
+            Schedule.ConsultationType consultationType
+    );
+
+    List<Schedule> findByDoctor_DoctorIdAndActiveTrueAndDayOfWeek(Integer doctorId, Integer dayOfWeek);
+
     @Query("SELECT s FROM Schedule s WHERE s.doctor.doctorId = :doctorId " +
             "AND s.dayOfWeek = :dayOfWeek " +
-            "AND s.startTime < :endTime AND s.endTime > :startTime " + // Correct overlap logic
+            "AND s.startTime < :endTime AND s.endTime > :startTime " +
             "AND s.active = true")
     List<Schedule> findOverlappingSchedules(
             @Param("doctorId") Integer doctorId,

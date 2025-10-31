@@ -5,17 +5,19 @@ import com.medconnect.entity.*;
 import com.medconnect.repository.*;
 import com.medconnect.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -51,12 +53,35 @@ public class BookAppointmentController {
         }
     }
 
+    /**
+     * API Endpoint để lấy các slot trống
+     */
+    @GetMapping("/api/appointments/available-slots")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> getAvailableSlots(
+            @RequestParam("doctorId") Integer doctorId,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam("type") Appointment.ConsultationType type) {
+        try {
+            Map<String, String> slots = appointmentService.getAvailableSlots(doctorId, date, type);
+            return ResponseEntity.ok(slots);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute AppointmentDTO dto, BindingResult result, Authentication auth, RedirectAttributes redirectAttributes) {
 
         String doctorIdParam = "?doctorId=" + dto.getDoctorId();
+
+        // SỬA LẠI: Kiểm tra lỗi validation DTO mới
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "MSG21: Time slot taken.");
+            // Lấy lỗi cụ thể
+            String errorMessage = result.getAllErrors().stream()
+                    .map(err -> err.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            redirectAttributes.addFlashAttribute("error", "Lỗi: " + errorMessage);
             return "redirect:/book-appointment" + doctorIdParam;
         }
 
