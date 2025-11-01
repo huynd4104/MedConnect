@@ -20,22 +20,33 @@ public class RegisterController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-        model.addAttribute("registerDTO", new RegisterDTO());
+        if (!model.containsAttribute("registerDTO")) {
+            model.addAttribute("registerDTO", new RegisterDTO());
+        }
         return "register";
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute RegisterDTO registerDTO, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String register(@Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
+                           BindingResult result,
+                           RedirectAttributes redirectAttributes,
+                           Model model) {
+
+        // 1. Xử lý lỗi validation (MSG02, MSG03,...)
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Invalid input.");
-            return "redirect:/register";
+            return "register";
         }
+
+        // 2. Xử lý lỗi logic (ví dụ: email đã tồn tại)
         try {
             registerService.register(registerDTO);
             redirectAttributes.addFlashAttribute("success", "Registration successful. Check your email for verification.");
             return "redirect:/login";
         } catch (Exception e) {
+            // Lỗi logic (như email trùng) MỚI dùng redirect
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+            // Giữ lại dữ liệu người dùng đã nhập khi redirect
+            redirectAttributes.addFlashAttribute("registerDTO", registerDTO);
             return "redirect:/register";
         }
     }

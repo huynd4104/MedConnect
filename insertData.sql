@@ -1,16 +1,4 @@
-/* ===========================================================
-TỆP DỮ LIỆU MẪU TÙY CHỈNH (7 BẢNG) - PHIÊN BẢN ĐÃ SỬA LỖI
-===========================================================
-BAO GỒM CÁC BẢNG:
-1. users
-2. tokens
-3. specializations (Tiếng Việt)
-4. doctors
-5. doctor_documents
-6. patients
-7. schedules (Nhiều lịch hơn cho mỗi bác sĩ)
-===========================================================
-*/
+
 USE MedConnectDB;
 GO
 
