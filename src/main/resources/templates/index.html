@@ -5,75 +5,203 @@
     <title>MedConnect - Trang chủ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        .feature-icon {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-white min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- Banner -->
-<section class="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white py-24 md:py-32 relative overflow-hidden">
-    <div class="container mx-auto text-center z-10 relative">
-        <h1 class="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">Chào mừng đến với MedConnect</h1>
-        <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">Nền tảng telemedicine và đặt lịch khám bệnh hàng đầu Việt Nam, kết nối bạn với chăm sóc y tế chất lượng cao.</p>
-        <a href="/register" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition shadow-md hover:shadow-lg">Đăng ký ngay</a>
-    </div>
-    <!-- Optional: Add subtle overlay or pattern for visual interest -->
-    <div class="absolute inset-0 bg-indigo-700 opacity-20"></div>
-</section>
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 px-4 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-blue-50 opacity-60"></div>
 
-<!-- Mô tả dịch vụ -->
-<section class="py-16 md:py-24 bg-white">
-    <div class="container mx-auto px-4 md:px-0">
-        <h2 class="text-4xl font-bold mb-12 text-center text-indigo-800">Dịch vụ nổi bật</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-gradient-to-b from-white to-gray-50 p-8 rounded-xl shadow-lg ring-1 ring-gray-300 hover:shadow-2xl hover:scale-105 transition duration-300 flex flex-col items-center text-center ml-4 md:ml-6">
-                <i class="fas fa-video text-5xl text-indigo-500 mb-6"></i>
-                <h3 class="text-2xl font-bold mb-4 text-indigo-700">Telemedicine</h3>
-                <p class="text-gray-600">Tư vấn trực tuyến với bác sĩ uy tín ngay từ nhà bạn, tiện lợi và an toàn.</p>
+    <div class="container mx-auto max-w-6xl relative z-10">
+        <div class="text-center space-y-8">
+            <div class="inline-block">
+                <span class="inline-flex items-center px-4 py-2 rounded-full bg-purple-50 text-purple-700 text-sm font-medium border border-purple-100">
+                    <span class="w-2 h-2 bg-purple-500 rounded-full mr-2 animate-pulse"></span>
+                    Nền tảng y tế trực tuyến hàng đầu
+                </span>
             </div>
-            <div class="bg-gradient-to-b from-white to-gray-50 p-8 rounded-xl shadow-lg ring-1 ring-gray-300 hover:shadow-2xl hover:scale-105 transition duration-300 flex flex-col items-center text-center">
-                <i class="fas fa-calendar-check text-5xl text-indigo-500 mb-6"></i>
-                <h3 class="text-2xl font-bold mb-4 text-indigo-700">Đặt lịch khám</h3>
-                <p class="text-gray-600">Dễ dàng đặt lịch khám tại phòng khám hoặc trực tuyến chỉ với vài cú click.</p>
-            </div>
-            <div class="bg-gradient-to-b from-white to-gray-50 p-8 rounded-xl shadow-lg ring-1 ring-gray-300 hover:shadow-2xl hover:scale-105 transition duration-300 flex flex-col items-center text-center mr-4 md:mr-6">
-                <i class="fas fa-user-md text-5xl text-indigo-500 mb-6"></i>
-                <h3 class="text-2xl font-bold mb-4 text-indigo-700">Bác sĩ uy tín</h3>
-                <p class="text-gray-600">Kết nối với hàng ngàn bác sĩ chuyên khoa hàng đầu trên toàn quốc.</p>
+
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
+                Chăm sóc sức khỏe<br>
+                <span class="gradient-text">thông minh hơn</span>
+            </h1>
+
+            <p class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Kết nối với bác sĩ chuyên khoa, đặt lịch khám nhanh chóng và tư vấn trực tuyến mọi lúc, mọi nơi
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+                <a href="/register" class="btn-primary text-white px-8 py-4 rounded-xl font-medium shadow-lg inline-flex items-center">
+                    Bắt đầu ngay
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a href="#services" class="px-8 py-4 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition inline-flex items-center border border-gray-200">
+                    Tìm hiểu thêm
+                    <i class="fas fa-chevron-down ml-2"></i>
+                </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Thanh tìm kiếm -->
-<section class="bg-gradient-to-r from-gray-100 to-gray-200 py-16 md:py-24">
-    <div class="container mx-auto px-4 md:px-0 text-center">
-        <h2 class="text-4xl font-bold mb-8 text-indigo-800">Tìm kiếm bác sĩ phù hợp</h2>
-        <form th:action="@{/search-doctors}" method="get" class="flex flex-col md:flex-row justify-center gap-4 max-w-4xl mx-auto">
-            <input type="text" name="name" placeholder="Tên bác sĩ hoặc chuyên khoa" class="p-4 rounded-lg w-full md:w-1/3 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-            <input type="text" name="location" placeholder="Vị trí (ví dụ: Hà Nội)" class="p-4 rounded-lg w-full md:w-1/3 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-            <button type="submit" class="bg-indigo-500 text-white px-8 py-4 rounded-lg hover:bg-indigo-600 transition shadow-md hover:shadow-lg flex items-center justify-center">
-                <i class="fas fa-search mr-2"></i> Tìm kiếm
-            </button>
+<!-- Services Section -->
+<section id="services" class="py-20 px-4 bg-gray-50">
+    <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Dịch vụ của chúng tôi</h2>
+            <p class="text-xl text-gray-600">Giải pháp chăm sóc sức khỏe toàn diện cho bạn</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card-hover bg-white p-8 rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-xl">
+                <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fas fa-video text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-gray-900">Tư vấn trực tuyến</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Gặp gỡ bác sĩ qua video call, nhận tư vấn y tế chuyên nghiệp ngay tại nhà
+                </p>
+            </div>
+
+            <div class="card-hover bg-white p-8 rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-xl">
+                <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fas fa-calendar-check text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-gray-900">Đặt lịch nhanh</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Đặt lịch khám bệnh dễ dàng, linh hoạt với hệ thống quản lý thông minh
+                </p>
+            </div>
+
+            <div class="card-hover bg-white p-8 rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-xl">
+                <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fas fa-user-md text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-gray-900">Bác sĩ uy tín</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Hơn 1000+ bác sĩ chuyên khoa hàng đầu sẵn sàng phục vụ bạn
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="py-20 px-4 bg-white">
+    <div class="container mx-auto max-w-5xl">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Tìm bác sĩ phù hợp</h2>
+            <p class="text-xl text-gray-600">Tìm kiếm theo chuyên khoa hoặc vị trí</p>
+        </div>
+
+        <form th:action="@{/search-doctors}" method="get" class="glass-effect rounded-2xl p-6 shadow-lg">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text"
+                           name="name"
+                           placeholder="Tên bác sĩ hoặc chuyên khoa"
+                           class="search-input w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:border-purple-300 transition">
+                </div>
+                <div class="flex-1">
+                    <input type="text"
+                           name="location"
+                           placeholder="Vị trí (ví dụ: Hà Nội)"
+                           class="search-input w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:border-purple-300 transition">
+                </div>
+                <button type="submit" class="btn-primary text-white px-8 py-4 rounded-xl font-medium shadow-lg whitespace-nowrap">
+                    <i class="fas fa-search mr-2"></i>
+                    Tìm kiếm
+                </button>
+            </div>
         </form>
     </div>
 </section>
 
-<!-- Bác sĩ nổi bật -->
-<section class="py-16 md:py-24">
-    <div class="container mx-auto px-4 md:px-0">
-        <h2 class="text-4xl font-bold mb-12 text-center text-indigo-800">Bác sĩ nổi bật</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div th:each="doctor : ${featuredDoctors}" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl hover:scale-105 transition duration-300">
-                <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-56 object-cover">
+<!-- Featured Doctors -->
+<section class="py-20 px-4 bg-gray-50">
+    <div class="container mx-auto max-w-7xl">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Bác sĩ nổi bật</h2>
+            <p class="text-xl text-gray-600">Đội ngũ bác sĩ chuyên môn cao, tận tâm</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div th:each="doctor : ${featuredDoctors}" class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-purple-200 hover:shadow-xl">
+                <div class="aspect-square overflow-hidden bg-gray-100">
+                    <img th:src="@{${doctor.photoPath}}"
+                         alt="Bác sĩ"
+                         class="w-full h-full object-cover">
+                </div>
                 <div class="p-6">
-                    <h3 th:text="${doctor.user.email}" class="text-xl font-bold mb-2 text-indigo-700"></h3>
-                    <p th:text="${doctor.specialization.name}" class="text-gray-600 mb-4"></p>
-                    <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}" class="text-indigo-500 hover:text-indigo-700 font-medium transition">Xem hồ sơ <i class="fas fa-arrow-right ml-1"></i></a>
+                    <h3 th:text="${doctor.user.email}" class="text-lg font-semibold mb-2 text-gray-900"></h3>
+                    <p th:text="${doctor.specialization.name}" class="text-sm text-gray-600 mb-4"></p>
+                    <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}"
+                       class="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium transition group">
+                        Xem hồ sơ
+                        <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition"></i>
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 px-4 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+    <div class="container mx-auto max-w-4xl text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">Sẵn sàng bắt đầu?</h2>
+        <p class="text-xl mb-8 opacity-90">Đăng ký ngay để trải nghiệm dịch vụ chăm sóc sức khỏe hiện đại</p>
+        <a href="/register" class="inline-block bg-white text-purple-600 px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition transform hover:-translate-y-1">
+            Đăng ký miễn phí
+        </a>
     </div>
 </section>
 

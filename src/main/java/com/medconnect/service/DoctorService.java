@@ -125,35 +125,43 @@ public class DoctorService {
         if (approve) {
             doctor.setStatus(Doctor.Status.Approved);
 
+            // GỬI THÔNG BÁO PHÊ DUYỆT
+            notificationService.sendPushNotification(
+                    doctor.getUser(),
+                    "Application Approved",
+                    "Hồ sơ bác sĩ của bạn đã được phê duyệt. Thông tin của bạn sẽ được cập nhật với bệnh nhân."
+            );
+
         } else {
             doctor.setStatus(Doctor.Status.Rejected);
             doctor.setRejectionReason(reason);
 
+            // GỬI EMAIL TỪ CHỐI (Giữ nguyên logic của bạn)
             try {
                 String toEmail = doctor.getUser().getEmail();
-                String doctorName = doctor.getFullName(); // Lấy tên đầy đủ
+                String doctorName = doctor.getFullName();
 
-                // Đảm bảo lý do không bị null/rỗng khi gửi mail
                 String rejectionReason = (reason != null && !reason.isBlank())
                         ? reason
                         : "Không có lý do cụ thể được cung cấp.";
 
-                // Gọi service email
                 emailService.sendDoctorRejectionEmail(toEmail, doctorName, rejectionReason);
 
             } catch (Exception e) {
                 System.err.println("LỖI: Không thể gửi email từ chối cho bác sĩ " + doctorId + ": " + e.getMessage());
                 e.printStackTrace();
             }
+
+            // GỬI THÔNG BÁO TỪ CHỐI
+            notificationService.sendPushNotification(
+                    doctor.getUser(),
+                    "Application rejection", // Tiêu đề đúng
+                    "Hồ sơ của bạn đã bị từ chối, lý do chi tiết vui lòng kiểm tra trong mail." // Nội dung đúng
+            );
         }
 
+        // Lưu thay đổi vào CSDL (chỉ 1 lần ở cuối)
         doctorRepository.save(doctor);
-
-        notificationService.sendPushNotification(
-                doctor.getUser(),
-                "Application rejection",
-                "Hồ sơ của bạn đã bị từ chối, lý do chi tiết vui lòng kiểm tra trong mail."
-        );
     }
 
     public List<Doctor> getAllDoctors() {
