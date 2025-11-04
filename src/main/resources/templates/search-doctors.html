@@ -5,44 +5,72 @@
     <title>Tìm kiếm bác sĩ - MedConnect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initMap"></script>
-
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+
+    <style>
+        /* Import font giống index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống index.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Tìm kiếm bác sĩ</h1>
+<section class="container mx-auto py-16 px-4 md:px-0">
 
-    <!-- Form tìm kiếm -->
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 mx-4 md:mx-8 transform transition duration-300">
-        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-search mr-2 text-indigo-500"></i> Tìm kiếm bác sĩ
+    <h1 class="text-5xl md:text-6xl font-bold text-center mb-16 gradient-text">
+        Tìm kiếm bác sĩ
+    </h1>
+
+    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mb-8 mx-4 md:mx-8">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+            <i class="fas fa-search mr-3 text-purple-600"></i> Lọc kết quả
         </h2>
         <form th:action="@{/search-doctors}" method="get" class="flex flex-col md:flex-row gap-4 justify-center">
-            <input type="text" name="name" placeholder="Tên, chuyên khoa" class="p-3 border border-gray-300 rounded-lg w-full md:w-1/4 focus:ring-indigo-500 focus:border-indigo-500">
-            <input type="text" name="location" placeholder="Vị trí" class="p-3 border border-gray-300 rounded-lg w-full md:w-1/4 focus:ring-indigo-500 focus:border-indigo-500">
-            <button type="submit" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-center">
+            <input type="text" name="name" placeholder="Tên, chuyên khoa"
+                   class="p-3 border border-gray-300 rounded-xl w-full md:w-1/4 focus:ring-purple-500 focus:border-purple-500">
+            <input type="text" name="location" placeholder="Vị trí"
+                   class="p-3 border border-gray-300 rounded-xl w-full md:w-1/4 focus:ring-purple-500 focus:border-purple-500">
+            <button type="submit"
+                    class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center">
                 <i class="fas fa-search mr-2"></i> Tìm
             </button>
         </form>
     </div>
 
-    <!-- Thông báo không tìm thấy bác sĩ -->
-    <div th:if="${doctors.empty}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center">Không tìm thấy bác sĩ. Vui lòng thử tiêu chí khác.</div>
+    <div th:if="${doctors.empty}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center">
+        Không tìm thấy bác sĩ. Vui lòng thử tiêu chí khác.
+    </div>
 
-    <!-- Danh sách bác sĩ -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mx-4 md:mx-8">
-        <div th:each="doctor : ${doctors}" class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
-            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-[300px] object-cover rounded-t-lg mb-4">
-            <h2 th:text="${doctor.fullName} ?: ${doctor.user.email}" class="text-xl font-semibold text-indigo-700"></h2>
-            <p th:text="${doctor.specialization.name}" class="text-gray-600"></p>
+
+        <div th:each="doctor : ${doctors}"
+             class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition duration-300">
+
+            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-[300px] object-cover rounded-xl mb-4">
+
+            <h2 th:text="${doctor.fullName} ?: ${doctor.user.email}" class="text-xl font-semibold text-gray-900"></h2>
+
+            <p th:text="${doctor.specialization.name}" class="text-purple-600 font-medium"></p>
+
             <p th:if="${doctor.clinicAddress}" class="text-gray-500 text-sm mt-1 flex items-center">
                 <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
                 <span th:text="${doctor.clinicAddress}"></span>
             </p>
-            <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}" class="text-indigo-600 hover:text-indigo-800 font-medium mt-4 inline-block transition">
+
+            <a th:href="@{/doctor-profile-view/{id}(id=${doctor.doctorId})}"
+               class="text-purple-600 hover:text-purple-800 font-medium mt-4 inline-block transition">
                 Xem hồ sơ <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>

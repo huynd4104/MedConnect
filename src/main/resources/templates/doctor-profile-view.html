@@ -12,6 +12,21 @@
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
 
     <style>
+        /* Import font giống index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống index.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .fc {
             --fc-border-color: #e5e7eb;
             --fc-daygrid-event-dot-width: 8px;
@@ -22,7 +37,15 @@
             border: none !important;
         }
 
-        .fc .fc-col-header-cell,
+        /* Cập nhật màu header (purple) */
+        .fc .fc-col-header-cell {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
+            background-color: #faf5ff !important; /* purple-50 */
+            color: #7e22ce !important; /* purple-700 */
+            font-weight: 600;
+        }
+
         .fc .fc-timegrid-axis,
         .fc .fc-timegrid-slot-label {
             background-color: #f9fafb !important;
@@ -31,12 +54,6 @@
             color: #374151;
             text-align: center;
             border-right: 1px solid #e5e7eb;
-        }
-
-        .fc .fc-col-header-cell {
-            padding: 0.75rem 0.5rem;
-            font-size: 0.9rem;
-            background-color: #f3f4f6 !important;
         }
 
         .fc .fc-timegrid-slot {
@@ -52,7 +69,6 @@
             padding-right: 0.5rem;
         }
 
-        /* Sự kiện: nhỏ gọn, rõ ràng */
         .fc .fc-event {
             border-radius: 6px;
             font-size: 0.75rem;
@@ -75,33 +91,35 @@
             text-align: center;
         }
 
-        /* Màu sắc sự kiện */
+        /* Màu sắc sự kiện - Cập nhật (purple) */
         .schedule-online {
-            background-color: #3b82f6 !important;
+            background-color: #9333ea !important; /* purple-600 */
         }
 
         .schedule-inperson {
-            background-color: #10b981 !important;
+            background-color: #10b981 !important; /* green-500 */
         }
 
-        /* Nút điều khiển */
+        /* Nút điều khiển - Cập nhật (purple) */
         .fc .fc-button {
-            background-color: #6366f1 !important;
+            background-color: #9333ea !important; /* purple-600 */
             border: none !important;
-            border-radius: 6px;
+            border-radius: 0.75rem; /* rounded-xl */
             padding: 0.5rem 0.75rem;
             font-size: 1rem;
             font-weight: 500;
             color: white;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
 
         .fc .fc-button:hover {
-            background-color: #4f46e5 !important;
+            background-color: #7e22ce !important; /* purple-700 */
+            transform: translateY(-1px);
         }
 
         .fc .fc-button:focus {
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.3); /* purple-500 with opacity */
         }
 
         .fc .fc-button-primary:disabled {
@@ -109,7 +127,6 @@
             opacity: 0.6;
         }
 
-        /* Toolbar */
         .fc .fc-toolbar {
             margin-bottom: 1rem;
             flex-wrap: wrap;
@@ -122,7 +139,6 @@
             color: #1f2937;
         }
 
-        /* Responsive: Mobile */
         @media (max-width: 768px) {
             .fc .fc-toolbar {
                 flex-direction: column;
@@ -145,25 +161,21 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Hồ sơ bác sĩ</h1>
-
-    <!-- Thông báo lỗi -->
+<section class="container mx-auto py-16 px-4 md:px-0">
     <div th:if="${error}"
          class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center"
          th:text="${error}"></div>
 
-    <!-- Thông tin bác sĩ -->
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 mb-8 transform transition duration-300">
+    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mx-4 md:mx-8 mb-8">
         <div class="flex flex-col md:flex-row gap-8">
             <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-48 h-48 object-cover rounded-full shadow-lg">
             <div class="flex-1">
                 <h2 th:text="${doctor.fullName} ?: ${doctor.user.email}"
-                    class="text-2xl font-semibold text-indigo-700 mb-2"></h2>
-                <p th:text="${doctor.specialization.name}" class="text-gray-600 text-lg mb-2"></p>
+                    class="text-3xl font-bold text-gray-900 mb-2"></h2>
+                <p th:text="${doctor.specialization.name}" class="text-purple-600 font-semibold text-lg mb-2"></p>
                 <p th:text="'Kinh nghiệm: ' + ${doctor.experienceYears} + ' năm'" class="text-gray-600 mb-1"></p>
                 <p th:if="${doctor.phoneNumber}" class="text-gray-600 mb-1 flex items-center">
                     <i class="fas fa-phone mr-2 text-gray-400"></i>
@@ -175,25 +187,22 @@
                 </p>
                 <a th:href="@{/book-appointment(doctorId=${doctor.doctorId})}"
                    sec:authorize="hasRole('Patient')"
-                   class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center w-fit">
+                   class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition transform hover:-translate-y-1 hover:shadow-lg flex items-center w-fit">
                     <i class="fas fa-calendar-plus mr-2"></i> Đặt lịch
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Lịch trống -->
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 mb-8 transform transition duration-300">
-        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-calendar mr-2 text-indigo-500"></i> Lịch trống
+    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mx-4 md:mx-8 mb-8">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+            <i class="fas fa-calendar mr-3 text-purple-600"></i> Lịch trống
         </h2>
 
-        <!-- Container lịch với khung cố định, đẹp và responsive -->
-        <div class="fc-theme-standard rounded-lg overflow-hidden shadow-sm">
+        <div class="fc-theme-standard rounded-lg overflow-hidden ">
             <div id="calendar" class="fc-custom" style="max-height: 500px; overflow-y: auto;"></div>
         </div>
 
-        <!-- Chú thích -->
         <div class="mt-6 flex flex-wrap gap-6 justify-center md:justify-start">
             <div class="flex items-center">
                 <div class="w-5 h-5 schedule-online rounded mr-2 shadow-sm"></div>
@@ -206,17 +215,16 @@
         </div>
     </div>
 
-    <!-- Đánh giá -->
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 transform transition duration-300">
-        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-star mr-2 text-indigo-500"></i> Đánh giá
+    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mx-4 md:mx-8">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+            <i class="fas fa-star mr-3 text-purple-600"></i> Đánh giá
         </h2>
         <div th:if="${reviews.isEmpty()}" class="text-center text-gray-500 italic">
             Chưa có đánh giá nào.
         </div>
 
         <div th:each="review : ${reviews}"
-             class="bg-gray-50 p-5 rounded-lg mb-4 shadow-sm border-l-4 border-indigo-100">
+             class="bg-gray-50 p-5 rounded-xl mb-4 shadow-sm border-l-4 border-purple-100">
 
             <div class="flex justify-between items-center mb-2">
                 <div class="font-semibold text-gray-800 text-lg">
@@ -225,7 +233,7 @@
                         Ẩn danh
                     </th:block>
                     <th:block th:if="!${review.anonymous}">
-                        <i class="fas fa-user mr-2 text-indigo-500"></i>
+                        <i class="fas fa-user mr-2 text-purple-600"></i>
                         <span th:text="${review.appointment.patient.fullName}"></span>
                     </th:block>
                 </div>
@@ -256,12 +264,9 @@
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
         const calendarEl = document.getElementById('calendar');
-
-        // Lấy doctorId mà Controller Java đã truyền sang
         const doctorId = /*[[${doctorId}]]*/ null;
 
         if (calendarEl && doctorId) {
-            // 1. Gọi API public mới tạo để lấy dữ liệu
             fetch(`/api/public/schedules/${doctorId}`)
                 .then(response => {
                     if (!response.ok) {
@@ -270,21 +275,13 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 2. Chuyển đổi ScheduleDTO thành định dạng sự kiện FullCalendar
                     const calendarEvents = data.map(scheduleDTO => {
-                        // Service trả về 1 slot (ví dụ: "08:00")
                         const startTime = scheduleDTO.slots[0];
-
-                        // Tính thời gian kết thúc (start + 30 min)
                         const timeParts = startTime.split(':').map(Number);
                         const dateObj = new Date();
                         dateObj.setHours(timeParts[0], timeParts[1] + 30, 0, 0);
                         const endTime = dateObj.toTimeString().substring(0, 5);
-
-                        // Chuyển đổi dayOfWeek (1=CN, 2=T2)
-                        // sang FullCalendar (0=CN, 1=T2)
                         const calendarDay = scheduleDTO.dayOfWeek - 1;
-
                         const isOnline = scheduleDTO.consultationType === 'Online';
 
                         return {
@@ -294,39 +291,33 @@
                             endTime: endTime,
                             daysOfWeek: [calendarDay],
                             allDay: false,
-                            // Thêm class CSS tùy chỉnh
                             className: isOnline ? 'schedule-online' : 'schedule-inperson',
-                            // (Không dùng color nữa, dùng className)
-                            // color: isOnline ? '#3b82f6' : '#10b981',
                         };
                     });
 
-                    // 3. Khởi tạo FullCalendar
                     const calendar = new FullCalendar.Calendar(calendarEl, {
-                        initialView: 'timeGridWeek', // Giao diện tuần
-                        locale: 'vi', // Tiếng Việt
-                        firstDay: 1,  // Bắt đầu từ Thứ 2
+                        initialView: 'timeGridWeek',
+                        locale: 'vi',
+                        firstDay: 1,
                         headerToolbar: {
                             left: 'prev,next today',
                             center: 'title',
                             right: 'timeGridWeek,timeGridDay'
                         },
-                        slotMinTime: '07:00:00', // Bắt đầu lúc 7h sáng
-                        slotMaxTime: '21:30:00', // Kết thúc lúc 9:30 tối
-                        allDaySlot: false, // Ẩn hàng "all-day"
-                        events: calendarEvents, // Nạp sự kiện đã xử lý
+                        slotMinTime: '07:00:00',
+                        slotMaxTime: '21:30:00',
+                        allDaySlot: false,
+                        events: calendarEvents,
                         eventTimeFormat: {
                             hour: '2-digit',
                             minute: '2-digit',
                             hour12: false
                         },
-                        // Không cho phép click vào sự kiện (vì đây là trang view)
                         eventClick: function (info) {
                             info.jsEvent.preventDefault();
                         }
                     });
 
-                    // 4. Render lịch
                     calendar.render();
                 })
                 .catch(error => {

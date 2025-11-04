@@ -7,76 +7,117 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+
+    <style>
+        /* Import font giống patient-dashboard.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống patient-dashboard.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tùy chỉnh cho bảng trong card (giống patient-dashboard.html) */
+        .card-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 1rem; /* rounded-2xl */
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden; /* Giúp bo góc cho table header */
+        }
+    </style>
+
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Quản lý hồ sơ bệnh nhân</h1>
+<section class="container mx-auto py-16 px-4 md:px-0">
+    <div th:if="${error}" class="mb-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
 
-    <!-- Thông báo lỗi -->
-    <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
-
-    <!-- Container cho hai bảng -->
     <div class="flex flex-col md:flex-row gap-8 mx-4 md:mx-8">
-        <!-- Form Cập nhật thông tin (bên trái) -->
-        <div class="w-full md:w-1/2 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300">
-            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-                <i class="fas fa-user-edit mr-2 text-indigo-500"></i> Cập nhật thông tin
+
+        <div class="w-full md:w-1/2 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+            <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+                <i class="fas fa-user-edit mr-3 text-purple-600"></i> Cập nhật thông tin
             </h2>
             <form th:action="@{/patient-profile}" th:object="${patientProfileDTO}" method="post" class="space-y-4">
                 <div>
                     <label for="fullName" class="block text-sm font-medium text-gray-700">Họ tên</label>
-                    <input type="text" th:field="*{fullName}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="text" th:field="*{fullName}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
                     <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-red-500 text-sm"></span>
                 </div>
                 <div>
                     <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
-                    <input type="text" th:field="*{phoneNumber}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="text" th:field="*{phoneNumber}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
                     <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-red-500 text-sm"></span>
                 </div>
                 <div>
                     <label for="address" class="block text-sm font-medium text-gray-700">Địa chỉ</label>
-                    <input type="text" th:field="*{address}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="text" th:field="*{address}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
                 </div>
                 <div>
                     <label for="dateOfBirth" class="block text-sm font-medium text-gray-700">Ngày sinh</label>
-                    <input type="date" th:field="*{dateOfBirth}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="date" th:field="*{dateOfBirth}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
                 </div>
                 <div>
                     <label for="medicalHistory" class="block text-sm font-medium text-gray-700">Lịch sử bệnh</label>
-                    <textarea th:field="*{medicalHistory}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="4"></textarea>
+                    <textarea th:field="*{medicalHistory}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500" rows="4"></textarea>
                 </div>
-                <div class="flex gap-4">
-                    <a th:href="@{/patient-dashboard}" class="w-1/2 bg-gray-500 text-white p-3 rounded-lg font-semibold hover:bg-gray-600 transition flex items-center justify-center">
+                <div class="flex gap-4 pt-4">
+                    <a th:href="@{/patient-dashboard}" class="w-1/2 bg-gray-300 text-gray-800 p-3 rounded-xl font-semibold hover:bg-gray-400 transition flex items-center justify-center">
                         <i class="fas fa-arrow-left mr-2"></i> Quay lại
                     </a>
-                    <button type="submit" class="w-1/2 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-center">
+                    <button type="submit" class="w-1/2 bg-purple-600 text-white p-3 rounded-xl font-semibold hover:bg-purple-700 transition flex items-center justify-center">
                         <i class="fas fa-save mr-2"></i> Cập nhật
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- Lịch sử lịch hẹn (bên phải) -->
-        <div class="w-full md:w-1/2 bg-white p-6 md:p-8 rounded-xl shadow-lg transform transition duration-300">
-            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-                <i class="fas fa-calendar-check mr-2 text-indigo-500"></i> Lịch sử lịch hẹn
+        <div class="w-full md:w-1/2 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+            <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+                <i class="fas fa-calendar-check mr-3 text-purple-600"></i> Lịch sử lịch hẹn
             </h2>
-            <div class="overflow-x-auto">
+            <div class="card-table-container">
                 <table class="w-full table-auto min-w-max border-collapse">
-                    <thead class="bg-indigo-100 text-indigo-800">
+                    <thead class="bg-purple-50">
                     <tr>
-                        <th class="p-3 text-left">Ngày</th>
-                        <th class="p-3 text-left">Bác sĩ</th>
-                        <th class="p-3 text-left">Trạng thái</th>
+                        <th class="p-3 text-left text-purple-700 font-semibold text-sm">Ngày</th>
+                        <th class="p-3 text-left text-purple-700 font-semibold text-sm">Bác sĩ</th>
+                        <th class="p-3 text-left text-purple-700 font-semibold text-sm">Trạng thái</th>
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                    <tr th:each="app : ${appointments}" class="transition duration-200">
-                        <td th:text="${app.appointmentDateTime}" class="p-3"></td>
-                        <td th:text="${app.doctor.user.email}" class="p-3"></td>
-                        <td th:text="${app.status}" class="p-3"></td>
+                    <tr th:each="app : ${appointments}" class="transition duration-200 hover:bg-gray-50">
+                        <td class="p-3" th:text="${#temporals.format(app.appointmentDateTime, 'HH:mm dd/MM/yyyy')}"></td>
+                        <td class="p-3" th:text="${app.doctor.user.email}"></td>
+                        <td class="p-3">
+                            <span th:switch="${app.status.name()}">
+                              <span th:case="'Pending'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                Đang chờ
+                              </span>
+                              <span th:case="'Confirmed'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Đã xác nhận
+                              </span>
+                              <span th:case="'Completed'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Đã hoàn thành
+                              </span>
+                              <span th:case="'Cancelled'" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                Đã hủy
+                              </span>
+                              <span th:case="*" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800" th:text="${app.status.name()}">
+                                Không xác định
+                              </span>
+                            </span>
+                        </td>
                     </tr>
                     <tr th:if="${appointments.empty}">
                         <td colspan="3" class="p-3 text-center text-gray-600">Không có lịch hẹn</td>

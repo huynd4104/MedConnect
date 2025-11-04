@@ -103,6 +103,7 @@ public class AppointmentService {
         appointment.setDoctor(doctor);
         appointment.setAppointmentDateTime(appointmentDateTime); // Đặt giờ đã gộp
         appointment.setConsultationType(dto.getConsultationType());
+        appointment.setMedicalInfo(dto.getMedicalInfo());
         appointmentRepository.save(appointment);
 
         // Notify doctor

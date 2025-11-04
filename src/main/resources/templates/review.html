@@ -8,6 +8,21 @@
 
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
     <style>
+        /* Import font giống patient-dashboard.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống patient-dashboard.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .star-rating {
             display: flex;
             gap: 8px;
@@ -15,45 +30,45 @@
         }
         .star {
             cursor: pointer;
-            color: #d1d5db;
+            color: #d1d5db; /* text-gray-300 */
             transition: all 0.2s ease;
         }
         .star:hover {
             transform: scale(1.15);
         }
         .star.active {
-            color: #fbbf24;
+            color: #fbbf24; /* text-amber-400 */
         }
         .star.hovered {
-            color: #fbbf24;
+            color: #fbbf24; /* text-amber-400 */
         }
     </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Để lại đánh giá</h1>
-
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-2xl mx-auto transform transition duration-300">
+<section class="container mx-auto py-16 px-4 md:px-0">
+    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 max-w-2xl mx-auto transform transition duration-300">
         <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center flex items-center justify-center">
             <i class="fas fa-exclamation-circle mr-2"></i>
             <span th:text="${error}"></span>
         </div>
 
-        <div class="mb-6">
-            <h2 class="text-2xl font-semibold mb-4 text-indigo-700 flex items-center">
-                <i class="fas fa-info-circle mr-2 text-indigo-500"></i> Tóm tắt lịch hẹn
+        <div class="mb-8">
+            <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+                <i class="fas fa-info-circle mr-3 text-purple-600"></i> Tóm tắt lịch hẹn
             </h2>
-            <p class="text-gray-700"><span class="font-medium">Bác sĩ:</span> <span th:text="${appointment.doctor.fullName}"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${#temporals.format(appointment.appointmentDateTime, 'HH:mm dd/MM/yyyy')}"></span></p>
+            <div class="space-y-2">
+                <p class="text-gray-700"><span class="font-medium">Bác sĩ:</span> <span th:text="${appointment.doctor.fullName}"></span></p>
+                <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${#temporals.format(appointment.appointmentDateTime, 'HH:mm dd/MM/yyyy')}"></span></p>
+            </div>
         </div>
 
         <form th:action="@{/review}" th:object="${reviewDTO}" method="post" class="space-y-6">
             <input type="hidden" th:field="*{appointmentId}" />
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
-                    <i class="fas fa-star mr-2 text-indigo-500"></i> Đánh giá
+                    <i class="fas fa-star mr-2 text-purple-600"></i> Đánh giá
                 </label>
                 <div class="star-rating" id="starRating">
                     <i class="fas fa-star star" data-rating="1"></i>
@@ -68,20 +83,20 @@
             </div>
             <div>
                 <label for="comment" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    <i class="fas fa-comment mr-2 text-indigo-500"></i> Nhận xét
+                    <i class="fas fa-comment mr-2 text-purple-600"></i> Nhận xét
                 </label>
-                <textarea th:field="*{comment}" id="comment" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" rows="4"></textarea>
+                <textarea th:field="*{comment}" id="comment" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500" rows="4"></textarea>
             </div>
             <div class="flex items-center">
-                <input type="checkbox" th:field="*{anonymous}" id="anonymous" class="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <input type="checkbox" th:field="*{anonymous}" id="anonymous" class="mr-2 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
                 <label for="anonymous" class="text-sm font-medium text-gray-700">Ẩn danh</label>
             </div>
             <div class="flex flex-col md:flex-row gap-4 pt-4">
-                <a th:href="@{/patient-dashboard}" class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition flex items-center justify-center text-center">
+                <a th:href="@{/patient-dashboard}" class="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-300 transition flex items-center justify-center text-center">
                     <i class="fas fa-arrow-left mr-2"></i> Quay lại
                 </a>
 
-                <button type="submit" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                <button type="submit" class="flex-1 bg-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-purple-700 transition flex items-center justify-center">
                     <i class="fas fa-paper-plane mr-2"></i> Gửi
                 </button>
             </div>
@@ -92,73 +107,77 @@
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('ratingInput');
-    const ratingText = document.getElementById('ratingText');
-    let selectedRating = 0;
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('ratingInput');
+        const ratingText = document.getElementById('ratingText');
+        let selectedRating = 0;
 
-    const ratingTexts = {
-        1: 'Rất không hài lòng',
-        2: 'Không hài lòng',
-        3: 'Bình thường',
-        4: 'Hài lòng',
-        5: 'Rất hài lòng'
-    };
+        const ratingTexts = {
+            1: 'Rất không hài lòng',
+            2: 'Không hài lòng',
+            3: 'Bình thường',
+            4: 'Hài lòng',
+            5: 'Rất hài lòng'
+        };
 
-    // Click vào sao để chọn rating
-    stars.forEach(star => {
-        star.addEventListener('click', function() {
-            selectedRating = parseInt(this.getAttribute('data-rating'));
-            ratingInput.value = selectedRating;
-            updateStars(selectedRating);
-            ratingText.textContent = ratingTexts[selectedRating];
-            ratingText.classList.remove('text-gray-600');
-            ratingText.classList.add('text-indigo-600', 'font-medium');
-        });
+        // Click vào sao để chọn rating
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                ratingInput.value = selectedRating;
+                updateStars(selectedRating);
+                ratingText.textContent = ratingTexts[selectedRating];
+                ratingText.classList.remove('text-gray-600');
+                // Đổi text thành màu purple
+                ratingText.classList.add('text-purple-600', 'font-medium');
+            });
 
-        // Hover effect
-        star.addEventListener('mouseenter', function() {
-            const hoverRating = parseInt(this.getAttribute('data-rating'));
-            stars.forEach((s, index) => {
-                if (index < hoverRating) {
-                    s.classList.add('hovered');
-                } else {
-                    s.classList.remove('hovered');
-                }
+            // Hover effect
+            star.addEventListener('mouseenter', function() {
+                const hoverRating = parseInt(this.getAttribute('data-rating'));
+                stars.forEach((s, index) => {
+                    if (index < hoverRating) {
+                        s.classList.add('hovered');
+                    } else {
+                        s.classList.remove('hovered');
+                    }
+                });
             });
         });
-    });
 
-    // Reset hover khi rời chuột
-    document.getElementById('starRating').addEventListener('mouseleave', function() {
-        stars.forEach(s => s.classList.remove('hovered'));
-    });
-
-    function updateStars(rating) {
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.classList.add('active');
-            } else {
-                star.classList.remove('active');
-            }
+        // Reset hover khi rời chuột
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            stars.forEach(s => s.classList.remove('hovered'));
         });
-    }
 
-    (function initReviewStars() {
-        // 1. Lấy giá trị rating ban đầu (Thymeleaf đã điền vào input)
-        const initialRating = parseInt(ratingInput.value);
-
-        // 2. Nếu có giá trị hợp lệ, cập nhật giao diện
-        if (initialRating > 0 && initialRating <= 5) {
-            selectedRating = initialRating;
-            updateStars(selectedRating); // Cập nhật màu sao
-
-            // Cập nhật text (ví dụ: "Rất hài lòng")
-            ratingText.textContent = ratingTexts[selectedRating];
-            ratingText.classList.remove('text-gray-600');
-            ratingText.classList.add('text-indigo-600', 'font-medium');
+        function updateStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
         }
-    })();
+
+        (function initReviewStars() {
+            // 1. Lấy giá trị rating ban đầu (Thymeleaf đã điền vào input)
+            const initialRating = parseInt(ratingInput.value);
+
+            // 2. Nếu có giá trị hợp lệ, cập nhật giao diện
+            if (initialRating > 0 && initialRating <= 5) {
+                selectedRating = initialRating;
+                updateStars(selectedRating); // Cập nhật màu sao
+
+                // Cập nhật text (ví dụ: "Rất hài lòng")
+                ratingText.textContent = ratingTexts[selectedRating];
+                ratingText.classList.remove('text-gray-600');
+                // Đổi text thành màu purple
+                ratingText.classList.add('text-purple-600', 'font-medium');
+            }
+        })();
+    });
 </script>
 </body>
 </html>

@@ -7,50 +7,63 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+
+    <style>
+        /* Import font giống patient-dashboard.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống patient-dashboard.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto px-4 md:px-0 flex-1 flex items-center justify-center">
-    <div class="max-w-lg mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Thanh toán phí tư vấn</h1>
+<section class="container mx-auto px-4 md:px-0 flex-1 flex items-center justify-center py-16">
+    <div class="max-w-lg w-full">
+        <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-0 text-center" th:text="${error}"></div>
 
-        <!-- Thông báo lỗi -->
-        <div th:if="${error}" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl mx-4 md:mx-8 text-center" th:text="${error}"></div>
-
-        <!-- Form thanh toán -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 transform transition duration-300">
-            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-                <i class="fas fa-file-invoice mr-2 text-indigo-500"></i> Tóm tắt lịch hẹn
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mx-4 md:mx-0">
+            <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+                <i class="fas fa-file-invoice mr-3 text-purple-600"></i> Tóm tắt lịch hẹn
             </h2>
             <div class="space-y-2 mb-6">
                 <p class="text-gray-700"><span class="font-medium">Bác sĩ:</span> <span th:text="${appointment.doctor.user.email}"></span></p>
                 <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${#temporals.format(appointment.appointmentDateTime, 'HH:mm dd/MM/yyyy')}"></span></p>
                 <p class="text-gray-700"><span class="font-medium">Phí:</span> <span th:text="${fee} + ' VND'"></span></p>
             </div>
-            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-                <i class="fas fa-credit-card mr-2 text-indigo-500"></i> Phương thức thanh toán
+            <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+                <i class="fas fa-credit-card mr-3 text-purple-600"></i> Phương thức thanh toán
             </h2>
             <form th:action="@{/payment}" th:object="${paymentDTO}" method="post" class="space-y-4">
                 <input type="hidden" th:field="*{appointmentId}" />
                 <input type="hidden" th:field="*{amount}" />
                 <input type="hidden" th:field="*{paymentMethod}" value="VNPAY" />
 
-                <div class="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-200">
+                <div class="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <i class="fas fa-wallet text-indigo-600 text-2xl mr-3"></i>
+                            <i class="fas fa-wallet text-purple-600 text-2xl mr-3"></i>
                             <span class="text-lg font-semibold text-gray-800">VNPAY</span>
                         </div>
-                        <i class="fas fa-check-circle text-indigo-600 text-xl"></i>
+                        <i class="fas fa-check-circle text-purple-600 text-xl"></i>
                     </div>
                 </div>
 
-                <div class="flex gap-4">
-                    <a th:href="@{/patient-dashboard}" class="w-1/2 bg-gray-500 text-white p-3 rounded-lg font-semibold hover:bg-gray-600 transition flex items-center justify-center">
+                <div class="flex gap-4 pt-4">
+                    <a th:href="@{/patient-dashboard}" class="w-1/2 bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-semibold hover:bg-gray-400 transition flex items-center justify-center text-center">
                         <i class="fas fa-arrow-left mr-2"></i> Quay lại
                     </a>
-                    <button type="submit" class="w-1/2 bg-indigo-500 text-white p-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-center">
+                    <button type="submit" class="w-1/2 bg-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-purple-700 transition flex items-center justify-center">
                         <i class="fas fa-check mr-2"></i> Thanh toán
                     </button>
                 </div>

@@ -7,38 +7,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+
+    <style>
+        /* Import font giống doctor-dashboard.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống doctor-dashboard.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Table container giống doctor-dashboard.html */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 1rem; /* 1rem = rounded-2xl */
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden; /* Thêm để bo góc cho table header */
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Quản lý Danh sách Bệnh nhân</h1>
+<section class="container mx-auto py-16 px-4">
+    <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-xl">
 
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mx-4 md:mx-8 overflow-x-auto">
-        <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-            <i class="fas fa-users mr-2 text-indigo-500"></i> Danh sách bệnh nhân
+        <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+            <i class="fas fa-users mr-3 text-purple-600"></i> Danh sách bệnh nhân
         </h2>
-        <table class="w-full table-auto min-w-max border-collapse">
-            <thead class="bg-indigo-100 text-indigo-800">
-            <tr>
-                <th class="p-3 text-left">Họ và Tên</th>
-                <th class="p-3 text-left">Email</th>
-                <th class="p-3 text-left">Số điện thoại</th>
-                <th class="p-3 text-left">Địa chỉ</th>
-            </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-            <tr th:each="patient : ${patients}" class="transition duration-200 hover:bg-gray-50">
-                <td class="p-3" th:text="${patient.fullName}"></td>
-                <td class="p-3" th:text="${patient.user.email}"></td>
-                <td class="p-3" th:text="${patient.phoneNumber}"></td>
-                <td class="p-3" th:text="${patient.address}"></td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(patients)}">
-                <td colspan="4" class="p-3 text-center text-gray-600">Không có bệnh nhân nào trong hệ thống.</td>
-            </tr>
-            </tbody>
-        </table>
+
+        <div class="table-container">
+            <table class="w-full table-auto min-w-max border-collapse">
+                <thead class="bg-purple-50 text-purple-700">
+                <tr>
+                    <th class="py-3 px-4 text-left font-semibold text-sm rounded-tl-xl">Họ và Tên</th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm">Email</th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm">Số điện thoại</th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm rounded-tr-xl">Địa chỉ</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                <tr th:each="patient : ${patients}" class="transition duration-200 hover:bg-gray-50">
+                    <td class="p-3" th:text="${patient.fullName}"></td>
+                    <td class="p-3" th:text="${patient.user.email}"></td>
+                    <td class="p-3" th:text="${patient.phoneNumber}"></td>
+                    <td class="p-3" th:text="${patient.address}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(patients)}">
+                    <td colspan="4" class="p-3 text-center text-gray-600">Không có bệnh nhân nào trong hệ thống.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 

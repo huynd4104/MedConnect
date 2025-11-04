@@ -57,6 +57,9 @@ public class Appointment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "medical_info", columnDefinition = "NVARCHAR(MAX)")
+    private String medicalInfo;
+
     public enum ConsultationType {
         InPerson, Online
     }

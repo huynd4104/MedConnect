@@ -8,40 +8,45 @@
     <script defer src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
 
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
+
+    <style>
+        /* Import font giống index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="flex-1 flex flex-col px-4 py-6 md:px-8 md:py-8 max-w-[1920px] mx-auto w-full">
+<section class="flex-1 flex flex-col px-4 py-8 md:px-8 md:py-12 max-w-[1920px] mx-auto w-full">
 
-    <!-- Error Message -->
-    <div th:if="${error}" class="mb-6 p-5 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg flex items-center shadow-sm">
+    <div th:if="${error}" class="mb-6 p-5 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-xl flex items-center shadow-sm">
         <i class="fas fa-exclamation-circle text-xl mr-3"></i>
         <span th:text="${error}" class="font-medium"></span>
     </div>
 
-    <!-- Main Video Container Card -->
-    <div class="flex-1 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+    <div class="flex-1 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col border border-gray-100">
 
-        <!-- Header Bar -->
-        <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-4 flex items-center justify-between">
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                     <i class="fas fa-video text-white text-lg"></i>
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold text-white">Phòng tư vấn trực tuyến</h2>
-                    <p class="text-indigo-100 text-sm">Kết nối video an toàn & bảo mật</p>
+                    <p class="text-purple-100 text-sm">Kết nối video an toàn & bảo mật</p>
                 </div>
             </div>
 
-            <button id="customFullscreenBtn" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-lg transition duration-200 flex items-center space-x-2 border border-white/20">
+            <button id="customFullscreenBtn" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-xl transition duration-200 flex items-center space-x-2 border border-white/20">
                 <i class="fas fa-expand text-sm"></i>
                 <span id="fullscreenBtnText" class="font-medium">Toàn màn hình</span>
             </button>
         </div>
 
-        <!-- Video Display Area -->
         <div class="flex-1 bg-gradient-to-br from-slate-900 to-slate-800 relative min-h-[500px] md:min-h-[600px] lg:min-h-[700px]">
             <div id="videoContainer" class="w-full h-full absolute inset-0"></div>
         </div>

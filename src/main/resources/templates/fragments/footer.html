@@ -3,17 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Thêm gradient-text để logo ở footer hiển thị đúng */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 </head>
 <body>
-<footer th:fragment="footer" class="bg-gray-800 text-white p-4 mt-auto">
-    <div class="container mx-auto text-center">
-        <p>&copy; 2025 MedConnect. All rights reserved.</p>
-        <div class="flex justify-center gap-4 mt-2">
-            <a href="/about" class="hover:underline">Về chúng tôi</a>
-            <a href="/contact" class="hover:underline">Liên hệ</a>
-            <a href="/privacy" class="hover:underline">Chính sách bảo mật</a>
+
+<footer th:fragment="footer" class="bg-gray-100 text-gray-600 mt-auto border-t border-gray-100">
+    <div class="container mx-auto max-w-7xl py-16 px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+                <a href="/" class="text-3xl font-bold tracking-tight gradient-text">MedConnect</a>
+                <p class="mt-4 text-gray-500 leading-relaxed">
+                    Nền tảng y tế trực tuyến kết nối bạn với các bác sĩ chuyên khoa hàng đầu.
+                </p>
+                <p class="mt-6 text-sm text-gray-400">&copy; 2025 MedConnect. All rights reserved.</p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900">Liên kết nhanh</h3>
+                <ul class="mt-4 space-y-3">
+                    <li><a href="/about" class="hover:text-purple-600 transition">Về chúng tôi</a></li>
+                    <li><a href="/contact" class="hover:text-purple-600 transition">Liên hệ</a></li>
+                    <li><a href="/privacy" class="hover:text-purple-600 transition">Chính sách bảo mật</a></li>
+                    <li><a href="/terms" class="hover:text-purple-600 transition">Điều khoản dịch vụ</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900">Theo dõi chúng tôi</h3>
+                <p class="mt-4 text-gray-500">Cập nhật thông tin sức khỏe mới nhất.</p>
+                <div class="flex gap-4 mt-4">
+                    <a href="#" class="text-gray-400 hover:text-purple-600 transition" aria-label="Facebook">
+                        <i class="fab fa-facebook-f text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-purple-600 transition" aria-label="Twitter">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-purple-600 transition" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-purple-600 transition" aria-label="Instagram">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
+
 </body>
 </html>

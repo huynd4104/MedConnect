@@ -10,12 +10,30 @@
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
 
     <style>
+        /* Import font giống index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Gradient text giống index.html */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tùy chỉnh FullCalendar để khớp với theme */
         .fc .fc-timegrid-slot {
             height: 3rem;
             font-size: 1rem;
         }
         .fc .fc-col-header-cell {
-            background-color: #f3f4f6;
+            /* Cập nhật giống header bảng ở dashboard */
+            background-color: #faf5ff; /* purple-50 */
+            color: #7e22ce; /* purple-700 */
             font-weight: 600;
             padding: 0.75rem;
             font-size: 1rem;
@@ -24,10 +42,11 @@
             border-radius: 0.25rem;
             font-size: 0.85rem;
             padding: 0.25rem 0.5rem;
-            border: 1px solid #e5e7eb;
+            border: none;
         }
         .fc .fc-event-main {
-            color: #1f2937;
+            /* Đổi màu chữ sự kiện sang màu trắng */
+            color: #ffffff;
         }
         .fc .fc-daygrid-day-number {
             font-size: 0.9rem;
@@ -35,53 +54,55 @@
         .fc .fc-toolbar-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #1f2937;
+            color: #1f2937; /* text-gray-900 */
         }
         .fc .fc-button {
-            background-color: #4b5563;
+            /* Cập nhật nút giống theme */
+            background-color: #9333ea; /* purple-600 */
             border: none;
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            transition: all 0.3s ease;
         }
         .fc .fc-button:hover {
-            background-color: #6b7280;
+            background-color: #7e22ce; /* purple-700 */
+            transform: translateY(-1px);
+        }
+        .fc .fc-button-primary:not(:disabled).fc-button-active,
+        .fc .fc-button-primary:not(:disabled):active {
+            background-color: #7e22ce; /* purple-700 */
         }
     </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-gray-50 min-h-screen flex flex-col antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<section class="container mx-auto py-12 px-4 md:px-0">
-    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800 drop-shadow-md">Lịch Làm Việc Của Tôi</h1>
-
-    <!-- Thông báo thành công / lỗi -->
-    <div class="max-w-6xl mx-auto">
-        <div th:if="${success}" class="mb-6 p-4 bg-green-50 border border-green-300 text-green-700 rounded-md text-center text-sm" th:text="${success}"></div>
-        <div th:if="${error}" class="mb-6 p-4 bg-red-50 border border-red-300 text-red-700 rounded-md text-center text-sm" th:text="${error}"></div>
+<section class="container mx-auto py-16 px-4 md:px-0">
+    <div class="max-w-8xl mx-auto px-5">
+        <div th:if="${success}" class="mb-6 p-4 bg-green-50 border border-green-300 text-green-700 rounded-xl text-center text-sm" th:text="${success}"></div>
+        <div th:if="${error}" class="mb-6 p-4 bg-red-50 border border-red-300 text-red-700 rounded-xl text-center text-sm" th:text="${error}"></div>
     </div>
 
-    <!-- Grid: Lịch (7 phần) + Form (3 phần) -->
-    <div class="max-w-8xl mx-auto px-5 grid grid-cols-1 md:grid-cols-10 gap-4">
-        <!-- LỊCH LÀM VIỆC - BÊN TRÁI (7/10) -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg col-span-1 md:col-span-7">
+    <div class="max-w-8xl mx-auto px-5 grid grid-cols-1 md:grid-cols-10 gap-8">
+
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 col-span-1 md:col-span-7">
             <div id="calendar"></div>
         </div>
 
-        <!-- FORM THÊM KHUNG GIỜ - BÊN PHẢI (3/10) -->
         <form th:action="@{/doctor-schedule}" th:object="${scheduleDTO}" method="post"
-              class="bg-white p-6 md:p-8 rounded-xl shadow-lg col-span-1 md:col-span-3 space-y-5">
+              class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 col-span-1 md:col-span-3 space-y-6">
 
-            <h2 class="text-2xl font-semibold mb-6 text-indigo-700 flex items-center">
-                <i class="fas fa-calendar mr-2 text-indigo-500"></i> Thêm Khung Giờ Mới
+            <h2 class="text-3xl font-semibold mb-4 text-gray-900 flex items-center">
+                <i class="fas fa-calendar mr-3 text-purple-600"></i> Thêm Khung Giờ Mới
             </h2>
 
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <!-- Ngày trong tuần -->
             <div>
-                <label for="dayOfWeekInput" class="block text-sm font-medium text-gray-600 mb-1">Ngày trong tuần</label>
+                <label for="dayOfWeekInput" class="block text-sm font-medium text-gray-700 mb-1">Ngày trong tuần</label>
                 <select id="dayOfWeekInput" th:field="*{dayOfWeek}"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 text-sm">
+                        class="w-full p-3 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
                     <option value="">-- Chọn ngày --</option>
                     <option value="2">Thứ Hai</option>
                     <option value="3">Thứ Ba</option>
@@ -94,47 +115,43 @@
                 <span th:if="${#fields.hasErrors('dayOfWeek')}" th:errors="*{dayOfWeek}" class="text-red-500 text-xs mt-1"></span>
             </div>
 
-            <!-- Khung giờ (multiple, click để chọn/bỏ) -->
             <div>
-                <label for="slotInput" class="block text-sm font-medium text-gray-600 mb-1">Chọn khung giờ (có thể chọn nhiều)</label>
+                <label for="slotInput" class="block text-sm font-medium text-gray-700 mb-1">Chọn khung giờ (có thể chọn nhiều)</label>
                 <select id="slotInput" th:field="*{slots}" multiple="multiple" size="10"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 text-sm">
+                        class="w-full p-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
                     <option value="" disabled>Vui lòng chọn ngày trong tuần trước</option>
                 </select>
                 <span th:if="${#fields.hasErrors('slots')}" th:errors="*{slots}" class="text-red-500 text-xs mt-1"></span>
             </div>
 
-            <!-- Loại tư vấn -->
             <div>
-                <label for="consultationTypeInput" class="block text-sm font-medium text-gray-600 mb-1">Loại tư vấn</label>
+                <label for="consultationTypeInput" class="block text-sm font-medium text-gray-700 mb-1">Loại tư vấn</label>
                 <select id="consultationTypeInput" th:field="*{consultationType}"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 text-sm">
+                        class="w-full p-3 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
                     <option value="Online">Trực tuyến (Online)</option>
                     <option value="InPerson">Trực tiếp (In-Person)</option>
                 </select>
                 <span th:if="${#fields.hasErrors('consultationType')}" th:errors="*{consultationType}" class="text-red-500 text-xs mt-1"></span>
             </div>
 
-            <!-- Nút hành động -->
             <div class="flex items-center gap-4 pt-2">
                 <a th:href="@{/doctor-dashboard}"
-                   class="flex-1 bg-gray-500 text-white p-3 rounded-lg font-semibold text-center hover:bg-gray-600 transition-colors duration-300">
-                    Quay Lại
+                   class="flex-1 bg-gray-300 text-gray-800 p-3 rounded-xl font-semibold text-center hover:bg-gray-400 transition transform hover:-translate-y-1">
+                    <i class="fas fa-arrow-left mr-2"></i>Quay Lại
                 </a>
                 <button type="submit"
-                        class="flex-1 bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="flex-1 bg-purple-600 text-white p-3 rounded-xl font-semibold hover:bg-purple-700 transition transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                     Thêm Lịch
                 </button>
             </div>
 
-            <!-- Legend -->
             <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                    <i class="fas fa-info-circle mr-2 text-indigo-500"></i>Chú thích
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-purple-600"></i>Chú thích
                 </h3>
                 <div class="space-y-3">
                     <div class="flex items-center">
-                        <div class="w-4 h-4 bg-blue-500 rounded mr-3 shadow-sm"></div>
+                        <div class="w-4 h-4 bg-purple-500 rounded mr-3 shadow-sm"></div>
                         <span class="text-sm text-gray-700">Tư vấn Online</span>
                     </div>
                     <div class="flex items-center">
@@ -147,30 +164,27 @@
     </div>
 </section>
 
-<!-- Modal chi tiết & sửa -->
 <div id="scheduleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center">
-    <div class="relative p-8 bg-white w-full max-w-md m-auto flex-col flex rounded-lg shadow-lg">
-        <!-- Xem chi tiết -->
+    <div class="relative p-8 bg-white w-full max-w-md m-auto flex-col flex rounded-2xl shadow-lg">
         <div id="viewMode">
-            <h3 class="text-2xl font-semibold text-gray-800 text-center mb-4">Chi tiết Khung Giờ</h3>
+            <h3 class="text-2xl font-semibold text-gray-900 text-center mb-4">Chi tiết Khung Giờ</h3>
             <div class="space-y-2 text-center">
                 <p id="modal-event-title" class="text-base font-medium text-gray-700"></p>
                 <p id="modal-event-time" class="text-sm text-gray-500"></p>
             </div>
             <div class="flex justify-center gap-4 mt-6">
-                <button id="editButton" class="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Sửa</button>
-                <button id="deleteButton" class="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Xóa</button>
-                <button id="closeModalButton" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Đóng</button>
+                <button id="editButton" class="px-5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">Sửa</button>
+                <button id="deleteButton" class="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600">Xóa</button>
+                <button id="closeModalButton" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300">Đóng</button>
             </div>
         </div>
 
-        <!-- Sửa khung giờ -->
         <div id="editMode" class="hidden">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Chỉnh Sửa Khung Giờ</h3>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">Chỉnh Sửa Khung Giờ</h3>
             <form id="editScheduleForm" class="space-y-4">
                 <div>
                     <label for="editDayOfWeek" class="block text-sm font-medium text-gray-700">Ngày trong tuần</label>
-                    <select id="editDayOfWeek" name="dayOfWeek" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 text-sm">
+                    <select id="editDayOfWeek" name="dayOfWeek" class="mt-1 block w-full p-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
                         <option value="2">Thứ Hai</option>
                         <option value="3">Thứ Ba</option>
                         <option value="4">Thứ Tư</option>
@@ -183,20 +197,20 @@
 
                 <div>
                     <label for="editSlotInput" class="block text-sm font-medium text-gray-700">Khung giờ</label>
-                    <select id="editSlotInput" name="slot" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 text-sm">
+                    <select id="editSlotInput" name="slot" class="mt-1 block w-full p-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
                     </select>
                 </div>
 
                 <div>
                     <label for="editConsultationType" class="block text-sm font-medium text-gray-700">Loại tư vấn</label>
-                    <select id="editConsultationType" name="consultationType" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 text-sm">
+                    <select id="editConsultationType" name="consultationType" class="mt-1 block w-full p-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
                         <option value="Online">Tư vấn Online</option>
                         <option value="InPerson">Tư vấn Trực tiếp</option>
                     </select>
                 </div>
                 <div class="flex justify-end gap-4 mt-4">
-                    <button type="submit" class="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Lưu thay đổi</button>
-                    <button type="button" id="cancelEditButton" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Hủy</button>
+                    <button type="submit" class="px-5 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600">Lưu thay đổi</button>
+                    <button type="button" id="cancelEditButton" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300">Hủy</button>
                 </div>
             </form>
         </div>
@@ -364,7 +378,7 @@
                     }
                 })
                 .catch(error => console.error('Error:', error))
-                .finally(closeModal);
+                .finally( closeModal);
         });
 
         // TẢI LỊCH TỪ API
@@ -377,7 +391,7 @@
                     const dateObj = new Date();
                     dateObj.setHours(timeParts[0], timeParts[1] + 30, 0, 0);
                     const endTime = dateObj.toTimeString().substring(0, 5);
-                    const calendarDay = scheduleDTO.dayOfWeek - 1;
+                    const calendarDay = scheduleDTO.dayOfWeek - 1; // 1(CN) -> 0, 2(T2) -> 1 ...
 
                     return {
                         id: scheduleDTO.scheduleId,
@@ -385,7 +399,8 @@
                         startTime: startTime,
                         endTime: endTime,
                         daysOfWeek: [calendarDay],
-                        color: scheduleDTO.consultationType === 'Online' ? '#3b82f6' : '#10b981',
+                        // CẬP NHẬT MÀU SỰ KIỆN (PURPLE / GREEN)
+                        color: scheduleDTO.consultationType === 'Online' ? '#a855f7' : '#10b981', // purple-500 / green-500
                         allDay: false,
                         extendedProps: {
                             dayOfWeek: scheduleDTO.dayOfWeek,
@@ -397,7 +412,7 @@
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'timeGridWeek',
                     locale: 'vi',
-                    firstDay: 1,
+                    firstDay: 1, // Bắt đầu bằng Thứ 2
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
