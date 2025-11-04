@@ -157,7 +157,7 @@ public class PaymentService {
                 // 1. Gửi Push Notification (Realtime)
                 notificationService.sendPushNotification(
                         doctor.getUser(),
-                        "Lịch hẹn mới",
+                        "New Appointment",
                         "Bạn có một cuộc hẹn mới, vui lòng kiểm tra trong trang quản lý."
                 );
 

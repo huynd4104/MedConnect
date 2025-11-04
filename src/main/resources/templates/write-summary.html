@@ -25,7 +25,7 @@
                 <i class="fas fa-info-circle mr-2 text-indigo-500"></i> Tóm tắt lịch hẹn
             </h2>
             <p class="text-gray-700"><span class="font-medium">Bệnh nhân:</span> <span th:text="${appointment.patient.fullName}"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${appointment.appointmentDateTime}"></span></p>
+            <p class="text-gray-700"><span class="font-medium">Thời gian:</span> <span th:text="${#temporals.format(appointment.appointmentDateTime, 'HH:mm dd/MM/yyyy')}"></span></p>
         </div>
 
         <form th:action="@{/write-summary}" th:object="${consultationDocumentDTO}" method="post" class="space-y-6">
