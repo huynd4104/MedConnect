@@ -170,33 +170,50 @@
          th:text="${error}"></div>
 
     <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mx-4 md:mx-8 mb-8">
-        <div class="flex flex-col md:flex-row gap-8">
-            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-48 h-48 object-cover rounded-full shadow-lg">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
+            <i class="fas fa-user-md mr-3 text-purple-600"></i> Thông tin bác sĩ
+        </h2>
+
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex-shrink-0 w-32 h-32 md:w-48 md:h-48">
+                <img th:if="${doctor.photoPath}"
+                     th:src="@{${doctor.photoPath}}"
+                     alt="Ảnh đại diện"
+                     class="w-full h-full rounded-full object-cover border-4 border-purple-100 shadow-lg">
+
+                <div th:if="${doctor.photoPath == null}"
+                     class="w-full h-full rounded-full bg-gray-100 border-4 border-gray-200 flex items-center justify-center shadow-inner">
+                    <i class="fas fa-user-md text-6xl text-gray-400"></i>
+                </div>
+            </div>
+
             <div class="flex-1">
-                <h2 th:text="${doctor.fullName} ?: ${doctor.user.email}"
-                    class="text-3xl font-bold text-gray-900 mb-2"></h2>
-                <p th:text="${doctor.specialization.name}" class="text-purple-600 font-semibold text-lg mb-2"></p>
-                <p th:text="'Kinh nghiệm: ' + ${doctor.experienceYears} + ' năm'" class="text-gray-600 mb-1"></p>
-                <p th:if="${doctor.phoneNumber}" class="text-gray-600 mb-1 flex items-center">
-                    <i class="fas fa-phone mr-2 text-gray-400"></i>
-                    <span th:text="${doctor.phoneNumber}"></span>
-                </p>
-                <p th:if="${doctor.clinicAddress}" class="text-gray-600 mb-4 flex items-start">
-                    <i class="fas fa-map-marker-alt mr-2 text-gray-400 mt-1"></i>
-                    <span th:text="${doctor.clinicAddress}"></span>
-                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p class="text-gray-700"><span class="font-medium">Họ tên:</span> <span
+                            th:text="${doctor.fullName} ?: 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Email:</span> <span
+                            th:text="${doctor.user.email}"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Số điện thoại:</span> <span
+                            th:text="${doctor.phoneNumber} ?: 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Chuyên khoa:</span> <span
+                            th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Số năm kinh nghiệm:</span> <span
+                            th:text="${doctor.experienceYears}"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Địa chỉ phòng khám:</span> <span
+                            th:text="${doctor.clinicAddress} ?: 'Chưa cập nhật'"></span></p>
                 <a th:href="@{/book-appointment(doctorId=${doctor.doctorId})}"
                    sec:authorize="hasRole('Patient')"
                    class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition transform hover:-translate-y-1 hover:shadow-lg flex items-center w-fit">
                     <i class="fas fa-calendar-plus mr-2"></i> Đặt lịch
                 </a>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mx-4 md:mx-8 mb-8">
         <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
-            <i class="fas fa-calendar mr-3 text-purple-600"></i> Lịch trống
+            <i class="fas fa-calendar mr-3 text-purple-600"></i> Lịch làm việc
         </h2>
 
         <div class="fc-theme-standard rounded-lg overflow-hidden ">

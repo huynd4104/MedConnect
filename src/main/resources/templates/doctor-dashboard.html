@@ -145,33 +145,51 @@
         <h2 class="text-3xl font-semibold mb-6 text-gray-900 flex items-center">
             <i class="fas fa-user-md mr-3 text-purple-600"></i> Thông tin bác sĩ
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p class="text-gray-700"><span class="font-medium">Họ tên:</span> <span
-                    th:text="${doctor.fullName} ?: 'Chưa cập nhật'"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Email:</span> <span
-                    th:text="${doctor.user.email}"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Số điện thoại:</span> <span
-                    th:text="${doctor.phoneNumber} ?: 'Chưa cập nhật'"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Chuyên khoa:</span> <span
-                    th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Số năm kinh nghiệm:</span> <span
-                    th:text="${doctor.experienceYears}"></span></p>
-            <p class="text-gray-700"><span class="font-medium">Địa chỉ phòng khám:</span> <span
-                    th:text="${doctor.clinicAddress} ?: 'Chưa cập nhật'"></span></p>
-            <p class="text-gray-700 flex items-center">
-                <span class="font-medium mr-2">Trạng thái:</span>
-                <span th:switch="${doctor.status.toString()}">
-        <span th:case="'Approved'" class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đã được duyệt</span>
-        <span th:case="'Pending'" class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Đang chờ duyệt</span>
-        <span th:case="'Rejected'" class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Bị từ chối</span>
-        <span th:case="*" th:text="${doctor.status}"
-              class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"></span>
-    </span>
-            </p>
+
+        <div class="flex flex-col md:flex-row gap-6">
+
+            <div class="flex-shrink-0 w-32 h-32 md:w-48 md:h-48">
+                <img th:if="${doctor.photoPath}"
+                     th:src="@{${doctor.photoPath}}"
+                     alt="Ảnh đại diện"
+                     class="w-full h-full rounded-full object-cover border-4 border-purple-100 shadow-lg">
+
+                <div th:if="${doctor.photoPath == null}"
+                     class="w-full h-full rounded-full bg-gray-100 border-4 border-gray-200 flex items-center justify-center shadow-inner">
+                    <i class="fas fa-user-md text-6xl text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p class="text-gray-700"><span class="font-medium">Họ tên:</span> <span
+                            th:text="${doctor.fullName} ?: 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Email:</span> <span
+                            th:text="${doctor.user.email}"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Số điện thoại:</span> <span
+                            th:text="${doctor.phoneNumber} ?: 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Chuyên khoa:</span> <span
+                            th:text="${doctor.specialization} ? ${doctor.specialization.name} : 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Số năm kinh nghiệm:</span> <span
+                            th:text="${doctor.experienceYears}"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Địa chỉ phòng khám:</span> <span
+                            th:text="${doctor.clinicAddress} ?: 'Chưa cập nhật'"></span></p>
+                    <p class="text-gray-700 flex items-center">
+                        <span class="font-medium mr-2">Trạng thái:</span>
+                        <span th:switch="${doctor.status.toString()}">
+                            <span th:case="'Approved'" class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đã được duyệt</span>
+                            <span th:case="'Pending'" class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Đang chờ duyệt</span>
+                            <span th:case="'Rejected'" class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Bị từ chối</span>
+                            <span th:case="*" th:text="${doctor.status}"
+                                  class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"></span>
+                        </span>
+                    </p>
+                </div>
+                <a th:href="@{/doctor-profile}" class="text-purple-600 hover:text-purple-700 font-medium mt-6 inline-block">
+                    Chỉnh sửa hồ sơ <i class="fas fa-edit ml-1"></i>
+                </a>
+            </div>
         </div>
-        <a th:href="@{/doctor-profile}" class="text-purple-600 hover:text-purple-700 font-medium mt-6 inline-block">
-            Chỉnh sửa hồ sơ <i class="fas fa-edit ml-1"></i>
-        </a>
     </div>
 
     <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-xl mb-8">

@@ -10,14 +10,12 @@
     <th:block th:replace="~{fragments/header :: firebase-scripts}"></th:block>
 
     <style>
-        /* Import font giống index.html */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
-        /* Gradient text giống index.html */
         .gradient-text {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
@@ -25,28 +23,37 @@
             background-clip: text;
         }
 
-        /* Tùy chỉnh FullCalendar để khớp với theme */
         .fc .fc-timegrid-slot {
             height: 3rem;
             font-size: 1rem;
         }
         .fc .fc-col-header-cell {
-            /* Cập nhật giống header bảng ở dashboard */
-            background-color: #faf5ff; /* purple-50 */
-            color: #7e22ce; /* purple-700 */
+            background-color: #faf5ff;
+            color: #7e22ce;
             font-weight: 600;
             padding: 0.75rem;
             font-size: 1rem;
         }
         .fc .fc-event {
-            border-radius: 0.25rem;
-            font-size: 0.85rem;
-            padding: 0.25rem 0.5rem;
-            border: none;
+            border-radius: 0.5rem !important;
+            font-size: 0.75rem !important;
+            padding: 0.25rem 0.5rem !important;
+            border: none !important;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
         }
-        .fc .fc-event-main {
-            /* Đổi màu chữ sự kiện sang màu trắng */
-            color: #ffffff;
+
+        .fc .fc-event .fc-event-main {
+            color: white !important;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .fc .fc-daygrid-day-number {
             font-size: 0.9rem;
@@ -54,24 +61,79 @@
         .fc .fc-toolbar-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #1f2937; /* text-gray-900 */
+            color: #1f2937;
         }
         .fc .fc-button {
-            /* Cập nhật nút giống theme */
-            background-color: #9333ea; /* purple-600 */
+            background-color: #9333ea;
             border: none;
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
-            border-radius: 0.75rem; /* rounded-xl */
+            border-radius: 0.75rem;
             transition: all 0.3s ease;
         }
         .fc .fc-button:hover {
-            background-color: #7e22ce; /* purple-700 */
+            background-color: #7e22ce;
             transform: translateY(-1px);
         }
         .fc .fc-button-primary:not(:disabled).fc-button-active,
         .fc .fc-button-primary:not(:disabled):active {
-            background-color: #7e22ce; /* purple-700 */
+            background-color: #7e22ce;
+        }
+
+        /* Custom styles cho time slot selector */
+        .time-slot-btn {
+            transition: all 0.2s ease;
+        }
+
+        .time-slot-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+        }
+
+        .time-slot-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .time-slot-btn.selected {
+            background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+            color: white;
+            border-color: #7e22ce;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.4);
+        }
+
+        .time-slot-grid {
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #e5e7eb #f9fafb;
+        }
+
+        .time-slot-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .time-slot-grid::-webkit-scrollbar-track {
+            background: #f9fafb;
+            border-radius: 3px;
+        }
+
+        .time-slot-grid::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 3px;
+        }
+
+        .time-slot-grid::-webkit-scrollbar-thumb:hover {
+            background: #d1d5db;
+        }
+
+        .slot-counter {
+            animation: bounce 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
     </style>
 </head>
@@ -116,11 +178,30 @@
             </div>
 
             <div>
-                <label for="slotInput" class="block text-sm font-medium text-gray-700 mb-1">Chọn khung giờ (có thể chọn nhiều)</label>
-                <select id="slotInput" th:field="*{slots}" multiple="multiple" size="10"
-                        class="w-full p-2 border border-gray-300 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm">
-                    <option value="" disabled>Vui lòng chọn ngày trong tuần trước</option>
-                </select>
+                <div class="flex items-center justify-between mb-3">
+                    <label class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-clock mr-1 text-purple-600"></i>
+                        Chọn khung giờ
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <span id="selectedCount" class="slot-counter text-xs font-semibold px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full">
+                            0 khung giờ
+                        </span>
+                        <button type="button" id="clearAllBtn" class="text-xs text-gray-500 hover:text-red-600 transition">
+                            <i class="fas fa-times-circle mr-1"></i>Xóa tất cả
+                        </button>
+                    </div>
+                </div>
+
+                <div id="timeSlotsContainer" class="time-slot-grid border border-gray-200 rounded-xl p-4 bg-gray-50">
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-calendar-day text-4xl mb-3"></i>
+                        <p class="text-sm">Vui lòng chọn ngày trong tuần trước</p>
+                    </div>
+                </div>
+
+                <!-- Hidden input để submit slots -->
+                <input type="hidden" id="slotsInput" name="slots" th:field="*{slots}">
                 <span th:if="${#fields.hasErrors('slots')}" th:errors="*{slots}" class="text-red-500 text-xs mt-1"></span>
             </div>
 
@@ -151,12 +232,10 @@
                 </h3>
                 <div class="space-y-3">
                     <div class="flex items-center">
-                        <div class="w-4 h-4 bg-purple-500 rounded mr-3 shadow-sm"></div>
-                        <span class="text-sm text-gray-700">Tư vấn Online</span>
+                        <span class="text-gray-700"><i class="fas fa-video text-purple-600 mr-1"></i>Tư vấn Trực tuyến</span>
                     </div>
                     <div class="flex items-center">
-                        <div class="w-4 h-4 bg-green-500 rounded mr-3 shadow-sm"></div>
-                        <span class="text-sm text-gray-700">Tư vấn Trực tiếp</span>
+                        <span class="text-gray-700"><i class="fas fa-hospital text-green-600 mr-1"></i>Tư vấn Trực tiếp</span>
                     </div>
                 </div>
             </div>
@@ -232,9 +311,14 @@
         let selectedEvent = null;
 
         const addDaySelect = document.getElementById('dayOfWeekInput');
-        const addSlotSelect = document.getElementById('slotInput');
+        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+        const slotsInput = document.getElementById('slotsInput');
+        const selectedCountEl = document.getElementById('selectedCount');
+        const clearAllBtn = document.getElementById('clearAllBtn');
         const editSlotSelect = document.getElementById('editSlotInput');
         const editDaySelect = document.getElementById('editDayOfWeek');
+
+        let selectedSlots = new Set();
 
         const closeModal = () => {
             modal.classList.add('hidden');
@@ -273,8 +357,100 @@
             }
         });
 
-        // TẢI SLOT CÒN TRỐNG
-        async function loadAvailableSlots(day, selectElement, selectedSlot = null, currentSlotText = null) {
+        // Update selected count display
+        function updateSelectedCount() {
+            const count = selectedSlots.size;
+            selectedCountEl.textContent = `${count} khung giờ`;
+            slotsInput.value = Array.from(selectedSlots).join(',');
+        }
+
+        // Clear all selections
+        clearAllBtn.addEventListener('click', () => {
+            selectedSlots.clear();
+            document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            updateSelectedCount();
+        });
+
+        // Load available slots and render as buttons
+        async function loadAvailableSlots(day) {
+            if (!day) {
+                timeSlotsContainer.innerHTML = `
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-calendar-day text-4xl mb-3"></i>
+                        <p class="text-sm">Vui lòng chọn ngày trong tuần trước</p>
+                    </div>
+                `;
+                selectedSlots.clear();
+                updateSelectedCount();
+                return;
+            }
+
+            timeSlotsContainer.innerHTML = `
+                <div class="text-center text-gray-400 py-8">
+                    <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+                    <p class="text-sm">Đang tải khung giờ...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/schedules/available?dayOfWeek=${day}`);
+                if (!response.ok) throw new Error('Failed to fetch slots');
+                const availableSlots = await response.json();
+
+                if (Object.keys(availableSlots).length === 0) {
+                    timeSlotsContainer.innerHTML = `
+                        <div class="text-center text-gray-400 py-8">
+                            <i class="fas fa-calendar-times text-4xl mb-3"></i>
+                            <p class="text-sm">Không còn khung giờ trống</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render time slot buttons in a grid
+                timeSlotsContainer.innerHTML = `
+                    <div class="grid grid-cols-2 gap-2">
+                        ${Object.entries(availableSlots).map(([value, text]) => `
+                            <button type="button"
+                                    class="time-slot-btn px-3 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
+                                    data-slot="${value}">
+                                <i class="far fa-clock mr-1 text-xs"></i>
+                                ${text}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                // Add click handlers to slot buttons
+                document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const slot = this.dataset.slot;
+                        if (selectedSlots.has(slot)) {
+                            selectedSlots.delete(slot);
+                            this.classList.remove('selected');
+                        } else {
+                            selectedSlots.add(slot);
+                            this.classList.add('selected');
+                        }
+                        updateSelectedCount();
+                    });
+                });
+
+            } catch (error) {
+                console.error('Error loading slots:', error);
+                timeSlotsContainer.innerHTML = `
+                    <div class="text-center text-red-400 py-8">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-3"></i>
+                        <p class="text-sm">Lỗi khi tải khung giờ</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load slots for edit mode (dropdown)
+        async function loadAvailableSlotsForEdit(day, selectElement, selectedSlot = null, currentSlotText = null) {
             if (!day) {
                 selectElement.innerHTML = '<option value="" disabled>Vui lòng chọn ngày</option>';
                 return;
@@ -312,25 +488,16 @@
             }
         }
 
-        // KHI CHỌN NGÀY → TẢI SLOT
+        // When day changes, load available slots
         addDaySelect.addEventListener('change', () => {
-            loadAvailableSlots(addDaySelect.value, addSlotSelect);
+            selectedSlots.clear();
+            updateSelectedCount();
+            loadAvailableSlots(addDaySelect.value);
         });
 
-        // CLICK ĐỂ CHỌN/BỎ CHỌN SLOT (KHÔNG CẦN SHIFT)
-        addSlotSelect.addEventListener('mousedown', function(e) {
-            if (e.target.tagName === 'OPTION') {
-                e.preventDefault();
-                e.stopPropagation();
-                const option = e.target;
-                option.selected = !option.selected;
-                addSlotSelect.focus();
-            }
-        });
-
-        // SỬA: ĐỔI NGÀY TRONG MODAL
+        // Edit mode: change day
         editDaySelect.addEventListener('change', () => {
-            loadAvailableSlots(editDaySelect.value, editSlotSelect);
+            loadAvailableSlotsForEdit(editDaySelect.value, editSlotSelect);
         });
 
         function showEditMode() {
@@ -342,7 +509,7 @@
 
             document.getElementById('editDayOfWeek').value = eventData.dayOfWeek;
             document.getElementById('editConsultationType').value = eventData.consultationType;
-            loadAvailableSlots(eventData.dayOfWeek, editSlotSelect, currentStartTime, currentSlotText);
+            loadAvailableSlotsForEdit(eventData.dayOfWeek, editSlotSelect, currentStartTime, currentSlotText);
 
             viewMode.classList.add('hidden');
             editMode.classList.remove('hidden');
@@ -378,10 +545,10 @@
                     }
                 })
                 .catch(error => console.error('Error:', error))
-                .finally( closeModal);
+                .finally(closeModal);
         });
 
-        // TẢI LỊCH TỪ API
+        // Load calendar
         fetch('/api/schedules')
             .then(response => response.json())
             .then(data => {
@@ -391,20 +558,23 @@
                     const dateObj = new Date();
                     dateObj.setHours(timeParts[0], timeParts[1] + 30, 0, 0);
                     const endTime = dateObj.toTimeString().substring(0, 5);
-                    const calendarDay = scheduleDTO.dayOfWeek - 1; // 1(CN) -> 0, 2(T2) -> 1 ...
+                    const calendarDay = scheduleDTO.dayOfWeek - 1;
 
                     return {
                         id: scheduleDTO.scheduleId,
-                        title: scheduleDTO.consultationType === 'Online' ? 'Tư vấn Online' : 'Tư vấn Trực tiếp',
+                        title: '',
                         startTime: startTime,
                         endTime: endTime,
                         daysOfWeek: [calendarDay],
-                        // CẬP NHẬT MÀU SỰ KIỆN (PURPLE / GREEN)
-                        color: scheduleDTO.consultationType === 'Online' ? '#a855f7' : '#10b981', // purple-500 / green-500
+                        color: scheduleDTO.consultationType === 'Online' ? '#a855f7' : '#10b981',
+                        textColor: '#ffffff',
                         allDay: false,
+                        displayEventTime: false,
                         extendedProps: {
                             dayOfWeek: scheduleDTO.dayOfWeek,
-                            consultationType: scheduleDTO.consultationType
+                            consultationType: scheduleDTO.consultationType,
+                            startTime: startTime,
+                            endTime: endTime
                         }
                     };
                 });
@@ -412,7 +582,7 @@
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'timeGridWeek',
                     locale: 'vi',
-                    firstDay: 1, // Bắt đầu bằng Thứ 2
+                    firstDay: 1,
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
@@ -426,12 +596,36 @@
                     eventClick: function(info) {
                         info.jsEvent.preventDefault();
                         selectedEvent = info.event;
-                        document.getElementById('modal-event-title').innerText = selectedEvent.title;
+                        const isOnline = selectedEvent.extendedProps.consultationType === 'Online';
+                        const iconHtml = isOnline
+                            ? '<i class="fas fa-video text-purple-600 mr-2"></i>'
+                            : '<i class="fas fa-hospital text-green-600 mr-2"></i>';
+                        const label = isOnline ? 'Trực tuyến' : 'Trực tiếp';
+                        document.getElementById('modal-event-title').innerHTML = iconHtml + label;
                         const startTime = selectedEvent.start.toTimeString().substring(0, 5);
                         const endTime = selectedEvent.end.toTimeString().substring(0, 5);
                         document.getElementById('modal-event-time').innerText = `Thời gian: ${startTime} - ${endTime}`;
                         modal.classList.remove('hidden');
-                    }
+                    },
+                    eventContent: function(info) {
+                        const props = info.event.extendedProps;
+                        const isOnline = props.consultationType === 'Online';
+                        const icon = isOnline
+                            ? '<i class="fas fa-video text-purple-200 mr-1 text-xs"></i>'
+                            : '<i class="fas fa-hospital text-green-200 mr-1 text-xs"></i>';
+                        const time = `${props.startTime} - ${info.event.end.toTimeString().substring(0, 5)}`;
+
+                        return {
+                            html: `
+                                <div class="flex flex-col items-center justify-center h-full text-white text-xs leading-tight">
+                                     <div class="text-xs opacity-90">${time}</div>
+                                     <div class="flex items-center">
+                                        ${icon}
+                                     </div>
+                                </div>
+                            `
+                        };
+                    },
                 });
                 calendar.render();
             })
