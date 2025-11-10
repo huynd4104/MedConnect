@@ -35,7 +35,7 @@ public class SecurityConfig {
 
                         // Các URL công khai
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/", "/index", "/register", "/login", "/forgot-password", "/reset-password", "/verify", "/search-doctors", "/doctor-profile-view/**").permitAll()
+                        .requestMatchers("/", "/index", "/register", "/login", "/forgot-password", "/reset-password", "/verify", "/search-doctors", "/doctor-profile-view/**", "/api/public/schedules/**").permitAll()
 
                         .requestMatchers("/api/notifications/unread").authenticated()
                         .requestMatchers("/api/notifications/mark-read/**").authenticated()

@@ -99,10 +99,30 @@
                     <i class="fas fa-camera mr-2 text-purple-600"></i> Ảnh đại diện
                 </label>
                 <div th:if="*{existingPhotoPath}" class="my-2">
-                    <img th:src="@{${doctorProfileDTO.existingPhotoPath}}" alt="Ảnh đại diện hiện tại" class="w-24 h-24 rounded-full object-cover border-2 border-gray-200 mx-auto">
+                    <img th:src="@{${doctorProfileDTO.existingPhotoPath}}" alt="Ảnh đại diện hiện tại"
+                         class="w-32 h-40 rounded-xl object-cover border-2 border-gray-200 mx-auto shadow-md">
                 </div>
                 <input type="file" name="photo" id="photo" class="w-full p-2 border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
-                <p class="text-xs text-gray-500 mt-1">Để trống nếu bạn không muốn thay đổi ảnh đại diện.</p>
+                <img id="photoPreview" class="hidden w-32 h-40 rounded-xl object-cover border-2 border-gray-200 mx-auto mt-3" alt="Xem trước ảnh">
+
+                <script>
+                    const photoInput = document.getElementById('photo');
+                    const preview = document.getElementById('photoPreview');
+
+                    photoInput.addEventListener('change', e => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = event => {
+                                preview.src = event.target.result;
+                                preview.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            preview.classList.add('hidden');
+                        }
+                    });
+                </script>
             </div>
 
             <div>

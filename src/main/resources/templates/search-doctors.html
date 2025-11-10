@@ -22,6 +22,17 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col antialiased">
@@ -58,7 +69,7 @@
         <div th:each="doctor : ${doctors}"
              class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition duration-300">
 
-            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-[300px] object-cover rounded-xl mb-4">
+            <img th:src="@{${doctor.photoPath}}" alt="Bác sĩ" class="w-full h-[600px] object-cover rounded-xl mb-4">
 
             <h2 th:text="${doctor.fullName} ?: ${doctor.user.email}" class="text-xl font-semibold text-gray-900"></h2>
 
