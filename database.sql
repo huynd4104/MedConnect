@@ -55,6 +55,7 @@ CREATE TABLE doctors (
                          experience_years INT NOT NULL,
                          license_number NVARCHAR(100) NOT NULL,
                          photo_path NVARCHAR(500) NULL,
+                         introduction NVARCHAR(MAX) NULL,
                          status NVARCHAR(50) NOT NULL DEFAULT 'Pending',
                          rejection_reason NVARCHAR(500) NULL,
                          created_at DATETIME NOT NULL DEFAULT GETDATE(),

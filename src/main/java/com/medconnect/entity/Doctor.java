@@ -44,6 +44,9 @@ public class Doctor {
     @Column(name = "photo_path")
     private String photoPath;
 
+    @Column(name = "introduction", columnDefinition = "NVARCHAR(MAX)")
+    private String introduction;
+
     @Column(name = "status", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private Status status = Status.Pending;

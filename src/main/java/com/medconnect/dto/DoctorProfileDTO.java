@@ -40,4 +40,6 @@ public class DoctorProfileDTO {
     private String phoneNumber;
 
     private String clinicAddress;
+
+    private String introduction;
 }

@@ -1,4 +1,3 @@
-
 USE MedConnectDB;
 GO
 
@@ -52,8 +51,8 @@ INSERT INTO specializations (name, description, created_by, created_at) VALUES
                                                                             (N'Tai Mũi Họng', N'Chuyên khoa điều trị các bệnh lý liên quan đến tai, mũi và họng.', @admin_id, GETDATE());
 GO
 
--- ========== 4. BẢNG doctors ==========
--- Khai báo ID user (Bác sĩ)
+-- ========== 4. BẢNG doctors (ĐÃ SỬA LỖI KHAI BÁO BIẾN) ==========
+-- Khai báo ID user (Bác sĩ) - (PHẢI KHAI BÁO LẠI SAU GO)
 DECLARE @doctor1_user_id INT = (SELECT TOP 1 user_id FROM users WHERE email = 'doctor1@example.com');
 DECLARE @doctor2_user_id INT = (SELECT TOP 1 user_id FROM users WHERE email = 'doctor2@example.com');
 DECLARE @doctor3_user_id INT = (SELECT TOP 1 user_id FROM users WHERE email = 'doctor3@example.com');
@@ -68,17 +67,66 @@ DECLARE @neurology_id INT = (SELECT TOP 1 specialization_id FROM specializations
 DECLARE @ent_id INT = (SELECT TOP 1 specialization_id FROM specializations WHERE name = N'Tai Mũi Họng');
 
 -- Chèn dữ liệu doctors
-INSERT INTO doctors (user_id, specialization_id, full_name, phone_number, clinic_address, experience_years, license_number, photo_path, status, created_at) VALUES
-                                                                                                                                                                (@doctor1_user_id, @cardiology_id, N'Bác sĩ Nguyễn Văn A', '0911111111', N'11 Đường A, Quận 1, TP.HCM', 10, 'LIC11111', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/09/bs-tho.jpg', 'Approved', GETDATE()),
-                                                                                                                                                                (@doctor2_user_id, @dermatology_id, N'Bác sĩ Trần Thị B', '0922222222', N'22 Đường B, Quận HB, Hà Nội', 5, 'LIC22222', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1340-768x1150.jpg', 'Approved', GETDATE()),
-                                                                                                                                                                (@doctor3_user_id, @pediatrics_id, N'Bác sĩ Lê Văn C', '0933333333', N'33 Đường C, Quận 3, TP.HCM', 8, 'LIC33333', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1101-768x1150.jpg', 'Approved', GETDATE()),
-                                                                                                                                                                (@doctor4_user_id, @neurology_id, N'Bác sĩ Phạm Thị D', '0944444444', N'44 Đường D, Quận ĐĐ, Hà Nội', 12, 'LIC44444', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1513-768x1150.jpg', 'Pending', GETDATE()), -- Chờ duyệt
-                                                                                                                                                                (@doctor5_user_id, @cardiology_id, N'Bác sĩ Hoàng Văn E', '0955555555', N'55 Đường E, Quận 1, TP.HCM', 15, 'LIC55555', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/09/DTC_1161-768x1151.jpg', 'Approved', GETDATE()),
-                                                                                                                                                                (@doctor6_user_id, @ent_id, N'Bác sĩ Vũ Thị F', '0966666666', N'66 Đường F, Quận BT, Hà Nội', 7, 'LIC66666', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1663-768x1151.jpg', 'Rejected', GETDATE());
+INSERT INTO doctors (user_id, specialization_id, full_name, phone_number, clinic_address, experience_years, license_number, photo_path, introduction, status, created_at) VALUES
+                                                                                                                                                                              (
+                                                                                                                                                                                  @doctor1_user_id, @cardiology_id, N'Bác sĩ Nguyễn Văn A', '0911111111', N'11 Đường A, Quận 1, TP.HCM', 10, 'LIC11111', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/09/bs-tho.jpg',
+                                                                                                                                                                                  N'Giảng viên cao cấp – Đại học Y Hà Nội.
+                                                                                                                                                                              Nguyên Trưởng Bộ môn Tim mạch – Đại học Y Hà Nội.
+                                                                                                                                                                              Nguyên Giám đốc Trung tâm Tim mạch - Bệnh viện Đại học Y Hà Nội.
+                                                                                                                                                                              Nguyên Viện trưởng Viện Tim mạch Việt Nam.
+                                                                                                                                                                              Nguyên Hiệu trưởng Trường Đại học Y Hà Nội.
+                                                                                                                                                                              Hơn 10 năm kinh nghiệm khám và điều trị bệnh Tim mạch.',
+                                                                                                                                                                                  'Approved', GETDATE()
+                                                                                                                                                                              ),
+                                                                                                                                                                              (
+                                                                                                                                                                                  @doctor2_user_id, @dermatology_id, N'Bác sĩ Trần Thị B', '0922222222', N'22 Đường B, Quận HB, Hà Nội', 5, 'LIC22222', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1340-768x1150.jpg',
+                                                                                                                                                                                  N'Bác sĩ Chuyên khoa II Da liễu – Bệnh viện Da liễu Trung ương.
+                                                                                                                                                                              Giảng viên Bộ môn Da liễu – Đại học Y Dược TP.HCM.
+                                                                                                                                                                              Hơn 5 năm kinh nghiệm trong điều trị các bệnh lý da liễu, da thẩm mỹ và ứng dụng laser trong y học.
+                                                                                                                                                                              Chứng chỉ đào tạo chuyên sâu về Da liễu Thẩm mỹ tại Hàn Quốc.
+                                                                                                                                                                              Thành viên Hội Da liễu Việt Nam.',
+                                                                                                                                                                                  'Approved', GETDATE()
+                                                                                                                                                                              ),
+                                                                                                                                                                              (
+                                                                                                                                                                                  @doctor3_user_id, @pediatrics_id, N'Bác sĩ Lê Văn C', '0933333333', N'33 Đường C, Quận 3, TP.HCM', 8, 'LIC33333', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1101-768x1150.jpg',
+                                                                                                                                                                                  N'Phó Trưởng khoa Nhi tổng hợp – Bệnh viện Nhi Trung ương.
+                                                                                                                                                                              Chuyên gia về các bệnh lý hô hấp và tiêu hóa ở trẻ em.
+                                                                                                                                                                              Hơn 8 năm kinh nghiệm làm việc tại các bệnh viện nhi hàng đầu.
+                                                                                                                                                                              Tác giả nhiều bài báo khoa học về dinh dưỡng và phát triển trẻ em.
+                                                                                                                                                                              Tận tâm, yêu trẻ và luôn cập nhật các phác đồ điều trị mới nhất.',
+                                                                                                                                                                                  'Approved', GETDATE()
+                                                                                                                                                                              ),
+                                                                                                                                                                              (
+                                                                                                                                                                                  @doctor4_user_id, @neurology_id, N'Bác sĩ Phạm Thị D', '0944444444', N'44 Đường D, Quận ĐĐ, Hà Nội', 12, 'LIC44444', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1513-768x1150.jpg',
+                                                                                                                                                                                  N'Trưởng khoa Thần kinh – Bệnh viện Bạch Mai.
+                                                                                                                                                                              Chuyên gia điều trị đột quỵ và các bệnh lý sa sút trí tuệ (Alzheimer, Parkinson).
+                                                                                                                                                                              Hơn 12 năm kinh nghiệm trong lĩnh vực Thần kinh học.
+                                                                                                                                                                              Tu nghiệp chuyên sâu về Thần kinh mạch máu tại Pháp.
+                                                                                                                                                                              Giảng viên kiêm nhiệm – Đại học Y Hà Nội.',
+                                                                                                                                                                                  'Pending', GETDATE() -- Chờ duyệt
+                                                                                                                                                                              ),
+                                                                                                                                                                              (
+                                                                                                                                                                                  @doctor5_user_id, @cardiology_id, N'Bác sĩ Hoàng Văn E', '0955555555', N'55 Đường E, Quận 1, TP.HCM', 15, 'LIC55555', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/09/DTC_1161-768x1151.jpg',
+                                                                                                                                                                                  N'Chuyên gia Can thiệp Tim mạch – Viện Tim TP.HCM.
+                                                                                                                                                                              Hơn 15 năm kinh nghiệm trong lĩnh vực nội tim mạch và can thiệp động mạch vành.
+                                                                                                                                                                              Nguyên Phó khoa Tim mạch can thiệp – Bệnh viện Chợ Rẫy.
+                                                                                                                                                                              Thành viên Hiệp hội Tim mạch học Việt Nam và Hiệp hội Tim mạch can thiệp Hoa Kỳ (SCAI).
+                                                                                                                                                                              Thực hiện thành công hàng ngàn ca can thiệp mạch vành phức tạp.',
+                                                                                                                                                                                  'Approved', GETDATE()
+                                                                                                                                                                              ),
+                                                                                                                                                                              (
+                                                                                                                                                                                  @doctor6_user_id, @ent_id, N'Bác sĩ Vũ Thị F', '0966666666', N'66 Đường F, Quận BT, Hà Nội', 7, 'LIC66666', 'https://benhvienphusanmekong.com/wp-content/uploads/2022/10/DTC_1663-768x1151.jpg',
+                                                                                                                                                                                  N'Bác sĩ Chuyên khoa Tai Mũi Họng – Bệnh viện Tai Mũi Họng Trung ương.
+                                                                                                                                                                              Chuyên điều trị các bệnh lý về viêm xoang, viêm amidan, và các vấn đề về thính lực.
+                                                                                                                                                                              Hơn 7 năm kinh nghiệm.
+                                                                                                                                                                              Chứng chỉ Phẫu thuật nội soi mũi xoang nâng cao.
+                                                                                                                                                                              Tận tình tư vấn và điều trị dứt điểm các bệnh lý tai mũi họng mãn tính.',
+                                                                                                                                                                                  'Rejected', GETDATE()
+                                                                                                                                                                              );
 GO
 
 -- ========== 5. BẢNG doctor_documents ==========
--- Khai báo ID doctor (Từ bảng doctors)
+-- Khai báo ID doctor (Từ bảng doctors) - (PHẢI KHAI BÁO LẠI SAU GO)
 DECLARE @doctor1_id INT = (SELECT TOP 1 doctor_id FROM doctors WHERE user_id = (SELECT user_id FROM users WHERE email = 'doctor1@example.com'));
 DECLARE @doctor2_id INT = (SELECT TOP 1 doctor_id FROM doctors WHERE user_id = (SELECT user_id FROM users WHERE email = 'doctor2@example.com'));
 DECLARE @doctor3_id INT = (SELECT TOP 1 doctor_id FROM doctors WHERE user_id = (SELECT user_id FROM users WHERE email = 'doctor3@example.com'));
@@ -123,8 +171,8 @@ INSERT INTO patients (user_id, full_name, phone_number, address, date_of_birth, 
                                                                                                                  (@patient6_user_id, N'Đặng Thị H', '0882223334', N'505 Đường PQR, Quận Cầu Giấy, Hà Nội', '1992-09-12', N'Tiền sử dị ứng hải sản.', GETDATE());
 GO
 
--- ========== 7. BẢNG schedules (Tăng cường số lượng lịch) ==========
--- Khai báo ID doctor (Chỉ các bác sĩ 'Approved')
+-- ========== 7. BẢNG schedules (ĐÃ SỬA LỖI KHAI BÁO BIẾN) ==========
+-- Khai báo ID doctor (Chỉ các bác sĩ 'Approved') - (PHẢI KHAI BÁO LẠI SAU GO)
 DECLARE @doctor1_id INT = (SELECT TOP 1 doctor_id FROM doctors WHERE user_id = (SELECT user_id FROM users WHERE email = 'doctor1@example.com') AND status = 'Approved');
 DECLARE @doctor2_id INT = (SELECT TOP 1 doctor_id FROM doctors WHERE user_id = (SELECT user_id FROM users WHERE email = 'doctor2@example.com') AND status = 'Approved');
 DECLARE @doctor3_id INT = (SELECT TOP 1 doctor_id FROM doctors WHERE user_id = (SELECT user_id FROM users WHERE email = 'doctor3@example.com') AND status = 'Approved');

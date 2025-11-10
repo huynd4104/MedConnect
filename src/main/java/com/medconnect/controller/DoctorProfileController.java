@@ -56,7 +56,7 @@ public class DoctorProfileController {
             dto.setExperienceYears(doctor.getExperienceYears());
             dto.setLicenseNumber(doctor.getLicenseNumber());
             dto.setSpecializationId(doctor.getSpecialization() != null ? doctor.getSpecialization().getSpecializationId() : null);
-
+            dto.setIntroduction(doctor.getIntroduction());
             dto.setExistingPhotoPath(doctor.getPhotoPath());
 
             doctorStatus = doctor.getStatus().name();

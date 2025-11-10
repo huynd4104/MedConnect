@@ -56,6 +56,7 @@ public class DoctorService {
         doctor.setFullName(dto.getFullName());
         doctor.setPhoneNumber(dto.getPhoneNumber());
         doctor.setClinicAddress(dto.getClinicAddress());
+        doctor.setIntroduction(dto.getIntroduction());
 
         // Upload ảnh đại diện (nếu có)
         if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
