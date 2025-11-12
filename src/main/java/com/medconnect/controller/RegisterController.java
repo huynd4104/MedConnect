@@ -40,7 +40,7 @@ public class RegisterController {
         // 2. Xử lý lỗi logic (ví dụ: email đã tồn tại)
         try {
             registerService.register(registerDTO);
-            redirectAttributes.addFlashAttribute("success", "Registration successful. Check your email for verification.");
+            redirectAttributes.addFlashAttribute("success", "Đăng ký thành công. Kiểm tra email để xác minh.");
             return "redirect:/login";
         } catch (Exception e) {
             // Lỗi logic (như email trùng) MỚI dùng redirect

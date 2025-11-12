@@ -2,6 +2,8 @@ package com.medconnect.service;
 
 import com.medconnect.entity.User;
 import com.medconnect.entity.User.Role;
+import com.medconnect.entity.Patient;
+import com.medconnect.repository.PatientRepository;
 import com.medconnect.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -25,6 +27,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
     // Sử dụng @Lazy để tránh lỗi vòng lặp (circular dependency) với SecurityConfig
     @Autowired
@@ -54,15 +59,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User newUser = new User();
         newUser.setEmail((String) attributes.get("email"));
 
-        // Vì đăng nhập bằng Google, không có mật khẩu nên tạo một mật khẩu ngẫu nhiên hoặc một giá trị place-holder
+        // Vì đăng nhập bằng Google, không có mật khẩu nên tạo một mật khẩu ngẫu nhiên
         newUser.setPasswordHash(passwordEncoder.encode(UUID.randomUUID().toString()));
 
-        // Gán vai trò mặc định cho người dùng mới đăng nhập bằng Google
-        newUser.setRole(Role.Patient); //  Role.Patient là vai trò mặc định
+        // Gán vai trò mặc định là Patient
+        newUser.setRole(Role.Patient);
 
         newUser.setVerified(true); // Tự động xác thực
         newUser.setBlocked(false);
 
-        return userRepository.save(newUser);
+        // 1. Lưu User trước để lấy user có ID
+        User savedUser = userRepository.save(newUser);
+
+        // 2. Tạo Patient liên kết với User vừa lưu
+        if (savedUser.getRole() == Role.Patient) {
+            Patient patient = new Patient();
+            patient.setUser(savedUser);
+
+            // Lấy tên từ Google nếu có, nếu không thì để rỗng giống RegisterService
+            String googleName = (String) attributes.get("name");
+            patient.setFullName(googleName != null ? googleName : "");
+
+            patientRepository.save(patient);
+        }
+
+        return savedUser;
     }
 }
